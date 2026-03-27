@@ -6,24 +6,26 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Endpoint for React to connect to
-        registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/signal")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // System inbox receiving messages from React
         registry.setApplicationDestinationPrefixes("/app");
-        // Personal inbox sending messages back to React
         registry.enableSimpleBroker("/user");
         registry.setUserDestinationPrefix("/user");
         registry.enableSimpleBroker("/topic");
+        registry.enableSimpleBroker("/topic");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 
+
 @Configuration
 public class CaptchaConfig {
 
@@ -29,5 +30,20 @@ public class CaptchaConfig {
         defaultKaptcha.setConfig(config);
         
         return defaultKaptcha;
+    }
+        @Bean
+        public DefaultKaptcha defaultKaptchaChanPass(){
+        DefaultKaptcha captcha = new DefaultKaptcha();
+
+        Properties properties = new Properties();
+        properties.put("kaptcha.textproducer.char.string", "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+        properties.put("kaptcha.textproducer.char.length", "6");
+        properties.put("kaptcha.image.width", "150");
+        properties.put("kaptcha.image.height", "50");
+
+        Config config = new Config(properties);
+        captcha.setConfig(config);
+
+        return captcha;
     }
 }

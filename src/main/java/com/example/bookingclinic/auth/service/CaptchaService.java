@@ -39,10 +39,8 @@ public class CaptchaService {
 
     public boolean validateCaptcha(String captchaId, String input) {
         String real = captchaStore.get(captchaId);
-
         if (real == null)
             return false;
-
         boolean result = real.equalsIgnoreCase(input);
         captchaStore.remove(captchaId);
 
