@@ -1,0 +1,84 @@
+package com.example.bookingclinic.adminsystem.repository.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Repository;
+
+import com.example.bookingclinic.adminsystem.dto.request.SubscriptionPackageSearchRequest;
+import com.example.bookingclinic.adminsystem.dto.response.SubscriptionPackageResponse;
+import com.example.bookingclinic.adminsystem.entity.QFeaturesEntity;
+import com.example.bookingclinic.adminsystem.entity.QSubscriptionPackageEntity;
+import com.example.bookingclinic.adminsystem.entity.QSubscriptionPackageFeaturesEntity;
+import com.example.bookingclinic.adminsystem.repository.custom.SubscriptionPackageRepositoryCustom;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+@Repository
+public class SubscriptionPackageRepositoryImpl implements SubscriptionPackageRepositoryCustom {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    public Page<SubscriptionPackageResponse> search(SubscriptionPackageSearchRequest request) {
+        QSubscriptionPackageEntity goi = QSubscriptionPackageEntity.subscriptionPackageEntity;
+        QSubscriptionPackageFeaturesEntity spf = QSubscriptionPackageFeaturesEntity.subscriptionPackageFeaturesEntity;
+        QFeaturesEntity tinhNang = QFeaturesEntity.featuresEntity;
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(goi.isDeleted.eq(false));
+
+        if(request.getKeyword() != null && !request.getKeyword().isEmpty()) {
+            builder.and(goi.tenGoi.containsIgnoreCase(request.getKeyword()));
+        }
+
+        if(request.getTrangThai() != null && !request.getTrangThai().isEmpty()) {
+            builder.and(goi.trangThai.eq(request.getTrangThai()));
+        }
+
+        if(request.getThoiGianNgay() != null) {
+            builder.and(goi.thoiGianNgay.eq(request.getThoiGianNgay()));
+        }
+
+        Map<String, SubscriptionPackageResponse> map = queryFactory
+            .from(goi)
+            .leftJoin(spf).on(spf.subscriptionPackage.eq(goi))
+            .leftJoin(tinhNang).on(spf.features.eq(tinhNang))
+            .where(builder)
+            .offset(request.getPage() * request.getSize())
+            .limit(request.getSize())
+            .transform(
+                GroupBy.groupBy(goi.maGoi).as(
+                    Projections.bean(
+                        SubscriptionPackageResponse.class,
+                        goi.maGoi,
+                        goi.tenGoi,
+                        goi.gia,
+                        goi.thoiGianNgay,
+                        goi.moTa,
+                        goi.trangThai,
+                        GroupBy.list(tinhNang.tenTinhNang).as("danhSachTenTinhNang")
+                )
+            ));
+        
+        List<SubscriptionPackageResponse> content = new ArrayList<>(map.values());
+
+         long total = queryFactory
+            .select(goi.countDistinct())
+            .from(goi)
+            .where(builder)
+            .fetchOne();
+
+        return new PageImpl<SubscriptionPackageResponse>(content, PageRequest.of(request.getPage(), request.getSize()), total);
+    }
+    
+}
