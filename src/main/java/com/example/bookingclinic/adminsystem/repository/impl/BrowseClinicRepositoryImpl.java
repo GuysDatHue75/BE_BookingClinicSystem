@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.entity.BrowseClinicEntity;
-import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.QBrowseClinicEntity;
-import com.example.bookingclinic.adminsystem.entity.QClinicEntity;
 import com.example.bookingclinic.adminsystem.repository.custom.BrowseClinicRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,32 +15,6 @@ import lombok.RequiredArgsConstructor;
 public class BrowseClinicRepositoryImpl implements BrowseClinicRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
-
-    @Override
-    public List<ClinicEntity> search(BrowseClinicSearchRequest request) {
-
-        QClinicEntity clinic = QClinicEntity.clinicEntity;
-
-        BooleanBuilder builder = new BooleanBuilder();
-
-        builder.and(clinic.isDeleted.isFalse());
-        
-        if(request.getKeyword() != null && !request.getKeyword().isEmpty()) {
-            String keyword = request.getKeyword();
-
-            builder.and(
-                clinic.tenPhongKham.containsIgnoreCase(keyword)
-                .or(clinic.nguoiDaiDien.containsIgnoreCase(keyword))
-                .or(clinic.tinhThanhPho.containsIgnoreCase(keyword))
-                .or(clinic.diaChi.containsIgnoreCase(keyword))
-            );
-        }
-
-        return queryFactory
-            .selectFrom(clinic)
-            .where(builder)
-            .fetch();
-    }
 
     @Override
     public List<BrowseClinicEntity> searchBrowseClinic(BrowseClinicSearchRequest request) {

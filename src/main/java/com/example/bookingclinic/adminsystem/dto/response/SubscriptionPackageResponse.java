@@ -10,7 +10,7 @@ public class SubscriptionPackageResponse {
     private String maGoi;
     private String tenGoi;
     private Double gia;
-    private Integer thoiGianNgay;
+    private Integer thoiHanNgay;
     private String moTa;
     private String trangThai;
     private List<String> danhSachTenTinhNang;

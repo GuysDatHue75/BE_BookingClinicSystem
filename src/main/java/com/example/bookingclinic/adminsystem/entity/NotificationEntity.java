@@ -23,8 +23,7 @@ public class NotificationEntity {
     @Column(name = "ma_tai_khoan", length = 10, nullable = false)
     private String maTaiKhoan;
 
-    @Lob
-    @Column(name = "tieu_de", nullable = false)
+    @Column(name = "tieu_de", length = 255, nullable = false)
     private String tieuDe;
 
     @Lob
@@ -34,7 +33,7 @@ public class NotificationEntity {
     @Column(name = "loai_thong_bao", length= 255, nullable = false)
     private String loaiThongBao;
 
-    @Column(name = "doi_tuong_nhan", length= 255, nullable = false)
+    @Column(name = "doi_tuong_nhan", length= 255)
     private String doiTuongNhan;
 
     @Column(name = "thoi_gian_gui", nullable = false)
@@ -43,5 +42,11 @@ public class NotificationEntity {
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
+
+    @Column(name = "files", length = 255)
+    private String files;
+
+    @Column(name = "anh_thong_bao", length = 255)
+    private String anhThongBao;
 
 }

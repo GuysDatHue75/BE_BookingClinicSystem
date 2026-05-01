@@ -52,7 +52,7 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
         
         SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getMaGoi())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy gói với mã: " + entity.getMaGoi()));
-        int thoiGianNgay = goi.getThoiGianNgay();
+        int thoiGianNgay = goi.getThoiHanNgay();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime ngayHetHan = now.plusDays(thoiGianNgay);
 

@@ -11,6 +11,8 @@ import com.example.bookingclinic.adminsystem.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class NotificationController {
     private final NotificationService notificationService;
 
+    //Xem tất cả thông báo
+    @GetMapping("/all")
+    public List<NotificationProjection> getAll(){
+        return notificationService.getAll();
+    }
+    
     //Tìm kiếm thông báo
     @PostMapping("/search")
     public Page<NotificationProjection> search(@RequestBody NotificationSearchRequest request) {
@@ -49,36 +57,37 @@ public class NotificationController {
     
     //Cập nhật thông báo
     @PutMapping("update/{id}")
-    public String update(@RequestBody NotificationRequest request) {
+    public String update(@PathVariable String id, @RequestBody NotificationRequest request) {
+        request.setMaThongBao(id);
         notificationService.updateNotification(request);
         return "Cập nhật thông báo thành công";
     }
 
     //Xóa thông báo
-    @DeleteMapping("/{maThongBao}")
+    @DeleteMapping("delete/{maThongBao}")
     public String deleteNotification(@PathVariable String maThongBao) {
         notificationService.deleteNotification(maThongBao);
         return "Xóa thông báo thành công";
     }
 
     //Lấy chi tiết thông báo
-    @GetMapping("/{maThongBao}")
-    public NotificationProjection getDetail(@PathVariable String maThongBao, @RequestParam String maTaiKhoan) {
-        return notificationService.getDetail(maThongBao, maTaiKhoan);
+    @GetMapping("detail/{maThongBao}")
+    public NotificationProjection getDetail(@PathVariable String maThongBao) {
+        return notificationService.getDetail(maThongBao);
     }
     
     // đánh dấu đã đọc
-    @PutMapping("{maThongBao}/read")
-    public String markAsRead(@PathVariable String maThongBao, @RequestParam String maTaiKhoan) {
-        notificationService.markAsRead(maThongBao, maTaiKhoan);
-        return "Đã đọc";
-    }
+    // @PutMapping("{maThongBao}/read")
+    // public String markAsRead(@PathVariable String maThongBao, @RequestParam String maTaiKhoan) {
+    //     notificationService.markAsRead(maThongBao, maTaiKhoan);
+    //     return "Đã đọc";
+    // }
 
-    //đếm số lượng thông báo chưa đọc
-    @GetMapping("/badge")
-    public long getBadge(@RequestParam String maTaiKhoan) {
-        return notificationService.countUnread(maTaiKhoan);
-    }
+    // //đếm số lượng thông báo chưa đọc
+    // @GetMapping("/badge")
+    // public long getBadge(@RequestParam String maTaiKhoan) {
+    //     return notificationService.countUnread(maTaiKhoan);
+    // }
     
 
     

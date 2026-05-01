@@ -34,7 +34,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public List<BrowseClinicResponse> search(BrowseClinicSearchRequest request) {
-        List<ClinicEntity> result = clinicRepository.search(request);
+        List<ClinicEntity> result = clinicRepository.searchClinic(request);
         return browseClinicMapper.toResponseListFromClinic(result);
     }
 
@@ -112,14 +112,14 @@ public class ClinicServiceImpl implements ClinicService {
         }
         SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getMaGoi())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy gói với mã: " + entity.getMaGoi()));
-        int thoiGianNgay = goi.getThoiGianNgay();
+        int thoiHanNgay = goi.getThoiHanNgay();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime currentExpire = entity.getNgayHetHan();
         
         if(currentExpire != null && currentExpire.isAfter(now)){
-            entity.setNgayHetHan(currentExpire.plusDays(thoiGianNgay));
+            entity.setNgayHetHan(currentExpire.plusDays(thoiHanNgay));
         } else {
-            entity.setNgayHetHan(now.plusDays(thoiGianNgay));
+            entity.setNgayHetHan(now.plusDays(thoiHanNgay));
         }
 
         entity.setTrangThai("Hoạt động");

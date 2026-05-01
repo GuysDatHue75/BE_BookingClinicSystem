@@ -2,7 +2,6 @@ package com.example.bookingclinic.adminsystem.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -50,12 +49,32 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public List<NotificationProjection> getAll() {
+        return notificationRepository.getAll();
+    }
+
+    @Override
     public Page<NotificationProjection> search(NotificationSearchRequest request) {
         return notificationRepository.search(request);
     }
 
     private String generateMaThongBao(){
-        return "TB"+ UUID.randomUUID().toString().substring(0,8);
+        List<String> danhSachMaThongBao = notificationRepository.findAllMaThongBao();
+        int maxNumber = 0;
+        for(String ma : danhSachMaThongBao) {
+            if(ma != null && ma.startsWith("TB")) {
+                try {
+                    int currentNumber = Integer.parseInt(ma.substring(2));
+                    if(currentNumber > maxNumber) {
+                        maxNumber = currentNumber;
+                    }
+                } catch(NumberFormatException e) {
+                    // Ignore non-numeric suffix
+                }
+            }
+        }
+        int nextNumber = maxNumber + 1;
+        return String.format("TB%02d", nextNumber);
     }
     
     @Override
@@ -67,7 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
             .tieuDe(request.getTieuDe())
             .noiDung(request.getNoiDung())
             .loaiThongBao(request.getLoaiThongBao())
-            .doiTuongNhan(request.getDoituongNhan())
+            .doiTuongNhan(request.getDoiTuongNhan())
             .thoiGianGui(LocalDateTime.now())
             .isDeleted(false)
             .build();
@@ -78,11 +97,8 @@ public class NotificationServiceImpl implements NotificationService {
             for(String userId : request.getDanhSachNguoiNhan()){
                 saveNotificationAccount(notification, userId);
             }
-        } else if(request.getDoituongNhan() != null){
-            List<AccountEntity> users = accountRepository.findAll()
-                .stream()
-                .filter(x -> x.getVaiTro().equalsIgnoreCase(request.getDoituongNhan()))
-                .toList();
+        } else if(request.getDoiTuongNhan() != null && !request.getDoiTuongNhan().isEmpty()){
+            List<AccountEntity> users = accountRepository.findByVaiTroIgnoreCase(request.getDoiTuongNhan());
             for(AccountEntity user : users){
                 saveNotificationAccount(notification, user.getMaTaiKhoan());
             }
@@ -91,17 +107,73 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void updateNotification(NotificationRequest request) {
-        NotificationEntity notification = notificationRepository.findById(request.getMaThongBao())
+        NotificationEntity oldNotification = notificationRepository.findById(request.getMaThongBao())
             .orElseThrow(() -> new RuntimeException("Không tìm thấy thông báo"));
         
-        notification.setTieuDe(request.getTieuDe());
-        notification.setNoiDung(request.getNoiDung());
-        notification.setLoaiThongBao(request.getLoaiThongBao());
-        notification.setDoiTuongNhan(request.getDoituongNhan());
-        notification.setThoiGianGui(LocalDateTime.now());
-        notification.setIsDeleted(false);
-        
-        notificationRepository.save(notification);
+        if (Boolean.TRUE.equals(oldNotification.getIsDeleted())) {
+            throw new RuntimeException("Thông báo này đã bị xóa và không thể cập nhật");
+        }
+
+        boolean isContentChanged = !oldNotification.getTieuDe().equals(request.getTieuDe()) 
+                                || !oldNotification.getNoiDung().equals(request.getNoiDung());
+
+        java.util.Set<String> newUserIds = new java.util.HashSet<>();
+        if (request.getDanhSachNguoiNhan() != null && !request.getDanhSachNguoiNhan().isEmpty()) {
+            newUserIds.addAll(request.getDanhSachNguoiNhan());
+        } else if (request.getDoiTuongNhan() != null && !request.getDoiTuongNhan().isEmpty()) {
+            List<AccountEntity> users = accountRepository.findByVaiTroIgnoreCase(request.getDoiTuongNhan());
+            newUserIds.addAll(users.stream().map(AccountEntity::getMaTaiKhoan).collect(java.util.stream.Collectors.toSet()));
+        }
+
+        if (isContentChanged) {
+
+            oldNotification.setIsDeleted(true);
+            notificationRepository.save(oldNotification);
+
+            String prefix = "[Cập nhật] ";
+            String newTitle = request.getTieuDe().startsWith(prefix) ? request.getTieuDe() : prefix + request.getTieuDe();
+
+            NotificationEntity newNotification = NotificationEntity.builder()
+                .maThongBao(generateMaThongBao())
+                .maTaiKhoan(request.getMaTaiKhoan())
+                .tieuDe(newTitle)
+                .noiDung(request.getNoiDung())
+                .loaiThongBao(request.getLoaiThongBao())
+                .doiTuongNhan(request.getDoiTuongNhan())
+                .thoiGianGui(LocalDateTime.now())
+                .isDeleted(false)
+                .build();
+            
+            notificationRepository.save(newNotification);
+
+            for (String userId : newUserIds) {
+                saveNotificationAccount(newNotification, userId);
+            }
+
+        } else {
+            
+            oldNotification.setLoaiThongBao(request.getLoaiThongBao());
+            oldNotification.setDoiTuongNhan(request.getDoiTuongNhan());
+            notificationRepository.save(oldNotification);
+
+            List<NotificationAccountEntity> existingMappings = notificationAccountRepository.findByIdMaThongBao(oldNotification.getMaThongBao());
+            
+            java.util.Set<String> oldUserIds = existingMappings.stream()
+                .map(na -> na.getId().getMaTaiKhoan())
+                .collect(java.util.stream.Collectors.toSet());
+
+            for (NotificationAccountEntity existing : existingMappings) {
+                if (!newUserIds.contains(existing.getId().getMaTaiKhoan())) {
+                    notificationAccountRepository.delete(existing);
+                }
+            }
+
+            for (String newUserId : newUserIds) {
+                if (!oldUserIds.contains(newUserId)) {
+                    saveNotificationAccount(oldNotification, newUserId);
+                }
+            }
+        }
     }
 
     @Override
@@ -113,30 +185,18 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notification);
     }
 
-    @Override
-    public void markAsRead(String maThongBao, String maTaiKhoan) {
-        notificationAccountRepository.markAsRead(maThongBao, maTaiKhoan);
-    }
+    // @Override
+    // public void markAsRead(String maThongBao, String maTaiKhoan) {
+    //     notificationAccountRepository.markAsRead(maThongBao, maTaiKhoan);
+    // }
+
+    // @Override
+    // public long countUnread(String maTaiKhoan) {
+    //     return notificationAccountRepository.countByIdMaTaiKhoanAndIsReadFalse(maTaiKhoan);
+    // }
 
     @Override
-    public long countUnread(String maTaiKhoan) {
-        return notificationAccountRepository.countByIdMaTaiKhoanAndIsReadFalse(maTaiKhoan);
-    }
-
-    @Override
-    public NotificationProjection getDetail(String maThongBao, String maTaiKhoan) {
-        NotificationProjection result = notificationRepository.getDetail(maThongBao, maTaiKhoan);
-
-        List<String> receivers = notificationAccountRepository.findAll()
-            .stream()
-            .filter(x -> x.getId().getMaThongBao().equals(maThongBao))
-            .map(x -> x.getId().getMaTaiKhoan())
-            .toList();
-        
-        if(result != null){
-            result.setDanhSachNguoiNhan(receivers);
-        }
-
-        return result;
+    public NotificationProjection getDetail(String maThongBao) {
+        return notificationRepository.getDetail(maThongBao);
     }
 }

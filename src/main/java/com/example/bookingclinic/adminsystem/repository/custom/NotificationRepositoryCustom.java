@@ -11,8 +11,8 @@ public interface NotificationRepositoryCustom {
 
     Page<NotificationProjection> search(NotificationSearchRequest request);
 
-    List<NotificationProjection> getAll(String maTaiKhoan);
+    List<NotificationProjection> getAll();
 
-    NotificationProjection getDetail(String maThongBao, String maTaiKhoan);
+    NotificationProjection getDetail(String maThongBao);
     
 }

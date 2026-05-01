@@ -38,7 +38,7 @@ public class BrowseClinicController {
     }
 
     //Tìm kiểm phòng khám theo tên phòng khám, tên người đại diện, địa chỉ
-    @GetMapping("/search")
+    @PostMapping("/search")
     public List<BrowseClinicResponse> search(
         @RequestBody BrowseClinicSearchRequest request) {
         return browseClinicService.search(request);
@@ -46,17 +46,17 @@ public class BrowseClinicController {
 
     //Duyệt (Xác thực) phòng khám hoặc từ chối phòng khám
     @PostMapping("/{id}/browse")
-    public void handleBrowseClinic(@RequestBody BrowseClinicActionRequest request) {
+    public void handleBrowseClinic(@PathVariable String id, @RequestBody BrowseClinicActionRequest request) {
         browseClinicService.handleBrowseClinic(request);
     }
 
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public List<BrowseClinicResponse> filter(
         @RequestBody BrowseClinicSearchRequest request) {
         return browseClinicService.filter(request);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     public ResponseEntity<BrowseClinicDetailResponse> getDetail(@PathVariable("id") String id) {
         return ResponseEntity.ok(browseClinicService.getDetail(id));
     }

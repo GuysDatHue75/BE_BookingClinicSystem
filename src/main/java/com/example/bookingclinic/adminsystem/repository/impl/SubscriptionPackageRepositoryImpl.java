@@ -1,6 +1,7 @@
 package com.example.bookingclinic.adminsystem.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +17,7 @@ import com.example.bookingclinic.adminsystem.entity.QSubscriptionPackageEntity;
 import com.example.bookingclinic.adminsystem.entity.QSubscriptionPackageFeaturesEntity;
 import com.example.bookingclinic.adminsystem.repository.custom.SubscriptionPackageRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -45,32 +45,66 @@ public class SubscriptionPackageRepositoryImpl implements SubscriptionPackageRep
             builder.and(goi.trangThai.eq(request.getTrangThai()));
         }
 
-        if(request.getThoiGianNgay() != null) {
-            builder.and(goi.thoiGianNgay.eq(request.getThoiGianNgay()));
+        if(request.getThoiHanNgay() != null) {
+            builder.and(goi.thoiHanNgay.eq(request.getThoiHanNgay()));
         }
 
-        Map<String, SubscriptionPackageResponse> map = queryFactory
-            .from(goi)
-            .leftJoin(spf).on(spf.subscriptionPackage.eq(goi))
-            .leftJoin(tinhNang).on(spf.features.eq(tinhNang))
-            .where(builder)
-            .offset(request.getPage() * request.getSize())
-            .limit(request.getSize())
-            .transform(
-                GroupBy.groupBy(goi.maGoi).as(
-                    Projections.bean(
-                        SubscriptionPackageResponse.class,
+        List<String> ids = queryFactory
+                .select(goi.maGoi)
+                .from(goi)
+                .where(builder)
+                .offset((long) request.getPage() * request.getSize())
+                .limit(request.getSize())
+                .fetch();
+        
+        if (ids.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>(), PageRequest.of(request.getPage(), request.getSize()), 0);
+        }
+
+        List<Tuple> rawResults = queryFactory
+                .select(
                         goi.maGoi,
                         goi.tenGoi,
                         goi.gia,
-                        goi.thoiGianNgay,
+                        goi.thoiHanNgay,
                         goi.moTa,
                         goi.trangThai,
-                        GroupBy.list(tinhNang.tenTinhNang).as("danhSachTenTinhNang")
+                        tinhNang.tenTinhNang
                 )
-            ));
+                .from(goi)
+                .leftJoin(spf).on(spf.subscriptionPackage.eq(goi))
+                .leftJoin(tinhNang).on(spf.features.eq(tinhNang))
+                .where(goi.maGoi.in(ids))
+                .fetch();
         
-        List<SubscriptionPackageResponse> content = new ArrayList<>(map.values());
+        Map<String, SubscriptionPackageResponse> map = new HashMap<>();
+
+        for (Tuple row : rawResults) {
+            String maGoi = row.get(goi.maGoi);
+            
+            SubscriptionPackageResponse response = map.computeIfAbsent(maGoi, key -> {
+                SubscriptionPackageResponse newRes = new SubscriptionPackageResponse();
+                newRes.setMaGoi(key);
+                newRes.setTenGoi(row.get(goi.tenGoi));
+                newRes.setGia(row.get(goi.gia));
+                newRes.setThoiHanNgay(row.get(goi.thoiHanNgay));
+                newRes.setMoTa(row.get(goi.moTa));
+                newRes.setTrangThai(row.get(goi.trangThai));
+                newRes.setDanhSachTenTinhNang(new ArrayList<>());
+                return newRes;
+            });
+            String featureName = row.get(tinhNang.tenTinhNang);
+            if (featureName != null) {
+                response.getDanhSachTenTinhNang().add(featureName);
+            }
+        }
+        
+        List<SubscriptionPackageResponse> content = new ArrayList<>();
+        for(String id : ids) {
+            if(map.containsKey(id)) {
+                content.add(map.get(id));
+            }
+        }
 
          long total = queryFactory
             .select(goi.countDistinct())
@@ -78,7 +112,7 @@ public class SubscriptionPackageRepositoryImpl implements SubscriptionPackageRep
             .where(builder)
             .fetchOne();
 
-        return new PageImpl<SubscriptionPackageResponse>(content, PageRequest.of(request.getPage(), request.getSize()), total);
+        return new PageImpl<>(content, PageRequest.of(request.getPage(), request.getSize()), total);
     }
     
 }

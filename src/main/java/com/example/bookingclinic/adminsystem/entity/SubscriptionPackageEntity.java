@@ -24,8 +24,8 @@ public class SubscriptionPackageEntity {
     @Column(name = "gia", nullable = false)
     private Double gia;
 
-    @Column(name = "thoi_gian_ngay", nullable = false)
-    private Integer thoiGianNgay;
+    @Column(name = "thoi_han_ngay", nullable = false)
+    private Integer thoiHanNgay;
 
     @Lob
     @Column(name = "mo_ta")

@@ -4,7 +4,7 @@ public interface SubscriptionPackageProjection {
     String getMaGoi();
     String getTenGoi();
     Double getGia();
-    Integer getThoiGianNgay();
+    Integer getThoiHanNgay();
     String getMoTa();
     String getTrangThai();
 }

@@ -1,5 +1,7 @@
 package com.example.bookingclinic.adminsystem.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,8 @@ import com.example.bookingclinic.adminsystem.entity.NotificationAccountId;
 
 @Repository
 public interface NotificationAccountRepository extends JpaRepository<NotificationAccountEntity, NotificationAccountId> {
+    
+    List<NotificationAccountEntity> findByIdMaThongBao(String maThongBao);
     
     long countByIdMaTaiKhoanAndIsReadFalse(String maTaiKhoan);
 

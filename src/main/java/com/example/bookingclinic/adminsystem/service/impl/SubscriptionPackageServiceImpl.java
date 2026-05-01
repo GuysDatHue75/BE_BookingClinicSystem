@@ -1,7 +1,7 @@
 package com.example.bookingclinic.adminsystem.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -18,17 +18,51 @@ import com.example.bookingclinic.adminsystem.repository.SubscriptionPackageFeatu
 import com.example.bookingclinic.adminsystem.repository.SubscriptionPackageRepository;
 import com.example.bookingclinic.adminsystem.service.SubscriptionPackageService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SubscriptionPackageServiceImpl implements SubscriptionPackageService{
     private final SubscriptionPackageRepository sPackageRepository;
     private final FeaturesRepository fRepository;
     private final SubscriptionPackageFeaturesRepository spFeaturesRepository;
 
     @Override
+    public List<SubscriptionPackageResponse> getAllActivePackages() {
+        List<SubscriptionPackageEntity> spEntities = sPackageRepository.findAllByIsDeletedFalse();
+        List<SubscriptionPackageResponse> responses = new ArrayList<>();
+
+        for(SubscriptionPackageEntity sp : spEntities) {
+            SubscriptionPackageResponse res = new SubscriptionPackageResponse();
+            res.setMaGoi(sp.getMaGoi());
+            res.setTenGoi(sp.getTenGoi());
+            res.setGia(sp.getGia());
+            res.setThoiHanNgay(sp.getThoiHanNgay());
+            res.setMoTa(sp.getMoTa());
+            res.setTrangThai(sp.getTrangThai());
+
+            List<SubscriptionPackageFeaturesEntity> spFeatures = spFeaturesRepository.findBySubscriptionPackageMaGoi(sp.getMaGoi());
+            List<String> featureNames = new ArrayList<>();
+            for (SubscriptionPackageFeaturesEntity spf : spFeatures) {
+                if(spf.getFeatures() != null) {
+                    featureNames.add(spf.getFeatures().getTenTinhNang());
+                }
+            }
+            res.setDanhSachTenTinhNang(featureNames);
+            responses.add(res);
+        }
+        return responses;
+    }
+
+    @Override
     public Page<SubscriptionPackageResponse> search(SubscriptionPackageSearchRequest request){
+        return sPackageRepository.search(request);
+    }
+
+    @Override
+    public Page<SubscriptionPackageResponse> filter(SubscriptionPackageSearchRequest request) {
         return sPackageRepository.search(request);
     }
 
@@ -48,7 +82,22 @@ public class SubscriptionPackageServiceImpl implements SubscriptionPackageServic
     }
 
     private String generateMaGoi(){
-        return "G" + UUID.randomUUID().toString().substring(0, 9);
+        List<String> danhSachMaGoi = sPackageRepository.findAllMaGoi();
+        int maxNumber = 0;
+        for(String ma : danhSachMaGoi) {
+            if(ma != null && ma.startsWith("G")) {
+                try {
+                    int currentNumber = Integer.parseInt(ma.substring(1));
+                    if(currentNumber > maxNumber) {
+                        maxNumber = currentNumber;
+                    }
+                } catch(NumberFormatException e) {
+                    // Ignore non-numeric suffix
+                }
+            }
+        }
+        int nextNumber = maxNumber + 1;
+        return String.format("G%02d", nextNumber);
     }
 
     @Override
@@ -58,9 +107,9 @@ public class SubscriptionPackageServiceImpl implements SubscriptionPackageServic
             .maGoi(maGoi)
             .tenGoi(request.getTenGoi())
             .gia(request.getGia())
-            .thoiGianNgay(request.getThoiGianNgay())
+            .thoiHanNgay(request.getThoiHanNgay())
             .moTa(request.getMoTa())
-            .trangThai(request.getTrangThai())
+            .trangThai("Đang kích hoạt")
             .isDeleted(false)
             .build();
         sPackageRepository.save(sPackageEntity);
@@ -71,10 +120,14 @@ public class SubscriptionPackageServiceImpl implements SubscriptionPackageServic
     @Override
     public void updatePackage(SubscriptionPackageRequest request){
         SubscriptionPackageEntity sPackageEntity = sPackageRepository.findById(request.getMaGoi())
-            .orElseThrow(() -> new RuntimeException("Khonong tồn tại mã gói này."));
+            .orElseThrow(() -> new RuntimeException("Không tồn tại mã gói này."));
+        
+        if (Boolean.TRUE.equals(sPackageEntity.getIsDeleted())) {
+            throw new RuntimeException("Gói đăng ký này đã bị xóa, không thể chỉnh sửa.");
+        }
         sPackageEntity.setTenGoi(request.getTenGoi());
         sPackageEntity.setGia(request.getGia());
-        sPackageEntity.setThoiGianNgay(request.getThoiGianNgay());
+        sPackageEntity.setThoiHanNgay(request.getThoiHanNgay());
         sPackageEntity.setMoTa(request.getMoTa());
         sPackageEntity.setTrangThai(request.getTrangThai());
 
@@ -89,6 +142,11 @@ public class SubscriptionPackageServiceImpl implements SubscriptionPackageServic
     public void deletePackage(String maGoi){
         SubscriptionPackageEntity sPackageEntity = sPackageRepository.findById(maGoi)
             .orElseThrow(() -> new RuntimeException("Không tồn tại mã gói này"));
+        
+        if (Boolean.TRUE.equals(sPackageEntity.getIsDeleted())) {
+            throw new RuntimeException("Gói đăng ký này đã bị xóa từ trước, không thể thực hiện lại thao tác này.");
+        }
+        sPackageEntity.setTrangThai("Đã xóa");
         sPackageEntity.setIsDeleted(true);
         sPackageRepository.save(sPackageEntity);
     }

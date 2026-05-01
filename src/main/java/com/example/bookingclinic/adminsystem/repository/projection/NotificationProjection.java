@@ -22,6 +22,8 @@ public class NotificationProjection {
     private List<String> danhSachNguoiNhan; 
     private Boolean isRead;
     private LocalDateTime thoiGianGui;
+    private String files;
+    private String anhThongBao;
 
     @QueryProjection
     public NotificationProjection(
@@ -35,7 +37,9 @@ public class NotificationProjection {
         String doiTuongNhan,
         List<String> danhSachNguoiNhan,
         Boolean isRead,
-        LocalDateTime thoiGianGui
+        LocalDateTime thoiGianGui,
+        String files,
+        String anhThongBao
     ) {
         this.maThongBao = maThongBao;
         this.maTaiKhoan = maTaiKhoan;
@@ -48,6 +52,8 @@ public class NotificationProjection {
         this.danhSachNguoiNhan = danhSachNguoiNhan;
         this.isRead = isRead;
         this.thoiGianGui = thoiGianGui;
+        this.files = files;
+        this.anhThongBao = anhThongBao;
     }
     
 }

@@ -18,7 +18,9 @@ public class NotificationRequest {
     private String tieuDe;
     private String noiDung;
     private String loaiThongBao;
-    private String doituongNhan;
+    private String doiTuongNhan;
     List<String> danhSachNguoiNhan;
     private LocalDateTime thoiGianGui;
+    private String files;
+    private String anhThongBao;
 }

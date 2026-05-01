@@ -6,7 +6,7 @@ import lombok.Data;
 public class SubscriptionPackageSearchRequest {
     private String keyword;
     private String trangThai;
-    private Integer thoiGianNgay;
+    private Integer thoiHanNgay;
 
     private int page = 0;
     private int size = 10;
