@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
+import com.example.bookingclinic.adminsystem.entity.AccountEntity;
 import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.SubscriptionPackageEntity;
 import com.example.bookingclinic.adminsystem.mapper.BrowseClinicMapper;
+import com.example.bookingclinic.adminsystem.repository.AccountRepository;
 import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
 import com.example.bookingclinic.adminsystem.repository.SubscriptionPackageRepository;
 import com.example.bookingclinic.adminsystem.service.ClinicService;
@@ -26,6 +28,7 @@ public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
     private final BrowseClinicMapper browseClinicMapper;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public List<BrowseClinicResponse> getAll() {
@@ -85,6 +88,13 @@ public class ClinicServiceImpl implements ClinicService {
         entity.setTrangThai("Bị khóa");
         entity.setIsDeleted(true);
         clinicRepository.save(entity);
+
+        AccountEntity account = accountRepository.findById(entity.getMaTaiKhoan())
+                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+
+        account.setIsDeleted(true);
+        account.setTrangThai(false);
+        accountRepository.save(account);
     }
 
     @Scheduled(cron = "0 0 0 * * ?") // mỗi ngày

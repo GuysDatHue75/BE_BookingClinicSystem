@@ -18,13 +18,13 @@ import lombok.*;
 @Builder
 public class ClinicEntity {
     @Id
-    @Column(name = "ma_phong_kham", length = 10, nullable = false)
+    @Column(name = "ma_phong_kham", length = 225, nullable = false)
     private String maPhongKham;
 
     @Column(name = "ten_phong_kham", length = 255, nullable = false)
     private String tenPhongKham;
 
-    @Column(name = "ma_chuyen_khoa", length = 255, nullable = false)
+    @Column(name = "ma_chuyen_khoa", length = 10, nullable = false)
     private String maChuyenKhoa;
 
     @Column(name = "ngay_thanh_lap", nullable = false)
@@ -92,5 +92,10 @@ public class ClinicEntity {
     @Column(name = "ngay_het_han")
     private LocalDateTime ngayHetHan;
 
+    @Column(name = "ma_tai_khoan", length = 225, nullable = false)
+    private String maTaiKhoan;
+
+    @Column(name = "anh_phong_kham", length = 255, nullable = false)
+    private String anhPhongKham;
 
 }

@@ -37,8 +37,8 @@ public class DoctorEntity {
     @Column(name = "avt", length = 255, nullable = false)
     private String avt;
 
-    @Column(name = "chuyen_khoa", length = 255, nullable = false)
-    private String chuyenKhoa;
+    @Column(name = "ma_chuyen_khoa", length = 10, nullable = false)
+    private String maChuyenKhoa;
 
     @Column(name = "bang_cap", length = 255, nullable = false)
     private String bangCap;
@@ -70,10 +70,10 @@ public class DoctorEntity {
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
 
-    @Column(name = "ma_tai_khoan", length= 10, nullable = false)  
+    @Column(name = "ma_tai_khoan", length= 225, nullable = false)  
     private String maTaiKhoan;
 
-    @Column(name = "ma_phong_kham", length = 10, nullable = false)
+    @Column(name = "ma_phong_kham", length = 225, nullable = false)
     private String maPhongKham;
 
     @Column(name = "ngay_dang_ky", nullable = false)

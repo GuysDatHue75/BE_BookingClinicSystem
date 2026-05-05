@@ -18,7 +18,7 @@ import lombok.*;
 @Builder
 public class BrowseClinicEntity {
     @Id
-    @Column(name = "ma_phong_kham", length = 10, nullable = false)
+    @Column(name = "ma_phong_kham", length = 225, nullable = false)
     private String maPhongKham;
 
     @Column(name = "ten_phong_kham", length = 255, nullable = false)
@@ -87,4 +87,7 @@ public class BrowseClinicEntity {
 
     @Column(name = "ly_do_tu_choi", length= 255)
     private String lyDoTuChoi;
+
+    @Column(name = "anh_phong_kham", length = 255, nullable = false)
+    private String anhPhongKham;
 }

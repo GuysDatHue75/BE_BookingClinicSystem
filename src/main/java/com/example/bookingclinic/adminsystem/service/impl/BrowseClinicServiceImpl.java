@@ -9,10 +9,12 @@ import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicActionReque
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
+import com.example.bookingclinic.adminsystem.entity.AccountEntity;
 import com.example.bookingclinic.adminsystem.entity.BrowseClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.SubscriptionPackageEntity;
 import com.example.bookingclinic.adminsystem.mapper.BrowseClinicMapper;
+import com.example.bookingclinic.adminsystem.repository.AccountRepository;
 import com.example.bookingclinic.adminsystem.repository.BrowseClinicRepository;
 import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
 import com.example.bookingclinic.adminsystem.repository.SubscriptionPackageRepository;
@@ -29,6 +31,7 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
     private final ClinicRepository clinicRepository;
     private final BrowseClinicMapper browseClinicMapper;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public List<BrowseClinicResponse> getAll() {
@@ -48,6 +51,10 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
         );
     }
 
+    private synchronized String generateMaTaiKhoan() {
+        return "TK" + System.currentTimeMillis();
+    }
+
     public void approve(BrowseClinicEntity entity) {
         
         SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getMaGoi())
@@ -55,6 +62,22 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
         int thoiGianNgay = goi.getThoiHanNgay();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime ngayHetHan = now.plusDays(thoiGianNgay);
+        String maTaiKhoan = generateMaTaiKhoan();
+
+        AccountEntity account = AccountEntity.builder()
+                .maTaiKhoan(maTaiKhoan)
+                .soDt(entity.getSoDienThoai())
+                .matKhau("123456")
+                .vaiTro("BacSi")
+                .hoVaTen(entity.getTenPhongKham())
+                .anhDaiDien(entity.getAnhPhongKham())
+                .trangThai(true)
+                .ngayTao(LocalDateTime.now())
+                .ngayCapNhat(LocalDateTime.now())
+                .isDeleted(false)
+                .build();
+        accountRepository.save(account);
+
 
         ClinicEntity clinic = ClinicEntity.builder()
                 .maPhongKham(entity.getMaPhongKham())

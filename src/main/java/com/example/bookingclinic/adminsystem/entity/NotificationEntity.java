@@ -20,7 +20,7 @@ public class NotificationEntity {
     @Column(name = "ma_thong_bao", length = 10, nullable = false)
     private String maThongBao;
 
-    @Column(name = "ma_tai_khoan", length = 10, nullable = false)
+    @Column(name = "ma_tai_khoan", length = 225, nullable = false)
     private String maTaiKhoan;
 
     @Column(name = "tieu_de", length = 255, nullable = false)
