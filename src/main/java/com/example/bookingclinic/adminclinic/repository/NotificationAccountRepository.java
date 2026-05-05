@@ -1,4 +1,4 @@
-package com.example.bookingclinic.adminclinic.reponsitory;
+package com.example.bookingclinic.adminclinic.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,7 +12,7 @@ import com.example.bookingclinic.adminclinic.entity.NotificationAccountId;
 @Repository
 public interface NotificationAccountRepository extends JpaRepository<NotificationAccountEntity, NotificationAccountId> {
 
-    long countByIdMaTaiKhoanAndReadFalse(String maTaiKhoan);
+    long countById_MaTaiKhoanAndIsReadFalse(String maTaiKhoan);
 
     @Modifying
     @Query("update NotificationAccountEntity n set n.isRead = true where n.id.maThongBao = :id and n.id.maTaiKhoan = :user")

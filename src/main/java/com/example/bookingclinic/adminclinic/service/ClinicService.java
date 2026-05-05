@@ -7,6 +7,6 @@ public interface ClinicService {
 
     ClinicResponse getDetail(String maPhongKham);
 
-    void updateClinic(ClinicRequest request);
-    
+    void updateClinic(String maPhongKham, ClinicRequest request);
+
 }

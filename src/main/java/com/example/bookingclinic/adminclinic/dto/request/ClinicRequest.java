@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ClinicRequest {
-    private String maPhongKham;
     private String tenPhongKham;
     private LocalDateTime ngayThanhLap;
     private LocalDateTime ngayDangKy;

@@ -46,6 +46,10 @@ public class AccountEntity {
     @Column(name = "ngay_cap_nhat", nullable = false)
     private LocalDateTime ngayCapNhat;
 
-    @Column(name = "ma_phong_kham", length = 10)
+    @Column(name = "ma_phong_kham", length = 255)
     private String maPhongKham;
+
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 }

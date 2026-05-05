@@ -1,12 +1,13 @@
 package com.example.bookingclinic.adminclinic.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bookingclinic.adminclinic.dto.request.ClinicRequest;
 import com.example.bookingclinic.adminclinic.dto.response.ClinicResponse;
 import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.mapper.ClinicMapper;
-import com.example.bookingclinic.adminclinic.reponsitory.ClinicRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
 import com.example.bookingclinic.adminclinic.service.ClinicService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,9 @@ public class ClinicServiceImpl implements ClinicService{
     }
 
     @Override
-    public void updateClinic(ClinicRequest request){
-        ClinicEntity entity = clinicRepository.findById(request.getMaPhongKham())
+    @Transactional
+    public void updateClinic(String maPhongKham, ClinicRequest request){
+        ClinicEntity entity = clinicRepository.findById(maPhongKham)
             .orElseThrow(() -> new RuntimeException("không tìm thấy phòng khám"));
         
         entity.setTenPhongKham(request.getTenPhongKham());

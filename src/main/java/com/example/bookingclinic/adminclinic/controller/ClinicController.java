@@ -23,15 +23,15 @@ public class ClinicController {
     private final ClinicService clinicService;
     
     //lấy thông tin chi tiết phòng khám
-    @GetMapping("/{maPhongKham}")
+    @GetMapping("/detail/{maPhongKham}")
     public ClinicResponse getDetail(@PathVariable String maPhongKham) {
         return clinicService.getDetail(maPhongKham);
     }
 
     //Chỉnh sửa(cập nhật) thông tin phòng khám
-    @PutMapping("update/{id}")
-    public String updateClinic(@RequestBody ClinicRequest request) {
-        clinicService.updateClinic(request);
+    @PutMapping("/update/{maPhongKham}")
+    public String updateClinic(@PathVariable String maPhongKham, @RequestBody ClinicRequest request) {
+        clinicService.updateClinic(maPhongKham, request);
         return "Cập nhật thông tin phòng khám thành công";
     }
     

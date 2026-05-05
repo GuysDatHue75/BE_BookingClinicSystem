@@ -37,8 +37,8 @@ public class DoctorEntity {
     @Column(name = "avt", length = 255, nullable = false)
     private String avt;
 
-    @Column(name = "chuyen_khoa", length = 255, nullable = false)
-    private String chuyenKhoa;
+    @Column(name = "ma_chuyen_khoa", length = 10, nullable = false)
+    private String maChuyenKhoa;
 
     @Column(name = "bang_cap", length = 255, nullable = false)
     private String bangCap;
@@ -73,7 +73,7 @@ public class DoctorEntity {
     @Column(name = "ma_tai_khoan", length= 10, nullable = false)  
     private String maTaiKhoan;
 
-    @Column(name = "ma_phong_kham", length = 10, nullable = false)
+    @Column(name = "ma_phong_kham", length = 255, nullable = false)
     private String maPhongKham;
 
     @Column(name = "ngay_dang_ky", nullable = false)
@@ -81,4 +81,9 @@ public class DoctorEntity {
 
     @Column(name = "tep_dinh_kem", length= 255, nullable = false)
     private String tepDinhKem;
+
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+    
 }
