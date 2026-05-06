@@ -70,7 +70,7 @@ public class DoctorEntity {
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
 
-    @Column(name = "ma_tai_khoan", length= 10, nullable = false)  
+    @Column(name = "ma_tai_khoan", length= 255, nullable = false)  
     private String maTaiKhoan;
 
     @Column(name = "ma_phong_kham", length = 255, nullable = false)

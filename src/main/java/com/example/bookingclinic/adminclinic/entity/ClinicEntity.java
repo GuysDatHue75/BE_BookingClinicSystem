@@ -89,5 +89,8 @@ public class ClinicEntity {
     @Column(name = "ngay_het_han")
     private LocalDateTime ngayHetHan;
 
+    @Column(name = "ma_tai_khoan", length = 255, nullable = false)
+    private String maTaiKhoan;
+
 
 }

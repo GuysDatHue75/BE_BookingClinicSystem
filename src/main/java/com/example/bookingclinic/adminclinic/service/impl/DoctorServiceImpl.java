@@ -56,7 +56,6 @@ public class DoctorServiceImpl implements DoctorService {
                 .trangThai(true)
                 .ngayTao(LocalDateTime.now())
                 .ngayCapNhat(LocalDateTime.now())
-                .maPhongKham(maPhongKham)
                 .isDeleted(false)
                 .build();
         accountRepository.save(account);

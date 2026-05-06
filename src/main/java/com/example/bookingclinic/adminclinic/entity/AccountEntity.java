@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AccountEntity {
     @Id
-    @Column(name = "ma_tai_khoan", length = 10, nullable = false)
+    @Column(name = "ma_tai_khoan", length = 255, nullable = false)
     private String maTaiKhoan;
 
     @Column(name = "so_dt", length = 20, nullable = false)
@@ -45,9 +45,6 @@ public class AccountEntity {
 
     @Column(name = "ngay_cap_nhat", nullable = false)
     private LocalDateTime ngayCapNhat;
-
-    @Column(name = "ma_phong_kham", length = 255)
-    private String maPhongKham;
 
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
