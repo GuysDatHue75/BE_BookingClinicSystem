@@ -7,8 +7,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
-import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
+import com.example.bookingclinic.adminsystem.dto.response.ClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.entity.AccountEntity;
 import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.SubscriptionPackageEntity;
@@ -72,7 +72,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public BrowseClinicDetailResponse getDetail(String maPhongKham) {
+    public ClinicDetailResponse getDetail(String maPhongKham) {
         ClinicEntity entity = clinicRepository.findById(maPhongKham)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng khám với mã: " + maPhongKham));
 

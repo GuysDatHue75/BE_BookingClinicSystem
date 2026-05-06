@@ -3,12 +3,12 @@ package com.example.bookingclinic.adminsystem.dto.response;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
-public class BrowseClinicDetailResponse {
+public class ClinicDetailResponse {
     private String maPhongKham;
     private String tenPhongKham;
     private String maChuyenKhoa;
@@ -33,7 +33,7 @@ public class BrowseClinicDetailResponse {
     private String nguoiDaiDien;
     private String soDienThoaiNguoiDaiDien;
     private String maGoi;
-    private String lyDoTuChoi;
+    private LocalDateTime ngayHetHan;
+    private String maTaiKhoan;
     private String anhPhongKham;
-    
 }

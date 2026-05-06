@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
-import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
+import com.example.bookingclinic.adminsystem.dto.response.ClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.service.ClinicService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class ClinicController {
 
     //Lấy chi tiết phòng khám
     @GetMapping("/{maPhongKham}")
-    public BrowseClinicDetailResponse getDetail(@PathVariable String maPhongKham) {
+    public ClinicDetailResponse getDetail(@PathVariable String maPhongKham) {
         return clinicService.getDetail(maPhongKham);
     }
 

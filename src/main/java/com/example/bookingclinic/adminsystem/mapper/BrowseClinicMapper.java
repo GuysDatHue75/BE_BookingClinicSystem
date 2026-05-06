@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
+import com.example.bookingclinic.adminsystem.dto.response.ClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.entity.BrowseClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
 
@@ -21,7 +22,7 @@ public interface BrowseClinicMapper {
 
     List<BrowseClinicResponse> toResponseListFromClinic(List<ClinicEntity> entities);
 
-    BrowseClinicDetailResponse toDetailResponseFromClinic(ClinicEntity entity);
+    ClinicDetailResponse toDetailResponseFromClinic(ClinicEntity entity);
     
 }
     // public BrowseClinicResponse toResponse(BrowseClinicEntity entity) {

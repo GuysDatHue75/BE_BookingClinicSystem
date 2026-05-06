@@ -104,6 +104,8 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
                 .trangThai("Hoạt động")
                 .maGoi(entity.getMaGoi())
                 .isDeleted(false)
+                .maTaiKhoan(maTaiKhoan)
+                .anhPhongKham(entity.getAnhPhongKham())
                 .build();
 
         clinicRepository.save(clinic);
