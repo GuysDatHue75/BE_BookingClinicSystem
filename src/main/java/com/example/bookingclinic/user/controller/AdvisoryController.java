@@ -1,7 +1,5 @@
 package com.example.bookingclinic.user.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,9 +35,9 @@ public class AdvisoryController {
     // }
 
     @GetMapping("/advisorys")// xem câu hỏi và câu trả lời có phân trang
-    public Page<Advisory> getAdvisoryByPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+    public Page<Advisory> getAdvisoryByPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam String city){
         Pageable pageable = PageRequest.of(page,size);
-        Page<Advisory> result = advisoryRepository.findByTrangThaiTraLoi(1,pageable);
+        Page<Advisory> result = advisoryRepository.findByTrangThaiTraLoiAndClinic_TinhThanhPhoContainingIgnoreCase(1,pageable,city);
         return result;
     }
 }

@@ -18,7 +18,6 @@ import lombok.Data;
 @Data
 public class UClinic {
     @Id
-    @Column(length = 10)
     private String maPhongKham;
     private String tenPhongKham;
     private LocalDate ngayThanhLap;
@@ -31,12 +30,14 @@ public class UClinic {
     private String giapPhep;
     private LocalDate ngayCap;
     private String noiCap;
-    private String tepDinhKem;
     private String nguoiDaiDien;
     private String soDienThoaiNguoiDaiDien;
     private String loaiHinhPhongKham;
     private String trangThai;
-    private String maGoiDangKy;
+    @Column(name = "ma_goi_dang_ky") 
+    private String maGoiDangKy; 
+    private String moTa;
+    private String soSao;
     private String anhPhongKham;
     @ManyToMany
     @JoinTable(

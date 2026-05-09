@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.bookingclinic.user.dto.UpdateAddressDTO;
 import com.example.bookingclinic.user.entity.Patient;
 import com.example.bookingclinic.user.service.UPatientService;
 
@@ -27,5 +29,10 @@ public class UPatientController {
     @PutMapping("/patient/{id}") // chỉnh sửa thông tin cá nhân của bệnh nhân
     public Patient editPatient(@PathVariable String id, @RequestBody Patient newPatient){
         return patientService.editPatient(newPatient, id);
+    }
+
+    @PutMapping("/patientQQ/{id}") // chỉnh sửa thông tin quê quán của bệnh nhân
+    public String editQueQuan(@PathVariable String id, @RequestBody UpdateAddressDTO qq){
+        return patientService.updateQueQuan(id, qq);
     }
 }

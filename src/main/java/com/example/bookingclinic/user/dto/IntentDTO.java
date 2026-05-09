@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class IntentDTO {
-    private String intent;
-    private String entity;
-    private String specialty;
-    private String location;
-    private Integer limit;
+    public String intent;
+    public String entity;
+    public String specialty;
+    public String location;
+    public Integer limit;
 }

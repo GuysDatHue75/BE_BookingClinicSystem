@@ -26,4 +26,9 @@ public class Account {
     private LocalDateTime ngayCapNhat;
     private String provider;     
     private String providerId;   
+    private Integer lanDauDangNhap;
+    public Account orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
 }

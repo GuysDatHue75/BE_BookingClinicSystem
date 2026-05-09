@@ -2,23 +2,57 @@ package com.example.bookingclinic.user.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.bookingclinic.user.dto.UpdateAddressDTO;
+import com.example.bookingclinic.user.entity.Account;
 import com.example.bookingclinic.user.entity.Patient;
 import com.example.bookingclinic.user.repository.UPatientRepository;
+import com.example.bookingclinic.user.repository.UAccountRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UPatientService {
     private UPatientRepository patientRepository;
-
-    public UPatientService(UPatientRepository patientRepository){
+    private UAccountRepository uAccountRepository;
+    public UPatientService(UPatientRepository patientRepository, UAccountRepository uAccountRepository){
         this.patientRepository = patientRepository;
+        this.uAccountRepository = uAccountRepository;
     }
 
-    public Patient getPatientById(String id){
+    public Patient getPatientById(String id) {
         return patientRepository.findById(id).orElse(null);
     }
 
-    public Patient editPatient(Patient newPatient, String id){
+    public String updateQueQuan(String id, UpdateAddressDTO qq) {
+        Patient patient = patientRepository.findById(id).orElse(null);
+        if (patient == null) {
+            return "Cập nhật thất bại";
+        }
+        patient.setQueQuan(qq.getQq());
+        Patient p = patientRepository.save(patient);
+        if (p != null) {
+            return "Cập nhật thành công";
+        } else {
+            return "Cập nhật thất bại";
+        }
+    }
+
+    @Transactional
+    public Patient editPatient(Patient newPatient, String id) {
         return patientRepository.findById(id).map(oldPatient -> {
+
+            if (newPatient.getSoDienThoai() != null) {
+                Account acc = oldPatient.getTaiKhoan();
+                
+                if (!newPatient.getSoDienThoai().equals(acc.getSoDt())) {
+                    if (uAccountRepository.existsBySoDt(newPatient.getSoDienThoai())) {
+                        throw new RuntimeException("Số điện thoại đã tồn tại!");
+                    }
+                    acc.setSoDt(newPatient.getSoDienThoai());
+                }
+                oldPatient.setSoDienThoai(newPatient.getSoDienThoai());
+            }
+
             oldPatient.setCanNang(newPatient.getCanNang());
             oldPatient.setChieuCao(newPatient.getChieuCao());
             oldPatient.setDiaChi(newPatient.getDiaChi());
@@ -29,9 +63,10 @@ public class UPatientService {
             oldPatient.setGioiTinh(newPatient.getGioiTinh());
             oldPatient.setNgheNghiep(newPatient.getNgheNghiep());
             oldPatient.setQueQuan(newPatient.getQueQuan());
-            oldPatient.setSoDienThoai(newPatient.getSoDienThoai());
             oldPatient.setTinhTrangSucKhoe(newPatient.getTinhTrangSucKhoe());
+
             return patientRepository.save(oldPatient);
-        }).orElseThrow(() -> new RuntimeException("Không tìm thấy bậy nhân vói id: " + id));
+
+        }).orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân với id: " + id));
     }
 }

@@ -18,12 +18,12 @@ public class UNews {
     @Column(length = 10)
     private String maTinTuc;
     private String tieuDe;
+    private String moTaNgan;
     private String noiDung;
-    private String maTacGia;
     private LocalDateTime ngayTao;
-    private boolean trangThai;
+    private LocalDateTime ngayCapNhat;
     private String anh;
-    private int luotXem;
+
     @ManyToOne 
     @JoinColumn(name = "ma_phong_kham")
     private UClinic phongKham;

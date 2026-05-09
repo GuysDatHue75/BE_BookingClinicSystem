@@ -15,5 +15,5 @@ public interface AdvisoryRepository extends JpaRepository<Advisory,String> {
     @Query("select tv from Advisory tv where tv.trangThaiTraLoi = 1")
     List<Advisory> findAnsweredAdvisories();
 
-    Page<Advisory> findByTrangThaiTraLoi(int state, Pageable pageable);
+    Page<Advisory> findByTrangThaiTraLoiAndClinic_TinhThanhPhoContainingIgnoreCase(int state, Pageable pageable,String city);
 }

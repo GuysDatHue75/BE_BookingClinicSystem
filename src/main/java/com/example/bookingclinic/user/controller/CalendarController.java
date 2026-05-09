@@ -29,8 +29,8 @@ public class CalendarController {
     }
 
     @GetMapping("/calendars") // xem lịch khám đã được bs xác nhận
-    public List<Calendar> getAllCalendars(@RequestParam String id){
-        return calendarService.getAllCalendar(id, "DaXacNhan");
+    public List<Calendar> getAllCalendars(@RequestParam String id, @RequestParam String status){
+        return calendarService.getAllCalendar(id, status);
     }
 
     @DeleteMapping("/calendar/{id}") // xóa lịch khám đã đặt

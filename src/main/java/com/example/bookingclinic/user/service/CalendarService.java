@@ -21,7 +21,7 @@ public class CalendarService {
         return calendarRepository.findByPatient_MaBenhNhanAndTrangThai(id, "DaKham");
     }
     public List<Calendar> getAllCalendar(String id, String status){
-        return calendarRepository.findByPatient_MaBenhNhanAndTrangThai(id, "DaXacNhan");
+        return calendarRepository.findByPatient_MaBenhNhanAndTrangThai(id, status);
     }
     @Transactional
     public void delCalendarByID(String id){

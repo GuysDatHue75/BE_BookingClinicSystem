@@ -30,4 +30,5 @@ public class Calendar {
     private String loaiKham;
     private String trangThai;
     private LocalDateTime ngayTao;
+    private int danhGia;
 }

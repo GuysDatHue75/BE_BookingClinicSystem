@@ -1,16 +1,38 @@
 package com.example.bookingclinic.user.controller;
 
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
-@Controller
+import com.example.bookingclinic.user.service.StringeeService;
+
+// @Controller
+// public class CallController {
+
+//     @MessageMapping("/signal")
+//     @SendTo("/topic/signal")
+//     public String signal(String message) {
+
+//         return message;
+//     }
+// }
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/stringee")
+@CrossOrigin(originPatterns = "*")
 public class CallController {
 
-    @MessageMapping("/signal")
-    @SendTo("/topic/signal")
-    public String signal(String message) {
+    @Autowired
+    private StringeeService stringeeService;
 
-        return message;
+    @GetMapping("/token")
+    public ResponseEntity<Map<String, String>> getToken(@RequestParam String userId) {
+        String token = stringeeService.generateToken(userId);
+        Map<String, String> response = new HashMap<>();
+        response.put("access_token", token);
+        return ResponseEntity.ok(response);
     }
 }

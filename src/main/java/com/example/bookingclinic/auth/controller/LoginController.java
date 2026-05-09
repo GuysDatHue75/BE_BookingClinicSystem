@@ -20,9 +20,9 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO infors){
 
+    @PostMapping("/login") // đăng nhập
+    public ResponseEntity<?> login(@RequestBody UserDTO infors){
         return loginService.login(infors);
     }
 }

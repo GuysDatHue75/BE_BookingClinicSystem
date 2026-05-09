@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.example.bookingclinic.user.entity.FeedBack;
 @Repository
 public interface FeedBackRepository extends JpaRepository<FeedBack,String> {
-    List<FeedBack> findByMaDoiTuong(String id);
+    List<FeedBack> findByMaPhongKham(String id);
+    
 }

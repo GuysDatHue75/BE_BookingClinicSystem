@@ -10,4 +10,5 @@ public interface UAccountRepository extends JpaRepository<Account,String>{
     Account findByProviderId(String providerId);
     Boolean existsBySoDt(String phone);
     Account findBySoDt(String phone);
+    Account findByProviderAndProviderId(String provider, String providerId);
 }

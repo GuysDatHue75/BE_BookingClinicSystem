@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,18 +38,18 @@ public class SecurityConfig {
                                 .and()
                                 .csrf().disable()
                                 .authorizeHttpRequests(auth -> auth
+                                        .requestMatchers("/api/stringee/**").permitAll()
                                                 .requestMatchers("/api/v1/**").permitAll()
+                                                // DÒNG THÊM MỚI: Mở khóa cho toàn bộ API bắt đầu bằng /api/stringee/
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
                                                 .successHandler((request, response, authentication) -> {
                                                         OAuth2User oauth2User = (OAuth2User) authentication
                                                                         .getPrincipal();
 
-                                                        OAuth2AuthenticationToken authAndToken = (OAuth2AuthenticationToken) authentication;
-                                                        String provider = authAndToken
-                                                                        .getAuthorizedClientRegistrationId()
+                                                        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
+                                                        String provider = authToken.getAuthorizedClientRegistrationId()
                                                                         .toUpperCase();
-                                                        System.out.println(provider);
 
                                                         String email = oauth2User.getAttribute("email");
                                                         String name = oauth2User.getAttribute("name");
@@ -62,6 +61,11 @@ public class SecurityConfig {
                                                                 picture = oauth2User.getAttribute("picture");
                                                         } else if ("FACEBOOK".equals(provider)) {
                                                                 providerId = oauth2User.getAttribute("id");
+
+                                                                if (email == null) {
+                                                                        email = providerId + "@facebook.com";
+                                                                }
+
                                                                 Map<String, Object> pictureObj = oauth2User
                                                                                 .getAttribute("picture");
                                                                 if (pictureObj != null) {
@@ -72,9 +76,12 @@ public class SecurityConfig {
                                                         }
 
                                                         String idPatient = "";
-                                                        Patient existingPatient = patientRepository.findByEmail(email);
+                                                        int isOneLogin;
+                                                        String idAccount = "";
+                                                        Account account = accountRepository.findByProviderAndProviderId(
+                                                                        provider, providerId);
 
-                                                        if (existingPatient == null) {
+                                                        if (account == null) {
                                                                 String randomSuffix = UUID.randomUUID().toString()
                                                                                 .substring(0, 8);
 
@@ -88,6 +95,7 @@ public class SecurityConfig {
                                                                 newAccount.setProvider(provider);
                                                                 newAccount.setProviderId(providerId);
                                                                 newAccount.setMatKhau("OAUTH2_USER");
+                                                                newAccount.setLanDauDangNhap(1);
 
                                                                 Account savedAccount = accountRepository
                                                                                 .save(newAccount);
@@ -98,16 +106,21 @@ public class SecurityConfig {
                                                                 newPatient.setEmail(email);
                                                                 newPatient.setTaiKhoan(savedAccount);
                                                                 patientRepository.save(newPatient);
-                                                        } else {
-                                                                idPatient = existingPatient.getMaBenhNhan();
-                                                        }
-                                                        response.sendRedirect(frontendUrl + "/login-success?role=BN&idPatient="+ idPatient);
-                                                }));;
-                return http.build();
-        }
+                                                                isOneLogin = 1;
+                                                                idAccount = savedAccount.getMaTaiKhoan();
 
-        @Bean
-        public BCryptPasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
+                                                        } else {
+                                                                Patient patient = patientRepository
+                                                                                .findByTaiKhoan(account);
+
+                                                                idPatient = patient.getMaBenhNhan();
+                                                                idAccount = account.getMaTaiKhoan();
+                                                        }
+                                                        response.sendRedirect(frontendUrl +
+                                                                        "/login-success?role=BN&idPatient=" + idPatient
+                                                                        + "&idAccount=" + idAccount);
+
+                                                }));
+                return http.build();
         }
 }

@@ -1,12 +1,14 @@
 package com.example.bookingclinic.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -21,7 +23,7 @@ public class Doctor {
     private Boolean gioiTinh;
     private String soDienThoai;
     private String email;
-    private String diaChi;
+    private String queQuan;
     private String avt;
     @OneToOne
     @JoinColumn(name = "ma_chuyen_khoa")
@@ -29,7 +31,8 @@ public class Doctor {
     private String bangCap;
     private String kinhNghiem;
     private String hoatDong;
-    private String mieuTa;
+    private String mieuTa1;
+    private String mieuTa2;
     private String chucVu;
     private String hocHam;
     private String cccd;
@@ -40,4 +43,13 @@ public class Doctor {
     private Account taiKhoan;
     @ManyToOne @JoinColumn(name = "ma_phong_kham")
     private UClinic phongKham;
+
+
+    @OneToMany
+    @JoinColumn(name = "ma_bac_si")
+    private List<WorkExperience> workEx;
+
+    @OneToMany
+    @JoinColumn(name = "ma_bac_si")
+    private List<TraningProgram> trainingProgram;
 }

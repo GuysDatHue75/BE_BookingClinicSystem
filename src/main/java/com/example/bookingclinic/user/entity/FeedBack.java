@@ -15,13 +15,15 @@ import lombok.Data;
 @Table(name = "danh_gia")
 public class FeedBack {
     @Id
-    @Column(length = 10)
     private String maDanhGia;
     @OneToOne
     @JoinColumn(name = "ma_benh_nhan")
     private Patient benhNhan;
-    private String maDoiTuong;
-    private int soSao;
+    private String maBacSi;
+    private String maPhongKham;
+    private int soSaoPhongKham;
+    private int soSaoBacSi;
     private String noiDung;
-    private LocalDateTime thoiGian;
+    private String maLichKham;
+    private LocalDateTime ngayDanhGia;
 }
