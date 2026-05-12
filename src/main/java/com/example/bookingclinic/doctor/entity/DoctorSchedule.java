@@ -18,7 +18,6 @@ public class DoctorSchedule {
     @JoinColumn(name = "ma_bac_si")
     @JsonIgnore
     private Doctor bacSi;
-
     private LocalDate ngayLamViec;
     private String khungGio;
     private String loaiHinhKham;
