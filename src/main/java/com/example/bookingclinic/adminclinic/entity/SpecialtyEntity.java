@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +26,8 @@ public class SpecialtyEntity {
     @Column(name = "ma_chuyen_khoa", length = 10, nullable = false)
     private String maChuyenKhoa;
 
-    @Column(name = "ma_phong_kham", length = 255, nullable = false)
-    private String maPhongKham;
+    @ManyToOne @JoinColumn(name = "ma_phong_kham")
+    private ClinicEntity clinic;
     
     @Column(name = "ten_chuyen_khoa", length = 255, nullable = false)
     private String tenChuyenKhoa;

@@ -10,7 +10,9 @@ import com.example.bookingclinic.adminclinic.dto.request.DoctorRequest;
 import com.example.bookingclinic.adminclinic.dto.request.DoctorSearchRequest;
 import com.example.bookingclinic.adminclinic.dto.response.DoctorResponse;
 import com.example.bookingclinic.adminclinic.entity.AccountEntity;
+import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
+import com.example.bookingclinic.adminclinic.entity.SpecialtyEntity;
 import com.example.bookingclinic.adminclinic.repository.AccountRepository;
 import com.example.bookingclinic.adminclinic.repository.DoctorRepository;
 import com.example.bookingclinic.adminclinic.repository.projection.DoctorProjection;
@@ -26,9 +28,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final AccountRepository accountRepository;
 
     private synchronized String generateMaTaiKhoan() {
-        Integer maxNumber = accountRepository.findMaxAccountIdNumber();
-        int nextNumber = (maxNumber == null ? 0 : maxNumber) + 1;
-        return String.format("TK%02d", nextNumber);
+         return "TK" + System.currentTimeMillis();
     }
     private String generateMaBacSi() {
         Integer maxNumber = doctorRepository.findMaxDoctorIdNumber();
@@ -60,6 +60,9 @@ public class DoctorServiceImpl implements DoctorService {
                 .build();
         accountRepository.save(account);
 
+        SpecialtyEntity specialtyProxy = SpecialtyEntity.builder().maChuyenKhoa(request.getMaChuyenKhoa()).build();
+        ClinicEntity clinicProxy = ClinicEntity.builder().maPhongKham(maPhongKham).build();
+
         DoctorEntity doctor = DoctorEntity.builder()
                 .maBacSi(maBacSi)
                 .tenBacSi(request.getTenBacSi())
@@ -68,7 +71,7 @@ public class DoctorServiceImpl implements DoctorService {
                 .email(request.getEmail())
                 .diaChi(request.getDiaChi())
                 .avt(request.getAvt())
-                .maChuyenKhoa(request.getMaChuyenKhoa())
+                .specialty(specialtyProxy)
                 .bangCap(request.getBangCap())
                 .kinhNghiem(request.getKinhNghiem())
                 .hoatDong(request.getHoatDong())
@@ -79,8 +82,8 @@ public class DoctorServiceImpl implements DoctorService {
                 .soGiayPhep(request.getSoGiayPhep())
                 .ngayCap(request.getNgayCap())
                 .noiCap(request.getNoiCap())
-                .maTaiKhoan(maTaiKhoan)
-                .maPhongKham(maPhongKham)
+                .account(account)
+                .clinic(clinicProxy)
                 .ngayDangKy(LocalDateTime.now())
                 .tepDinhKem(request.getTepDinhKem())
                 .isDeleted(false)
@@ -99,12 +102,12 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setIsDeleted(true);
         doctorRepository.save(doctor);
 
-        AccountEntity account = accountRepository.findById(doctor.getMaTaiKhoan())
-                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-
-        account.setIsDeleted(true);
-        account.setTrangThai(false);
-        accountRepository.save(account);
+        AccountEntity account = doctor.getAccount();
+        if (account != null){
+            account.setIsDeleted(true);
+            account.setTrangThai(false);
+            accountRepository.save(account);
+        }
     }
 
     @Override

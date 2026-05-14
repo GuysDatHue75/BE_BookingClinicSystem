@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -37,8 +40,8 @@ public class DoctorEntity {
     @Column(name = "avt", length = 255, nullable = false)
     private String avt;
 
-    @Column(name = "ma_chuyen_khoa", length = 10, nullable = false)
-    private String maChuyenKhoa;
+    @ManyToOne @JoinColumn(name = "ma_chuyen_khoa")
+    private SpecialtyEntity specialty;
 
     @Column(name = "bang_cap", length = 255, nullable = false)
     private String bangCap;
@@ -70,11 +73,11 @@ public class DoctorEntity {
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
 
-    @Column(name = "ma_tai_khoan", length= 255, nullable = false)  
-    private String maTaiKhoan;
+    @OneToOne @JoinColumn(name = "ma_tai_khoan")
+    private AccountEntity account;
 
-    @Column(name = "ma_phong_kham", length = 255, nullable = false)
-    private String maPhongKham;
+    @ManyToOne @JoinColumn(name = "ma_phong_kham")
+    private ClinicEntity clinic;
 
     @Column(name = "ngay_dang_ky", nullable = false)
     private LocalDateTime ngayDangKy;

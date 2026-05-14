@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bookingclinic.adminclinic.dto.request.SpecialtyRequest;
 import com.example.bookingclinic.adminclinic.dto.request.SpecialtySearchRequest;
+import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.SpecialtyEntity;
 import com.example.bookingclinic.adminclinic.repository.SpecialtyRepository;
 import com.example.bookingclinic.adminclinic.repository.projection.SpecialtyProjection;
@@ -30,16 +31,16 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     @Override
     public SpecialtyProjection createSpecialty(SpecialtyRequest request, String maPhongKham) {
         String chuyenKhoa = generateMaChuyenKhoa();
+        ClinicEntity clinicProxy = ClinicEntity.builder().maPhongKham(maPhongKham).build();
         
         SpecialtyEntity s = SpecialtyEntity.builder()
                 .maChuyenKhoa(chuyenKhoa)
-                .maPhongKham(maPhongKham)
                 .tenChuyenKhoa(request.getTenChuyenKhoa())
+                .clinic(clinicProxy)
                 .moTa(request.getMoTa())
                 .trangThai(true)
                 .ngayTao(LocalDateTime.now())
                 .isDeleted(false)
-                .maPhongKham(maPhongKham)
                 .build();
         specialtyRepository.save(s);
         return getSpecialtyDetail(maPhongKham, chuyenKhoa);
@@ -48,7 +49,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     @Transactional
     @Override
     public SpecialtyProjection updateSpecialty(String maChuyenKhoa, SpecialtyRequest request, String maPhongKham) {
-        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndMaPhongKhamAndIsDeletedFalse(maChuyenKhoa, maPhongKham)
+        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndClinic_MaPhongKhamAndIsDeletedFalse(maChuyenKhoa, maPhongKham)
                 .orElseThrow(() -> new RuntimeException("Chuyên khoa không tồn tại"));
 
         s.setTenChuyenKhoa(request.getTenChuyenKhoa());
@@ -61,7 +62,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     @Transactional
     @Override
     public void deleteSpecialty(String maChuyenKhoa, String maPhongKham) {
-        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndMaPhongKhamAndIsDeletedFalse(maChuyenKhoa, maPhongKham)
+        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndClinic_MaPhongKhamAndIsDeletedFalse(maChuyenKhoa, maPhongKham)
                 .orElseThrow(() -> new RuntimeException("Chuyên khoa không tồn tại"));
 
         s.setIsDeleted(true);

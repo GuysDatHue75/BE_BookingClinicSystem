@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.bookingclinic.adminclinic.dto.request.SpecialtySearchRequest;
-import com.example.bookingclinic.adminclinic.entity.QClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.QSpecialtyEntity;
 import com.example.bookingclinic.adminclinic.repository.custom.SpecialtyRepositoryCustom;
 import com.example.bookingclinic.adminclinic.repository.projection.QSpecialtyProjection;
@@ -22,23 +21,21 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepositoryCustom {
     @Override
     public Optional<SpecialtyProjection> findDetailByIdAndClinicId(String maPhongKham, String maChuyenKhoa) {
         QSpecialtyEntity s = QSpecialtyEntity.specialtyEntity;
-        QClinicEntity c = QClinicEntity.clinicEntity;
 
         SpecialtyProjection result = queryFactory
             .select(new QSpecialtyProjection(
                 s.maChuyenKhoa,
                 s.tenChuyenKhoa,
-                s.maPhongKham,
-                c.tenPhongKham,
+                s.clinic.maPhongKham,
+                s.clinic.tenPhongKham,
                 s.moTa,
                 s.trangThai,
                 s.ngayTao
             ))
             .from(s)
-            .join(c).on(s.maPhongKham.eq(c.maPhongKham))
             .where(
                 s.maChuyenKhoa.eq(maChuyenKhoa)
-                .and(c.maPhongKham.eq(maPhongKham))
+                .and(s.clinic.maPhongKham.eq(maPhongKham))
                 .and(s.isDeleted.eq(false))
             )
             .fetchOne();
@@ -49,12 +46,11 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepositoryCustom {
     @Override
     public List<SpecialtyProjection> search(SpecialtySearchRequest request, String maPhongKham) {
         QSpecialtyEntity s = QSpecialtyEntity.specialtyEntity;
-        QClinicEntity c = QClinicEntity.clinicEntity;
 
         BooleanBuilder builder = new BooleanBuilder();
 
         if(maPhongKham != null && !maPhongKham.trim().isEmpty()){
-            builder.and(s.maPhongKham.eq(maPhongKham));
+            builder.and(s.clinic.maPhongKham.eq(maPhongKham));
         }
         builder.and(s.isDeleted.eq(false));
 
@@ -73,15 +69,14 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepositoryCustom {
         return queryFactory
             .select(new QSpecialtyProjection(
                 s.maChuyenKhoa,
-                s.maPhongKham,
-                c.tenPhongKham,
                 s.tenChuyenKhoa,
+                s.clinic.maPhongKham,
+                s.clinic.tenPhongKham,
                 s.moTa,
                 s.trangThai,
                 s.ngayTao
             ))
             .from(s)
-            .join(c).on(s.maPhongKham.eq(c.maPhongKham))
             .where(builder)
             .orderBy(s.ngayTao.desc())
             .fetch();
@@ -90,22 +85,20 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepositoryCustom {
     @Override
     public List<SpecialtyProjection> findAllSpecialtyByClinicId(String maPhongKham) {
         QSpecialtyEntity s = QSpecialtyEntity.specialtyEntity;
-        QClinicEntity c = QClinicEntity.clinicEntity;
 
         return queryFactory
                 .select(new QSpecialtyProjection(
-                    s.maChuyenKhoa, 
-                    s.maPhongKham, 
-                    c.tenPhongKham,
-                    s.tenChuyenKhoa, 
+                    s.maChuyenKhoa,
+                    s.tenChuyenKhoa,  
+                    s.clinic.maPhongKham, 
+                    s.clinic.tenPhongKham,
                     s.moTa, 
                     s.trangThai, 
                     s.ngayTao
                 ))
                 .from(s)
-                .join(c).on(s.maPhongKham.eq(c.maPhongKham))
                 .where(
-                        s.maPhongKham.eq(maPhongKham)
+                        s.clinic.maPhongKham.eq(maPhongKham)
                         .and(s.isDeleted.eq(false))
                 )
                 .orderBy(s.ngayTao.desc())

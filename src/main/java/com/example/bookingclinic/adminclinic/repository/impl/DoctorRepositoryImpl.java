@@ -5,10 +5,7 @@ import java.util.List;
 
 import com.example.bookingclinic.adminclinic.dto.request.DoctorSearchRequest;
 import com.example.bookingclinic.adminclinic.dto.response.DoctorResponse;
-import com.example.bookingclinic.adminclinic.entity.QAccountEntity;
-import com.example.bookingclinic.adminclinic.entity.QClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.QDoctorEntity;
-import com.example.bookingclinic.adminclinic.entity.QSpecialtyEntity;
 import com.example.bookingclinic.adminclinic.repository.custom.DoctorRepositoryCustom;
 import com.example.bookingclinic.adminclinic.repository.projection.DoctorProjection;
 import com.example.bookingclinic.adminclinic.repository.projection.QDoctorProjection;
@@ -27,8 +24,6 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
     public List<DoctorResponse> search(DoctorSearchRequest request, String maPhongKham) {
 
         QDoctorEntity d = QDoctorEntity.doctorEntity;
-        QSpecialtyEntity s = QSpecialtyEntity.specialtyEntity;
-        QClinicEntity c = QClinicEntity.clinicEntity;
 
         return queryFactory
             .select(Projections.constructor(DoctorResponse.class,
@@ -38,18 +33,15 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
                 d.soDienThoai,
                 d.email,
                 d.diaChi,
-                s.tenChuyenKhoa,
+                d.specialty.tenChuyenKhoa,
                 d.kinhNghiem,
                 d.chucVu,
                 d.hocHam,
                 d.ngayDangKy
             ))
             .from(d)
-            .join(s).on(d.maChuyenKhoa.eq(s.maChuyenKhoa))
-            .join(c).on(d.maPhongKham.eq(c.maPhongKham))
-
             .where(
-                d.maPhongKham.eq(maPhongKham),
+                d.clinic.maPhongKham.eq(maPhongKham),
                 keywordContains(request.getTenBacSi(), d),
                 phoneContains(request.getSoDienThoai(), d),
                 addressContains(request.getDiaChi(), d),
@@ -83,7 +75,7 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
     private BooleanExpression specialtyeq(String specialty, QDoctorEntity d){
         return (specialty == null || specialty.isEmpty())
             ? null
-            : d.maChuyenKhoa.eq(specialty);
+            : d.specialty.maChuyenKhoa.eq(specialty);
     }
 
     private BooleanExpression positionEq(String position, QDoctorEntity d){
@@ -113,9 +105,6 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
     public DoctorProjection getDetail(String maBacSi) {
 
         QDoctorEntity d = QDoctorEntity.doctorEntity;
-        QClinicEntity c = QClinicEntity.clinicEntity;
-        QSpecialtyEntity s = QSpecialtyEntity.specialtyEntity;
-        QAccountEntity e = QAccountEntity.accountEntity;
 
         return queryFactory
             .select(new QDoctorProjection(
@@ -126,8 +115,8 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
                 d.email,
                 d.diaChi,
                 d.avt,
-                d.maChuyenKhoa,
-                s.tenChuyenKhoa,
+                d.specialty.maChuyenKhoa,
+                d.specialty.tenChuyenKhoa,
                 d.bangCap,
                 d.kinhNghiem,
                 d.hoatDong,
@@ -138,18 +127,15 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
                 d.soGiayPhep,
                 d.ngayCap,
                 d.noiCap,
-                d.maPhongKham,
-                c.tenPhongKham,
-                d.maTaiKhoan,
-                e.soDt,
-                e.matKhau,
+                d.clinic.maPhongKham,
+                d.clinic.tenPhongKham,
+                d.account.maTaiKhoan,
+                d.account.soDt,
+                d.account.matKhau,
                 d.ngayDangKy,
                 d.tepDinhKem
             ))
             .from(d)
-            .join(c).on(d.maPhongKham.eq(c.maPhongKham))
-            .join(s).on(d.maChuyenKhoa.eq(s.maChuyenKhoa))
-            .join(e).on(d.maTaiKhoan.eq(e.maTaiKhoan))
             .where(d.maBacSi.eq(maBacSi))
             .fetchOne();
     }
@@ -157,9 +143,6 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
     @Override
     public List<DoctorResponse> findAllDoctors(String maPhongKham) {
         QDoctorEntity d = QDoctorEntity.doctorEntity;
-        QClinicEntity c = QClinicEntity.clinicEntity;
-        QAccountEntity e = QAccountEntity.accountEntity;
-        QSpecialtyEntity s = QSpecialtyEntity.specialtyEntity;
 
         return queryFactory
             .select(Projections.constructor(DoctorResponse.class,
@@ -169,19 +152,16 @@ public class DoctorRepositoryImpl implements DoctorRepositoryCustom {
                 d.soDienThoai,
                 d.email,        
                 d.diaChi,
-                s.tenChuyenKhoa,
+                d.specialty.tenChuyenKhoa,
                 d.kinhNghiem,   
                 d.chucVu,
                 d.hocHam,
                 d.ngayDangKy
             ))
             .from(d)
-            .leftJoin(c).on(d.maPhongKham.eq(c.maPhongKham))
-            .leftJoin(e).on(d.maTaiKhoan.eq(e.maTaiKhoan))
-            .leftJoin(s).on(d.maChuyenKhoa.eq(s.maChuyenKhoa))
             .where(
                 d.isDeleted.eq(false),
-                d.maPhongKham.eq(maPhongKham)
+                d.clinic.maPhongKham.eq(maPhongKham)
             ) 
             .fetch();
     }

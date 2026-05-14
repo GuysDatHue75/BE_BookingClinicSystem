@@ -16,7 +16,7 @@ public interface SpecialtyRepository extends JpaRepository<SpecialtyEntity, Stri
     @Query("SELECT s.maChuyenKhoa FROM SpecialtyEntity s")
     List<String> findAllMaChuyenKhoa();
 
-    Optional<SpecialtyEntity> findByMaChuyenKhoaAndMaPhongKhamAndIsDeletedFalse(String maPhongKham, String maChuyenKhoa);
+    Optional<SpecialtyEntity> findByMaChuyenKhoaAndClinic_MaPhongKhamAndIsDeletedFalse(String maPhongKham, String maChuyenKhoa);
 
     List<SpecialtyProjection> findAllSpecialtyByClinicId(String maPhongKham);
 

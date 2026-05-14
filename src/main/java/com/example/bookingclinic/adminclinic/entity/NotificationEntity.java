@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -20,11 +22,10 @@ public class NotificationEntity {
     @Column(name = "ma_thong_bao", length = 10, nullable = false)
     private String maThongBao;
 
-    @Column(name = "ma_tai_khoan", length = 255, nullable = false)
-    private String maTaiKhoan;
+    @ManyToOne @JoinColumn(name = "ma_tai_khoan")
+    private AccountEntity account;
 
-    @Lob
-    @Column(name = "tieu_de", nullable = false)
+    @Column(name = "tieu_de", length = 255, nullable = false)
     private String tieuDe;
 
     @Lob
@@ -43,5 +44,11 @@ public class NotificationEntity {
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
+
+    @Column(name = "files", length = 255)
+    private String files;
+
+    @Column(name = "anh_thong_bao", length = 255)
+    private String anhThongBao;
 
 }
