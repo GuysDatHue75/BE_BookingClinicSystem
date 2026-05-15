@@ -3,6 +3,9 @@ package com.example.bookingclinic.adminsystem.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicActionRequest;
@@ -22,16 +25,21 @@ import com.example.bookingclinic.adminsystem.service.BrowseClinicService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class BrowseClinicServiceImpl implements BrowseClinicService {
 
+    private static final Logger log = LoggerFactory.getLogger(BrowseClinicServiceImpl.class);
     private final BrowseClinicRepository browseClinicRepository;
     private final ClinicRepository clinicRepository;
     private final BrowseClinicMapper browseClinicMapper;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender javaMailSender;
 
     @Override
     public List<BrowseClinicResponse> getAll() {
@@ -64,10 +72,13 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
         LocalDateTime ngayHetHan = now.plusDays(thoiGianNgay);
         String maTaiKhoan = generateMaTaiKhoan();
 
+        String rawPassword = "123456";
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+
         AccountEntity account = AccountEntity.builder()
                 .maTaiKhoan(maTaiKhoan)
                 .soDt(entity.getSoDienThoai())
-                .matKhau("123456")
+                .matKhau(encodedPassword)
                 .vaiTro("BacSi")
                 .hoVaTen(entity.getTenPhongKham())
                 .anhDaiDien(entity.getAnhPhongKham())
@@ -112,6 +123,29 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
 
         entity.setTrangThai("Đã duyệt");
         browseClinicRepository.save(entity);
+
+        sendAccountEmail(entity.getEmail(), entity.getTenPhongKham(), account.getSoDt(), rawPassword);
+    }
+
+    private void sendAccountEmail(String toEmail, String tenPhongKham, String soDt, String rawPassword){
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Thông báo: Yêu cầu đăng ký phòng khám đã được duyệt");
+            message.setText("Chào" + tenPhongKham + ",\n\n" + 
+                "Chúc mừng! Phòng khám của bạn đã được duyệt thành công trên hệ thống.\n\n" +
+                    "Dưới đây là thông tin tài khoản quản trị phòng khám của bạn:\n" +
+                    "- Tên đăng nhập (Số điện thoại): " + soDt + "\n" +
+                    "- Mật khẩu: " + rawPassword + "\n\n" +
+                    "Vui lòng đăng nhập vào hệ thống và đổi mật khẩu ngay để đảm bảo an toàn.\n\n" +
+                    "Trân trọng,\n" +
+                    "Ban Quản Trị Booking Clinic."
+            );
+            javaMailSender.send(message);
+            log.info("Đã gửi email cấp tài khoản thành công tới: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Lỗi khi gửi email tới {} : {}", toEmail, e.getMessage());
+        }    
     }
 
     public void reject(BrowseClinicEntity entity, String lyDoTuChoi) {
