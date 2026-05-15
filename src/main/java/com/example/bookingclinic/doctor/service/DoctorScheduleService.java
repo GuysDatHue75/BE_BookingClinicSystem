@@ -1,7 +1,6 @@
 package com.example.bookingclinic.doctor.service;
 
 import com.example.bookingclinic.doctor.repository.DoctorRepository;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.doctor.dto.schedule.DailyScheduleDTO;
@@ -20,7 +18,6 @@ import com.example.bookingclinic.doctor.dto.schedule.UpdateSchedulesDTO;
 import com.example.bookingclinic.doctor.dto.schedule.WeeklyScheduleRequestDTO;
 import com.example.bookingclinic.doctor.entity.DoctorSchedule;
 import com.example.bookingclinic.doctor.repository.DoctorScheduleRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -149,4 +146,7 @@ public class DoctorScheduleService {
             return "Thứ " + (dayOfWeek.getValue() + 1);
         }
     }
+
+
+
 }
