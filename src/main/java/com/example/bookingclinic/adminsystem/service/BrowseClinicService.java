@@ -1,7 +1,5 @@
 package com.example.bookingclinic.adminsystem.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicActionRequest;
