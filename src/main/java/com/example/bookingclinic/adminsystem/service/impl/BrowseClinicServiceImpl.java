@@ -1,8 +1,10 @@
 package com.example.bookingclinic.adminsystem.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,21 +44,24 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public List<BrowseClinicResponse> getAll() {
-        return browseClinicMapper.toResponseListBrowseClinic(browseClinicRepository.findAll());
+    public Page<BrowseClinicResponse> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BrowseClinicEntity> entityPage = browseClinicRepository.findAll(pageable);
+        return entityPage.map(browseClinicMapper::toResponseFromBrowseClinic);
     }
 
     @Override
-    public List<BrowseClinicResponse> search(BrowseClinicSearchRequest request) {
-        List<BrowseClinicEntity> result = browseClinicRepository.searchBrowseClinic(request);
-        return browseClinicMapper.toResponseListBrowseClinic(result);
+    public Page<BrowseClinicResponse> search(BrowseClinicSearchRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(),request.getSize());
+        Page<BrowseClinicEntity> result = browseClinicRepository.searchBrowseClinic(request, pageable);
+        return result.map(entity -> browseClinicMapper.toResponseFromBrowseClinic(entity));
     }
 
     @Override
-    public List<BrowseClinicResponse> getPending() {
-        return browseClinicMapper.toResponseListBrowseClinic(
-            browseClinicRepository.findByTrangThaiOrderByNgayDangKyDesc("Chờ duyệt")
-        );
+    public Page<BrowseClinicResponse> getPending(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BrowseClinicEntity> entityPage = browseClinicRepository.findByTrangThaiOrderByNgayDangKyDesc("Chờ duyệt", pageable);
+        return entityPage.map(browseClinicMapper::toResponseFromBrowseClinic);
     }
 
     private synchronized String generateMaTaiKhoan() {
@@ -79,7 +84,7 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
                 .maTaiKhoan(maTaiKhoan)
                 .soDt(entity.getSoDienThoai())
                 .matKhau(encodedPassword)
-                .vaiTro("BacSi")
+                .vaiTro("PhongKham")
                 .hoVaTen(entity.getTenPhongKham())
                 .anhDaiDien(entity.getAnhPhongKham())
                 .trangThai(true)
@@ -93,7 +98,6 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
         ClinicEntity clinic = ClinicEntity.builder()
                 .maPhongKham(entity.getMaPhongKham())
                 .tenPhongKham(entity.getTenPhongKham())
-                .maChuyenKhoa(entity.getMaChuyenKhoa())
                 .ngayThanhLap(entity.getNgayThanhLap())
                 .ngayDangKy(now)
                 .ngayHetHan(ngayHetHan)
@@ -165,19 +169,6 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
             reject(entity, request.getLyDoTuChoi());
         }
 
-    }
-
-    @Override
-    public List<BrowseClinicResponse> filter(BrowseClinicSearchRequest request) {
-        List<BrowseClinicEntity> result = browseClinicRepository.findAll();
-
-        if(request.getTrangThai() != null && !request.getTrangThai().isEmpty()) {
-            result = result.stream()
-                .filter(c -> request.getTrangThai().equalsIgnoreCase(c.getTrangThai()))
-                .toList();
-        }
-
-        return browseClinicMapper.toResponseListBrowseClinic(result);
     }
 
     @Override

@@ -1,11 +1,12 @@
 package com.example.bookingclinic.adminsystem.repository.custom;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.entity.BrowseClinicEntity;
 
 public interface BrowseClinicRepositoryCustom {
 
-    List<BrowseClinicEntity> searchBrowseClinic(BrowseClinicSearchRequest request);
+    Page<BrowseClinicEntity> searchBrowseClinic(BrowseClinicSearchRequest request, Pageable pageable);
 }

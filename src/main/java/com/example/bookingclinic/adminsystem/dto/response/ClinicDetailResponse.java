@@ -11,7 +11,6 @@ import lombok.Data;
 public class ClinicDetailResponse {
     private String maPhongKham;
     private String tenPhongKham;
-    private String maChuyenKhoa;
     private LocalDateTime ngayThanhLap;
     private LocalDateTime ngayDangKy;
     private Integer soLuongBacSi;

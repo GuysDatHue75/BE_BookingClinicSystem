@@ -25,16 +25,3 @@ public interface BrowseClinicMapper {
     ClinicDetailResponse toDetailResponseFromClinic(ClinicEntity entity);
     
 }
-    // public BrowseClinicResponse toResponse(BrowseClinicEntity entity) {
-    //     return BrowseClinicResponse.builder()
-    //             .maPhongKham(entity.getMaPhongKham())
-    //             .tenPhongKham(entity.getTenPhongKham())
-    //             .tinhThanhPho(entity.getTinhThanhPho())
-    //             .diaChi(entity.getDiaChi())
-    //             .nguoiDaiDien(entity.getNguoiDaiDien())
-    //             .soDienThoai(entity.getSoDienThoai())
-    //             .email(entity.getEmail())
-    //             .trangThai(entity.getTrangThai())
-    //             .ngayDangKy(entity.getNgayDangKy())
-    //             .build();
-    // }

@@ -2,6 +2,8 @@ package com.example.bookingclinic.adminsystem.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicActionRequest;
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
@@ -9,15 +11,13 @@ import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
 
 public interface BrowseClinicService {
 
-    List<BrowseClinicResponse> getAll();
+    Page<BrowseClinicResponse> getAll(int page, int size);
 
-    List<BrowseClinicResponse> search(BrowseClinicSearchRequest request);
+    Page<BrowseClinicResponse> search(BrowseClinicSearchRequest request);
 
-    List<BrowseClinicResponse> getPending();
+    Page<BrowseClinicResponse> getPending(int papge, int size);
 
     void handleBrowseClinic(BrowseClinicActionRequest request);
-
-    List<BrowseClinicResponse> filter(BrowseClinicSearchRequest request);
 
     BrowseClinicDetailResponse getDetail(String maPhongKham);
 }
