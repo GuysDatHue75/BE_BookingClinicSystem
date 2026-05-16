@@ -109,10 +109,10 @@ public class DoctorServiceImpl implements DoctorService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
-            message.setSubject("Thông báo: Yêu cầu đăng ký phòng khám đã được duyệt");
-            message.setText("Chào" + tenBacSi + ",\n\n" + 
-                "Chúc mừng! Phòng khám của bạn đã được duyệt thành công trên hệ thống.\n\n" +
-                    "Dưới đây là thông tin tài khoản quản trị phòng khám của bạn:\n" +
+            message.setSubject("Thông báo: Yêu cầu đăng ký bác sĩ mới đã được duyệt");
+            message.setText("Chào " + tenBacSi + ",\n\n" + 
+                "Chúc mừng! Bạn đã được duyệt trở thành bác sĩ thành công trên hệ thống.\n\n" +
+                    "Dưới đây là thông tin tài khoản bac sĩ của bạn:\n" +
                     "- Tên đăng nhập (Số điện thoại): " + soDt + "\n" +
                     "- Mật khẩu: " + rawPassword + "\n\n" +
                     "Vui lòng đăng nhập vào hệ thống và đổi mật khẩu ngay để đảm bảo an toàn.\n\n" +
