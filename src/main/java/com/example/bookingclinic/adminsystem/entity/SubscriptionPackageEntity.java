@@ -21,11 +21,11 @@ public class SubscriptionPackageEntity {
     @Column(name = "ten_goi", length = 255, nullable = false)
     private String tenGoi;
 
-    @Column(name = "gia", nullable = false)
+    @Column(name = "gia")
     private Double gia;
 
     @Column(name = "thoi_han_ngay", nullable = false)
-    private Integer thoiHanNgay;
+    private int thoiHanNgay;
 
     @Lob
     @Column(name = "mo_ta")

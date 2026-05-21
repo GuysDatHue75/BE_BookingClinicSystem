@@ -17,4 +17,6 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, String> {
 
     boolean existsBySoDienThoai(String soDienThoai);
 
+    DoctorEntity findByAccount_MaTaiKhoan(String maTaiKhoan);
+
 }

@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -20,10 +22,11 @@ public class NotificationEntity {
     @Column(name = "ma_thong_bao", length = 10, nullable = false)
     private String maThongBao;
 
-    @Column(name = "ma_tai_khoan", length = 225, nullable = false)
-    private String maTaiKhoan;
+    @OneToOne @JoinColumn(name = "ma_tai_khoan")
+    private AccountEntity account;
 
-    @Column(name = "tieu_de", length = 255, nullable = false)
+    @Lob
+    @Column(name = "tieu_de", nullable = false)
     private String tieuDe;
 
     @Lob
@@ -36,17 +39,22 @@ public class NotificationEntity {
     @Column(name = "doi_tuong_nhan", length= 255)
     private String doiTuongNhan;
 
-    @Column(name = "thoi_gian_gui", nullable = false)
+    @Column(name = "thoi_gian_gui")
     private LocalDateTime thoiGianGui;
+
+    @Column(name = "ma_nguoi_nhan", length = 255)
+    private String maNguoiNhan;
 
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @Column(name = "files", length = 255)
+    @Lob
+    @Column(name = "files")
     private String files;
 
-    @Column(name = "anh_thong_bao", length = 255)
+    @Lob
+    @Column(name = "anh_thong_bao")
     private String anhThongBao;
 
 }

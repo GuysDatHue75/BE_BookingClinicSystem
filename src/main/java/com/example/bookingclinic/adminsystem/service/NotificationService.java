@@ -1,18 +1,15 @@
 package com.example.bookingclinic.adminsystem.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 
 import com.example.bookingclinic.adminsystem.dto.request.NotificationRequest;
 import com.example.bookingclinic.adminsystem.dto.request.NotificationSearchRequest;
+import com.example.bookingclinic.adminsystem.dto.response.NotificationResponse;
 import com.example.bookingclinic.adminsystem.repository.projection.NotificationProjection;
 
 public interface NotificationService {
 
-    Page<NotificationProjection> search(NotificationSearchRequest request);
-
-    List<NotificationProjection> getAll();
+    Page<NotificationResponse> search(NotificationSearchRequest request);
 
     void createNotification(NotificationRequest request);
 

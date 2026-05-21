@@ -1,12 +1,16 @@
 package com.example.bookingclinic.adminsystem.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -25,7 +29,7 @@ public class ClinicEntity {
     private String tenPhongKham;
 
     @Column(name = "ngay_thanh_lap", nullable = false)
-    private LocalDateTime ngayThanhLap;
+    private LocalDate ngayThanhLap;
 
     @Column(name = "ngay_dang_ky", nullable = false)
     private LocalDateTime ngayDangKy;
@@ -55,17 +59,15 @@ public class ClinicEntity {
     @Column(name = "gio_ket_thuc_lam_viec", nullable = false)
     private LocalTime gioKetThucLamViec;
 
-    @Column(name = "giay_phep", length = 255, nullable = false)
+    @Lob
+    @Column(name = "giay_phep", nullable = false)
     private String giayPhep;
 
     @Column(name = "ngay_cap", nullable = false)
-    private LocalDateTime ngayCap;
+    private LocalDate ngayCap;
 
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
-
-    @Column(name = "tep_dinh_kem", length= 255, nullable = false)
-    private String tepDinhKem;
 
     @Column(name = "nguoi_dai_dien", length= 255, nullable = false)
     private String nguoiDaiDien;
@@ -79,8 +81,8 @@ public class ClinicEntity {
     @Column(name = "trang_thai", length= 255, nullable = false)
     private String trangThai;
 
-    @Column(name = "ma_goi", length= 10, nullable = false)
-    private String maGoi;
+    @ManyToOne @JoinColumn(name = "ma_goi")
+    private SubscriptionPackageEntity subpackage;
 
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
@@ -89,10 +91,14 @@ public class ClinicEntity {
     @Column(name = "ngay_het_han")
     private LocalDateTime ngayHetHan;
 
-    @Column(name = "ma_tai_khoan", length = 225, nullable = false)
-    private String maTaiKhoan;
+    @OneToOne @JoinColumn(name = "ma_tai_khoan")
+    private AccountEntity account;
 
-    @Column(name = "anh_phong_kham", length = 255, nullable = false)
+    @Lob
+    @Column(name = "anh_phong_kham")
     private String anhPhongKham;
+
+    @Column(name = "so_sao", length = 255)
+    private String soSao;
 
 }

@@ -2,6 +2,10 @@ package com.example.bookingclinic.adminsystem.repository.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.QClinicEntity;
@@ -17,7 +21,7 @@ public class ClinicRepositoryImpl implements ClinicRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ClinicEntity> searchClinic(BrowseClinicSearchRequest request) {
+    public Page<ClinicEntity> searchClinic(BrowseClinicSearchRequest request, Pageable pageable) {
 
         QClinicEntity clinic = QClinicEntity.clinicEntity;
 
@@ -35,11 +39,32 @@ public class ClinicRepositoryImpl implements ClinicRepositoryCustom {
                 .or(clinic.diaChi.containsIgnoreCase(keyword))
             );
         }
+        if(request.getTrangThai() != null && !request.getTrangThai().trim().isEmpty()) {
+            builder.and(clinic.trangThai.equalsIgnoreCase(request.getTrangThai().trim()));
+        }
 
-        return queryFactory
+        if(request.getLoaiHinhPhongKham() != null && !request.getLoaiHinhPhongKham().trim().isEmpty()) {
+            builder.and(clinic.loaiHinhPhongKham.equalsIgnoreCase(request.getLoaiHinhPhongKham().trim()));
+        }
+        if(request.getTinhThanhPho() != null && !request.getTinhThanhPho().trim().isEmpty()) {
+            builder.and(clinic.tinhThanhPho.equalsIgnoreCase(request.getTinhThanhPho().trim()));
+        }
+        
+        List<ClinicEntity> results = queryFactory
             .selectFrom(clinic)
             .where(builder)
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .fetch();
+        
+        Long totalCount = queryFactory
+            .select(clinic.count())
+            .from(clinic)
+            .where(builder)
+            .fetchOne();
+        
+        Long total = (totalCount != null) ? totalCount :0L;
+        return new PageImpl<>(results, pageable, total);
     }
     
 }

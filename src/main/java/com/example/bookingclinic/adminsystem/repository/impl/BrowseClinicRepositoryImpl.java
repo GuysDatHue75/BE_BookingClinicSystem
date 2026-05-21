@@ -38,7 +38,7 @@ public class BrowseClinicRepositoryImpl implements BrowseClinicRepositoryCustom 
             );
         }
         if(request.getTrangThai() != null && !request.getTrangThai().isEmpty()){
-            builder.and(browseClinic.trangThai.equalsIgnoreCase(request.getTrangThai()));
+            builder.and(browseClinic.trangThai.eq(request.getTrangThai()));
         }
         List<BrowseClinicEntity> results = queryFactory
             .selectFrom(browseClinic)

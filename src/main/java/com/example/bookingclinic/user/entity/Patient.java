@@ -3,6 +3,8 @@ package com.example.bookingclinic.user.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.example.bookingclinic.adminsystem.entity.AccountEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,5 +33,5 @@ public class Patient {
     private String email;
     private String diaChi;
     @OneToOne @JoinColumn(name = "ma_tai_khoan")
-    private Account taiKhoan;
+    private AccountEntity taiKhoan;
 }

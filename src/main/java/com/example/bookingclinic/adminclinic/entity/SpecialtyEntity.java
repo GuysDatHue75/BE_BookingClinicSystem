@@ -2,6 +2,8 @@ package com.example.bookingclinic.adminclinic.entity;
 
 import java.time.LocalDateTime;
 
+import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

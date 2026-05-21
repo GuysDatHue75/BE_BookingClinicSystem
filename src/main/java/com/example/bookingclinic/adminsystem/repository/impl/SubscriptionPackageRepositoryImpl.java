@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.example.bookingclinic.adminsystem.dto.request.SubscriptionPackageSearchRequest;
+import com.example.bookingclinic.adminsystem.dto.response.FeaturesDto;
 import com.example.bookingclinic.adminsystem.dto.response.SubscriptionPackageResponse;
 import com.example.bookingclinic.adminsystem.entity.QFeaturesEntity;
 import com.example.bookingclinic.adminsystem.entity.QSubscriptionPackageEntity;
@@ -30,29 +31,30 @@ public class SubscriptionPackageRepositoryImpl implements SubscriptionPackageRep
 
     @Override
     public Page<SubscriptionPackageResponse> search(SubscriptionPackageSearchRequest request) {
-        QSubscriptionPackageEntity goi = QSubscriptionPackageEntity.subscriptionPackageEntity;
+        QSubscriptionPackageEntity sub = QSubscriptionPackageEntity.subscriptionPackageEntity;
         QSubscriptionPackageFeaturesEntity spf = QSubscriptionPackageFeaturesEntity.subscriptionPackageFeaturesEntity;
         QFeaturesEntity tinhNang = QFeaturesEntity.featuresEntity;
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(goi.isDeleted.eq(false));
+        builder.and(sub.isDeleted.eq(false));
 
         if(request.getKeyword() != null && !request.getKeyword().isEmpty()) {
-            builder.and(goi.tenGoi.containsIgnoreCase(request.getKeyword()));
+            builder.and(sub.tenGoi.containsIgnoreCase(request.getKeyword()));
         }
 
         if(request.getTrangThai() != null && !request.getTrangThai().isEmpty()) {
-            builder.and(goi.trangThai.eq(request.getTrangThai()));
+            builder.and(sub.trangThai.eq(request.getTrangThai()));
         }
 
         if(request.getThoiHanNgay() != null) {
-            builder.and(goi.thoiHanNgay.eq(request.getThoiHanNgay()));
+            builder.and(sub.thoiHanNgay.eq(request.getThoiHanNgay()));
         }
 
         List<String> ids = queryFactory
-                .select(goi.maGoi)
-                .from(goi)
+                .select(sub.maGoi)
+                .from(sub)
                 .where(builder)
+                .orderBy(sub.maGoi.desc())
                 .offset((long) request.getPage() * request.getSize())
                 .limit(request.getSize())
                 .fetch();
@@ -63,39 +65,41 @@ public class SubscriptionPackageRepositoryImpl implements SubscriptionPackageRep
 
         List<Tuple> rawResults = queryFactory
                 .select(
-                        goi.maGoi,
-                        goi.tenGoi,
-                        goi.gia,
-                        goi.thoiHanNgay,
-                        goi.moTa,
-                        goi.trangThai,
+                        sub.maGoi,
+                        sub.tenGoi,
+                        sub.gia,
+                        sub.thoiHanNgay,
+                        sub.moTa,
+                        sub.trangThai,
+                        tinhNang.maTinhNang,
                         tinhNang.tenTinhNang
                 )
-                .from(goi)
-                .leftJoin(spf).on(spf.subscriptionPackage.eq(goi))
+                .from(sub)
+                .leftJoin(spf).on(spf.subscriptionPackage.eq(sub))
                 .leftJoin(tinhNang).on(spf.features.eq(tinhNang))
-                .where(goi.maGoi.in(ids))
+                .where(sub.maGoi.in(ids))
                 .fetch();
         
         Map<String, SubscriptionPackageResponse> map = new HashMap<>();
 
         for (Tuple row : rawResults) {
-            String maGoi = row.get(goi.maGoi);
+            String maGoi = row.get(sub.maGoi);
             
             SubscriptionPackageResponse response = map.computeIfAbsent(maGoi, key -> {
                 SubscriptionPackageResponse newRes = new SubscriptionPackageResponse();
                 newRes.setMaGoi(key);
-                newRes.setTenGoi(row.get(goi.tenGoi));
-                newRes.setGia(row.get(goi.gia));
-                newRes.setThoiHanNgay(row.get(goi.thoiHanNgay));
-                newRes.setMoTa(row.get(goi.moTa));
-                newRes.setTrangThai(row.get(goi.trangThai));
+                newRes.setTenGoi(row.get(sub.tenGoi));
+                newRes.setGia(row.get(sub.gia));
+                newRes.setThoiHanNgay(row.get(sub.thoiHanNgay));
+                newRes.setMoTa(row.get(sub.moTa));
+                newRes.setTrangThai(row.get(sub.trangThai));
                 newRes.setDanhSachTenTinhNang(new ArrayList<>());
                 return newRes;
             });
+            String maTinhNang = row.get(tinhNang.maTinhNang);
             String featureName = row.get(tinhNang.tenTinhNang);
             if (featureName != null) {
-                response.getDanhSachTenTinhNang().add(featureName);
+                response.getDanhSachTenTinhNang().add(new FeaturesDto(maTinhNang, featureName));
             }
         }
         
@@ -107,8 +111,8 @@ public class SubscriptionPackageRepositoryImpl implements SubscriptionPackageRep
         }
 
          long total = queryFactory
-            .select(goi.countDistinct())
-            .from(goi)
+            .select(sub.countDistinct())
+            .from(sub)
             .where(builder)
             .fetchOne();
 

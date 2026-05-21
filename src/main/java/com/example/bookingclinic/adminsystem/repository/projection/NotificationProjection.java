@@ -19,6 +19,7 @@ public class NotificationProjection {
     private String noiDung;
     private String loaiThongBao;
     private String doiTuongNhan;
+    private String maNguoiNhan;
     private List<String> danhSachNguoiNhan; 
     private Boolean isRead;
     private LocalDateTime thoiGianGui;
@@ -35,6 +36,7 @@ public class NotificationProjection {
         String noiDung,
         String loaiThongBao,
         String doiTuongNhan,
+        String maNguoiNhan,
         List<String> danhSachNguoiNhan,
         Boolean isRead,
         LocalDateTime thoiGianGui,
@@ -49,6 +51,7 @@ public class NotificationProjection {
         this.noiDung = noiDung;
         this.loaiThongBao = loaiThongBao;
         this.doiTuongNhan = doiTuongNhan;
+        this.maNguoiNhan = maNguoiNhan;
         this.danhSachNguoiNhan = danhSachNguoiNhan;
         this.isRead = isRead;
         this.thoiGianGui = thoiGianGui;

@@ -1,7 +1,6 @@
 package com.example.bookingclinic.adminsystem.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,20 +26,14 @@ public class ClinicController {
 
     //Lấy tất cả phòng khám
     @GetMapping
-    public List<BrowseClinicResponse> getAll() {
-        return clinicService.getAll();
+    public Page<BrowseClinicResponse> getAll(@RequestBody BrowseClinicSearchRequest request) {
+        return clinicService.getAll(request);
     }
 
-    //tìm kiếm phòng khám
+    //tìm kiếm phòng khám, Lọc phòng khám
     @PostMapping("/search")
-    public List<BrowseClinicResponse> search(@RequestBody BrowseClinicSearchRequest request) {       
+    public Page<BrowseClinicResponse> search(@RequestBody BrowseClinicSearchRequest request) {       
         return clinicService.search(request);
-    }
-
-    //Lọc phòng khám
-    @PostMapping("/filter")
-    public List<BrowseClinicResponse> filter(@RequestBody BrowseClinicSearchRequest request) {
-        return clinicService.filter(request);
     }
 
     //Lấy chi tiết phòng khám

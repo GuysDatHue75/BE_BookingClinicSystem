@@ -1,10 +1,17 @@
 package com.example.bookingclinic.adminsystem.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.example.bookingclinic.adminclinic.entity.SpecialtyEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -19,11 +26,18 @@ public class DoctorEntity {
     @Column(name = "ma_bac_si", length = 10, nullable = false)
     private String maBacSi;
 
-    @Column(name = "ten_bac_si", length = 100, nullable = false)
+    @Column(name = "ten_bac_si", length = 255, nullable = false)
     private String tenBacSi;
 
     @Column(name = "gioi_tinh", nullable = false)
     private boolean gioiTinh;
+
+    @Column(name = "ngay_sinh")
+    private LocalDate ngaySinh;
+
+    @Lob
+    @Column(name = "que_quan")
+    private String queQuan;
 
     @Column(name = "so_dien_thoai", length = 50, nullable = false)
     private String soDienThoai;
@@ -31,14 +45,16 @@ public class DoctorEntity {
     @Column(name = "email", length = 255, nullable = false)
     private String email;
 
-    @Column(name = "dia_chi", length = 255, nullable = false)
+    @Lob
+    @Column(name = "dia_chi")
     private String diaChi;
 
-    @Column(name = "avt", length = 255, nullable = false)
+    @Lob
+    @Column(name = "avt")
     private String avt;
 
-    @Column(name = "ma_chuyen_khoa", length = 10, nullable = false)
-    private String maChuyenKhoa;
+    @ManyToOne @JoinColumn(name = "ma_chuyen_khoa")
+    private SpecialtyEntity specialty;
 
     @Column(name = "bang_cap", length = 255, nullable = false)
     private String bangCap;
@@ -49,8 +65,13 @@ public class DoctorEntity {
     @Column(name = "hoat_dong", length = 255, nullable = false)
     private String hoatDong;
 
-    @Column(name = "mieu_ta", length = 255)
-    private String mieuTa;
+    @Lob
+    @Column(name = "mieu_ta1")
+    private String mieuTa1;
+
+    @Lob
+    @Column(name = "mieu_ta2")
+    private String mieuTa2;
 
     @Column(name = "chuc_vu", length = 255, nullable = false)
     private String chucVu;
@@ -70,15 +91,20 @@ public class DoctorEntity {
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
 
-    @Column(name = "ma_tai_khoan", length= 225, nullable = false)  
-    private String maTaiKhoan;
+    @OneToOne @JoinColumn(name = "ma_tai_khoan")
+    private AccountEntity account;
 
-    @Column(name = "ma_phong_kham", length = 225, nullable = false)
-    private String maPhongKham;
+    @ManyToOne @JoinColumn(name = "ma_phong_kham")
+    private ClinicEntity clinic;
 
-    @Column(name = "ngay_dang_ky", nullable = false)
+    @Column(name = "ngay_dang_ky")
     private LocalDateTime ngayDangKy;
 
-    @Column(name = "tep_dinh_kem", length= 255, nullable = false)
+    @Lob
+    @Column(name = "tep_dinh_kem")
     private String tepDinhKem;
+
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 }

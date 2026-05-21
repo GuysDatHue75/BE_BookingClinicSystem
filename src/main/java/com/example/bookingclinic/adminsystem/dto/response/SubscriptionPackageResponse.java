@@ -4,6 +4,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Data
 @NoArgsConstructor
 public class SubscriptionPackageResponse {
@@ -13,5 +14,5 @@ public class SubscriptionPackageResponse {
     private Integer thoiHanNgay;
     private String moTa;
     private String trangThai;
-    private List<String> danhSachTenTinhNang;
+    private List<FeaturesDto> danhSachTenTinhNang;
 }

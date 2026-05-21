@@ -1,12 +1,15 @@
 package com.example.bookingclinic.adminsystem.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -24,10 +27,10 @@ public class BrowseClinicEntity {
     @Column(name = "ten_phong_kham", length = 255, nullable = false)
     private String tenPhongKham;
 
-    @Column(name = "ngay_thanh_lap", nullable = false)
-    private LocalDateTime ngayThanhLap;
+    @Column(name = "ngay_thanh_lap")
+    private LocalDate ngayThanhLap;
 
-    @Column(name = "ngay_dang_ky", nullable = false)
+    @Column(name = "ngay_dang_ky")
     private LocalDateTime ngayDangKy;
 
     @Column(name = "so_luong_bac_si", nullable = false)
@@ -58,14 +61,11 @@ public class BrowseClinicEntity {
     @Column(name = "giay_phep", length = 255, nullable = false)
     private String giayPhep;
 
-    @Column(name = "ngay_cap", nullable = false)
-    private LocalDateTime ngayCap;
+    @Column(name = "ngay_cap")
+    private LocalDate ngayCap;
 
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
-
-    @Column(name = "tep_dinh_kem", length= 255, nullable = false)
-    private String tepDinhKem;
 
     @Column(name = "nguoi_dai_dien", length= 255, nullable = false)
     private String nguoiDaiDien;
@@ -79,12 +79,13 @@ public class BrowseClinicEntity {
     @Column(name = "trang_thai", length= 255, nullable = false)
     private String trangThai;
 
-    @Column(name = "ma_goi", length= 10, nullable = false)
-    private String maGoi;
+    @ManyToOne @JoinColumn(name = "ma_goi")
+    private SubscriptionPackageEntity subpackage;
 
     @Column(name = "ly_do_tu_choi", length= 255)
     private String lyDoTuChoi;
 
-    @Column(name = "anh_phong_kham", length = 255, nullable = false)
+    @Lob
+    @Column(name = "anh_phong_kham")
     private String anhPhongKham;
 }

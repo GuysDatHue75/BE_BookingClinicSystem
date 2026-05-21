@@ -1,6 +1,5 @@
 package com.example.bookingclinic.adminsystem.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -30,39 +29,7 @@ public class SubscriptionPackageServiceImpl implements SubscriptionPackageServic
     private final SubscriptionPackageFeaturesRepository spFeaturesRepository;
 
     @Override
-    public List<SubscriptionPackageResponse> getAllActivePackages() {
-        List<SubscriptionPackageEntity> spEntities = sPackageRepository.findAllByIsDeletedFalse();
-        List<SubscriptionPackageResponse> responses = new ArrayList<>();
-
-        for(SubscriptionPackageEntity sp : spEntities) {
-            SubscriptionPackageResponse res = new SubscriptionPackageResponse();
-            res.setMaGoi(sp.getMaGoi());
-            res.setTenGoi(sp.getTenGoi());
-            res.setGia(sp.getGia());
-            res.setThoiHanNgay(sp.getThoiHanNgay());
-            res.setMoTa(sp.getMoTa());
-            res.setTrangThai(sp.getTrangThai());
-
-            List<SubscriptionPackageFeaturesEntity> spFeatures = spFeaturesRepository.findBySubscriptionPackageMaGoi(sp.getMaGoi());
-            List<String> featureNames = new ArrayList<>();
-            for (SubscriptionPackageFeaturesEntity spf : spFeatures) {
-                if(spf.getFeatures() != null) {
-                    featureNames.add(spf.getFeatures().getTenTinhNang());
-                }
-            }
-            res.setDanhSachTenTinhNang(featureNames);
-            responses.add(res);
-        }
-        return responses;
-    }
-
-    @Override
     public Page<SubscriptionPackageResponse> search(SubscriptionPackageSearchRequest request){
-        return sPackageRepository.search(request);
-    }
-
-    @Override
-    public Page<SubscriptionPackageResponse> filter(SubscriptionPackageSearchRequest request) {
         return sPackageRepository.search(request);
     }
 
@@ -109,7 +76,7 @@ public class SubscriptionPackageServiceImpl implements SubscriptionPackageServic
             .gia(request.getGia())
             .thoiHanNgay(request.getThoiHanNgay())
             .moTa(request.getMoTa())
-            .trangThai("Đang kích hoạt")
+            .trangThai("Hoạt động")
             .isDeleted(false)
             .build();
         sPackageRepository.save(sPackageEntity);

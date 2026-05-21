@@ -70,8 +70,8 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
 
     public void approve(BrowseClinicEntity entity) {
         
-        SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getMaGoi())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy gói với mã: " + entity.getMaGoi()));
+        SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getSubpackage().getMaGoi())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy gói với mã: " + entity.getSubpackage().getMaGoi()));
         int thoiGianNgay = goi.getThoiHanNgay();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime ngayHetHan = now.plusDays(thoiGianNgay);
@@ -94,6 +94,7 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
                 .build();
         accountRepository.save(account);
 
+        SubscriptionPackageEntity subPackageProxy = SubscriptionPackageEntity.builder().maGoi(entity.getSubpackage().getMaGoi()).build();
 
         ClinicEntity clinic = ClinicEntity.builder()
                 .maPhongKham(entity.getMaPhongKham())
@@ -109,7 +110,6 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
                 .giayPhep(entity.getGiayPhep())
                 .ngayCap(entity.getNgayCap())
                 .noiCap(entity.getNoiCap())
-                .tepDinhKem(entity.getTepDinhKem())
                 .nguoiDaiDien(entity.getNguoiDaiDien())
                 .soDienThoaiNguoiDaiDien(entity.getSoDienThoaiNguoiDaiDien())
                 .loaiHinhPhongKham(entity.getLoaiHinhPhongKham())
@@ -117,9 +117,9 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
                 .tinhThanhPho(entity.getTinhThanhPho())
                 .soLuongBacSi(entity.getSoLuongBacSi())
                 .trangThai("Hoạt động")
-                .maGoi(entity.getMaGoi())
+                .subpackage(subPackageProxy)
                 .isDeleted(false)
-                .maTaiKhoan(maTaiKhoan)
+                .account(account)
                 .anhPhongKham(entity.getAnhPhongKham())
                 .build();
 

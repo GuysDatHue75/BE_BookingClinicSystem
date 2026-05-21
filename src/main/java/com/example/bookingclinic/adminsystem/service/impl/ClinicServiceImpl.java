@@ -3,6 +3,9 @@ package com.example.bookingclinic.adminsystem.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -31,44 +34,17 @@ public class ClinicServiceImpl implements ClinicService {
     private final AccountRepository accountRepository;
 
     @Override
-    public List<BrowseClinicResponse> getAll() {
-        return browseClinicMapper.toResponseListFromClinic(clinicRepository.findByIsDeletedFalse());
+    public Page<BrowseClinicResponse> getAll(BrowseClinicSearchRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(),request.getSize());
+        Page<ClinicEntity> clinicPage = clinicRepository.findByIsDeletedFalse(pageable);
+        return clinicPage.map(entity -> browseClinicMapper.toResponseFromClinic(entity));
     }
 
     @Override
-    public List<BrowseClinicResponse> search(BrowseClinicSearchRequest request) {
-        List<ClinicEntity> result = clinicRepository.searchClinic(request);
-        return browseClinicMapper.toResponseListFromClinic(result);
-    }
-
-    @Override
-    public List<BrowseClinicResponse> filter(BrowseClinicSearchRequest request) {
-        List<ClinicEntity> result = clinicRepository.findAll();
-
-        if(request.getTrangThai() != null && !request.getTrangThai().isEmpty()) {
-             result = result.stream()
-                .filter(c -> request.getTrangThai().equalsIgnoreCase(c.getTrangThai()))
-                .toList();
-        }
-
-        if(request.getLoaiHinhPhongKham() != null && !request.getLoaiHinhPhongKham().isEmpty()) {
-            result = result.stream()
-                .filter(c -> request.getLoaiHinhPhongKham().equalsIgnoreCase(c.getLoaiHinhPhongKham()))
-                .toList();
-        }
-
-        if(request.getMaGoi() != null && !request.getMaGoi().isEmpty()) {
-            result = result.stream()
-                .filter(c -> request.getMaGoi().equalsIgnoreCase(c.getMaGoi()))
-                .toList();
-        }
-
-        if(request.getTinhThanhPho() != null && !request.getTinhThanhPho().isEmpty()) {
-            result = result.stream()
-                .filter(c -> request.getTinhThanhPho().equalsIgnoreCase(c.getTinhThanhPho()))
-                .toList();
-        }
-        return browseClinicMapper.toResponseListFromClinic(result);
+    public Page<BrowseClinicResponse> search(BrowseClinicSearchRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(),request.getSize());
+        Page<ClinicEntity> result = clinicRepository.searchClinic(request, pageable);
+        return result.map(entity -> browseClinicMapper.toResponseFromClinic(entity));
     }
 
     @Override
@@ -89,7 +65,7 @@ public class ClinicServiceImpl implements ClinicService {
         entity.setIsDeleted(true);
         clinicRepository.save(entity);
 
-        AccountEntity account = accountRepository.findById(entity.getMaTaiKhoan())
+        AccountEntity account = accountRepository.findById(entity.getAccount().getMaTaiKhoan())
                 .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
         account.setIsDeleted(true);
@@ -120,8 +96,8 @@ public class ClinicServiceImpl implements ClinicService {
         if(Boolean.TRUE.equals(entity.getIsDeleted())) {
             throw new RuntimeException("Phòng khám đã bị xóa (khóa)");
         }
-        SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getMaGoi())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy gói với mã: " + entity.getMaGoi()));
+        SubscriptionPackageEntity goi = subscriptionPackageRepository.findById(entity.getSubpackage().getMaGoi())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy gói với mã: " + entity.getSubpackage().getMaGoi()));
         int thoiHanNgay = goi.getThoiHanNgay();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime currentExpire = entity.getNgayHetHan();

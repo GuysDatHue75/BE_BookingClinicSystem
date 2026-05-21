@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bookingclinic.adminsystem.dto.request.NotificationRequest;
 import com.example.bookingclinic.adminsystem.dto.request.NotificationSearchRequest;
+import com.example.bookingclinic.adminsystem.dto.response.NotificationResponse;
 import com.example.bookingclinic.adminsystem.entity.AccountEntity;
 import com.example.bookingclinic.adminsystem.entity.NotificationAccountEntity;
 import com.example.bookingclinic.adminsystem.entity.NotificationAccountId;
@@ -49,12 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationProjection> getAll() {
-        return notificationRepository.getAll();
-    }
-
-    @Override
-    public Page<NotificationProjection> search(NotificationSearchRequest request) {
+    public Page<NotificationResponse> search(NotificationSearchRequest request) {
         return notificationRepository.search(request);
     }
 
@@ -80,9 +76,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createNotification(NotificationRequest request) {
         String maThongBao = generateMaThongBao();
+        AccountEntity accountProxy = AccountEntity.builder().maTaiKhoan(request.getMaTaiKhoan()).build();
         NotificationEntity notification = NotificationEntity.builder()
             .maThongBao(maThongBao)
-            .maTaiKhoan(request.getMaTaiKhoan())
+            .account(accountProxy)
             .tieuDe(request.getTieuDe())
             .noiDung(request.getNoiDung())
             .loaiThongBao(request.getLoaiThongBao())
@@ -98,7 +95,12 @@ public class NotificationServiceImpl implements NotificationService {
                 saveNotificationAccount(notification, userId);
             }
         } else if(request.getDoiTuongNhan() != null && !request.getDoiTuongNhan().isEmpty()){
-            List<AccountEntity> users = accountRepository.findByVaiTroIgnoreCase(request.getDoiTuongNhan());
+            List<AccountEntity> users;
+            if(request.getDoiTuongNhan().equalsIgnoreCase("Tất cả người dùng") || request.getDoiTuongNhan().equalsIgnoreCase("all")) { 
+                users = accountRepository.findAll();
+            } else {
+                users = accountRepository.findByVaiTroIgnoreCase(request.getDoiTuongNhan());
+            }
             for(AccountEntity user : users){
                 saveNotificationAccount(notification, user.getMaTaiKhoan());
             }
@@ -121,7 +123,12 @@ public class NotificationServiceImpl implements NotificationService {
         if (request.getDanhSachNguoiNhan() != null && !request.getDanhSachNguoiNhan().isEmpty()) {
             newUserIds.addAll(request.getDanhSachNguoiNhan());
         } else if (request.getDoiTuongNhan() != null && !request.getDoiTuongNhan().isEmpty()) {
-            List<AccountEntity> users = accountRepository.findByVaiTroIgnoreCase(request.getDoiTuongNhan());
+            List<AccountEntity> users;
+            if (request.getDoiTuongNhan().equalsIgnoreCase("Tất cả người dùng") || request.getDoiTuongNhan().equalsIgnoreCase("all")) {
+                users = accountRepository.findAll(); // Lấy toàn bộ
+            } else {
+                users = accountRepository.findByVaiTroIgnoreCase(request.getDoiTuongNhan());
+            }
             newUserIds.addAll(users.stream().map(AccountEntity::getMaTaiKhoan).collect(java.util.stream.Collectors.toSet()));
         }
 
@@ -132,10 +139,11 @@ public class NotificationServiceImpl implements NotificationService {
 
             String prefix = "[Cập nhật] ";
             String newTitle = request.getTieuDe().startsWith(prefix) ? request.getTieuDe() : prefix + request.getTieuDe();
+            AccountEntity accountProxy = AccountEntity.builder().maTaiKhoan(request.getMaTaiKhoan()).build();
 
             NotificationEntity newNotification = NotificationEntity.builder()
                 .maThongBao(generateMaThongBao())
-                .maTaiKhoan(request.getMaTaiKhoan())
+                .account(accountProxy)
                 .tieuDe(newTitle)
                 .noiDung(request.getNoiDung())
                 .loaiThongBao(request.getLoaiThongBao())

@@ -1,5 +1,6 @@
 package com.example.bookingclinic.adminsystem.dto.response;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -11,7 +12,7 @@ import lombok.Data;
 public class ClinicDetailResponse {
     private String maPhongKham;
     private String tenPhongKham;
-    private LocalDateTime ngayThanhLap;
+    private LocalDate ngayThanhLap;
     private LocalDateTime ngayDangKy;
     private Integer soLuongBacSi;
     private String loaiHinhPhongKham;
@@ -25,9 +26,8 @@ public class ClinicDetailResponse {
     private String moTa;
     
     private String giayPhep;
-    private LocalDateTime ngayCap;
+    private LocalDate ngayCap;
     private String noiCap;
-    private String tepDinhKem;
 
     private String nguoiDaiDien;
     private String soDienThoaiNguoiDaiDien;

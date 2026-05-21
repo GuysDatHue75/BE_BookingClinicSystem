@@ -5,12 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bookingclinic.adminsystem.dto.request.NotificationRequest;
 import com.example.bookingclinic.adminsystem.dto.request.NotificationSearchRequest;
+import com.example.bookingclinic.adminsystem.dto.response.NotificationResponse;
 import com.example.bookingclinic.adminsystem.repository.projection.NotificationProjection;
 import com.example.bookingclinic.adminsystem.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,23 +27,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-
-    //Xem tất cả thông báo
-    @GetMapping("/all")
-    public List<NotificationProjection> getAll(){
-        return notificationService.getAll();
-    }
     
     //Tìm kiếm thông báo
     @PostMapping("/search")
-    public Page<NotificationProjection> search(@RequestBody NotificationSearchRequest request) {
+    public Page<NotificationResponse> search(@RequestBody NotificationSearchRequest request) {
         return notificationService.search(request);
-    }
-
-    //Lọc thông báo
-     @PostMapping("/filter")
-     public Page<NotificationProjection> filter(@RequestBody NotificationSearchRequest request) {
-         return notificationService.search(request);
     }
 
     //Tạo thông báo mới
@@ -55,9 +42,9 @@ public class NotificationController {
     }
     
     //Cập nhật thông báo
-    @PutMapping("update/{id}")
-    public String update(@PathVariable String id, @RequestBody NotificationRequest request) {
-        request.setMaThongBao(id);
+    @PutMapping("update/{maThongBao}")
+    public String update(@PathVariable String maThongBao, @RequestBody NotificationRequest request) {
+        request.setMaThongBao(maThongBao);
         notificationService.updateNotification(request);
         return "Cập nhật thông báo thành công";
     }
