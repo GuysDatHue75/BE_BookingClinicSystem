@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "lich_kham_bac_si")
+@Table(name = "lich_lam_viec")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +24,7 @@ import lombok.Setter;
 @Builder
 public class DoctorScheduleEntity {
     @Id
-    @Column(name = "ma_lich_lam_viec", length = 255, nullable = false)
+    @Column(name = "ma_lich_lam", length = 255, nullable = false)
     private String maLichLamViec;
 
     @ManyToOne @JoinColumn(name = "ma_bac_si")
@@ -32,13 +32,15 @@ public class DoctorScheduleEntity {
 
     @ManyToOne @JoinColumn(name = "ma_phong_kham")
     private ClinicEntity clinic;
-    
-    @Column(name = "ngay_lam_viec", nullable = false)
-    private LocalDate ngayLamViec;
-    
 
     @ManyToOne @JoinColumn(name = "ma_khung_gio")
     private TimeSlotsEntity timeslot;
+    
+    @Column(name = "ngay_lam_viec", nullable = false)
+    private LocalDate ngayLamViec;
+
+    @Column(name = "loai_hinh_kham", length = 255)
+    private String loaiHinhKham;
 
     @Column(name = "trang_thai", length = 20, nullable = false)
     private String trangThai;

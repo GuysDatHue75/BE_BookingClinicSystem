@@ -37,7 +37,7 @@ public class PatientsEntity {
     private String ngheNghiep;
 
     @Column(name = "chieu_cao")
-    private int chieuCao;
+    private Integer chieuCao;
 
     @Column(name = "can_nang")
     private float canNang;
@@ -48,7 +48,7 @@ public class PatientsEntity {
     @Column(name = "tinh_trang_suc_khoe", length = 255)
     private String tinhTrangSucKhoe;
 
-    @Column(name = "nhom_mau", length = 10)
+    @Column(name = "nhom_mau", length = 255)
     private String nhomMau;
 
     @Column(name = "gioi_tinh")

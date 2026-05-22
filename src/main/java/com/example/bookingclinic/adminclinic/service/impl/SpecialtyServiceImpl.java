@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.bookingclinic.adminclinic.dto.request.SpecialtyRequest;
 import com.example.bookingclinic.adminclinic.dto.request.SpecialtySearchRequest;
 import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
+import com.example.bookingclinic.adminclinic.entity.SpecialtyClinicEntity;
+import com.example.bookingclinic.adminclinic.entity.SpecialtyClinicId;
 import com.example.bookingclinic.adminclinic.entity.SpecialtyEntity;
+import com.example.bookingclinic.adminclinic.repository.SpecialtyClinicRepository;
 import com.example.bookingclinic.adminclinic.repository.SpecialtyRepository;
 import com.example.bookingclinic.adminclinic.repository.projection.SpecialtyProjection;
 import com.example.bookingclinic.adminclinic.service.SpecialtyService;
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class SpecialtyServiceImpl implements SpecialtyService {
 
     private final SpecialtyRepository specialtyRepository;
+    private final SpecialtyClinicRepository specialtyClinicRepository;
 
     @Override
     public List<SpecialtyProjection> getAllSpecialty(String maPhongKham) {
@@ -36,20 +40,26 @@ public class SpecialtyServiceImpl implements SpecialtyService {
         SpecialtyEntity s = SpecialtyEntity.builder()
                 .maChuyenKhoa(chuyenKhoa)
                 .tenChuyenKhoa(request.getTenChuyenKhoa())
-                .clinic(clinicProxy)
                 .moTa(request.getMoTa())
                 .trangThai(true)
                 .ngayTao(LocalDateTime.now())
                 .isDeleted(false)
                 .build();
         specialtyRepository.save(s);
+
+        SpecialtyClinicEntity sc = SpecialtyClinicEntity.builder()
+                .id(new SpecialtyClinicId(maPhongKham, chuyenKhoa))
+                .clinic(clinicProxy)
+                .specialty(s)
+                .build();
+        specialtyClinicRepository.save(sc);
         return getSpecialtyDetail(maPhongKham, chuyenKhoa);
     }
 
     @Transactional
     @Override
     public SpecialtyProjection updateSpecialty(String maChuyenKhoa, SpecialtyRequest request, String maPhongKham) {
-        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndClinic_MaPhongKhamAndIsDeletedFalse(maChuyenKhoa, maPhongKham)
+        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndIsDeletedFalse(maChuyenKhoa)
                 .orElseThrow(() -> new RuntimeException("Chuyên khoa không tồn tại"));
 
         s.setTenChuyenKhoa(request.getTenChuyenKhoa());
@@ -62,7 +72,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     @Transactional
     @Override
     public void deleteSpecialty(String maChuyenKhoa, String maPhongKham) {
-        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndClinic_MaPhongKhamAndIsDeletedFalse(maChuyenKhoa, maPhongKham)
+        SpecialtyEntity s = specialtyRepository.findByMaChuyenKhoaAndIsDeletedFalse(maChuyenKhoa)
                 .orElseThrow(() -> new RuntimeException("Chuyên khoa không tồn tại"));
 
         s.setIsDeleted(true);

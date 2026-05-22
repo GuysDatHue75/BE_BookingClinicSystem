@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -57,7 +58,8 @@ public class ClinicEntity {
     @Column(name = "gio_ket_thuc_lam_viec", nullable = false)
     private LocalTime gioKetThucLamViec;
 
-    @Column(name = "giay_phep", length = 255, nullable = false)
+    @Lob
+    @Column(name = "giay_phep", nullable = false)
     private String giayPhep;
 
     @Column(name = "ngay_cap", nullable = false)
@@ -65,9 +67,6 @@ public class ClinicEntity {
 
     @Column(name = "noi_cap", length = 255, nullable = false)
     private String noiCap;
-
-    @Column(name = "tep_dinh_kem", length= 255, nullable = false)
-    private String tepDinhKem;
 
     @Column(name = "nguoi_dai_dien", length= 255, nullable = false)
     private String nguoiDaiDien;
@@ -81,8 +80,8 @@ public class ClinicEntity {
     @Column(name = "trang_thai", length= 255, nullable = false)
     private String trangThai;
 
-    @Column(name = "ma_goi", length= 10, nullable = false)
-    private String maGoi;
+    @ManyToOne @JoinColumn(name = "ma_goi")
+    private SubscriptionPackageEntity subpackage;
 
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
@@ -93,6 +92,13 @@ public class ClinicEntity {
 
     @OneToOne @JoinColumn(name = "ma_tai_khoan")
     private AccountEntity account;
+
+     @Lob
+    @Column(name = "anh_phong_kham")
+    private String anhPhongKham;
+
+    @Column(name = "so_sao", length = 255)
+    private String soSao;
 
 
 }

@@ -30,7 +30,6 @@ public class ClinicRequest {
     private String giayPhep;
     private LocalDateTime ngayCap;
     private String noiCap;
-    private String tepDinhKem;
 
     private String nguoiDaiDien;
     private String soDienThoaiNguoiDaiDien;

@@ -1,5 +1,6 @@
 package com.example.bookingclinic.adminclinic.dto.response;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +17,8 @@ public class DoctorDetailResponse {
     private String maBacSi;
     private String tenBacSi;
     private boolean gioiTinh;
+    private LocalDate ngaySinh;
+    private String queQuan;
 
     private String soDienThoai;
     private String email;
@@ -27,7 +30,8 @@ public class DoctorDetailResponse {
     private String bangCap;
     private String kinhNghiem;
     private String hoatDong;
-    private String mieuTa;
+    private String mieuTa1;
+    private String mieuTa2;
 
     private String chucVu;
     private String hocHam;

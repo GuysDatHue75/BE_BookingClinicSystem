@@ -1,11 +1,13 @@
 package com.example.bookingclinic.adminclinic.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -28,16 +30,25 @@ public class DoctorEntity {
     @Column(name = "gioi_tinh", nullable = false)
     private boolean gioiTinh;
 
+    @Column(name = "ngay_sinh")
+    private LocalDate ngaySinh;
+
+    @Lob
+    @Column(name = "que_quan")
+    private String queQuan;
+
     @Column(name = "so_dien_thoai", length = 50, nullable = false)
     private String soDienThoai;
 
     @Column(name = "email", length = 255, nullable = false)
     private String email;
 
-    @Column(name = "dia_chi", length = 255, nullable = false)
+    @Lob
+    @Column(name = "dia_chi")
     private String diaChi;
 
-    @Column(name = "avt", length = 255, nullable = false)
+    @Lob
+    @Column(name = "avt")
     private String avt;
 
     @ManyToOne @JoinColumn(name = "ma_chuyen_khoa")
@@ -52,8 +63,13 @@ public class DoctorEntity {
     @Column(name = "hoat_dong", length = 255, nullable = false)
     private String hoatDong;
 
-    @Column(name = "mieu_ta", length = 255)
-    private String mieuTa;
+    @Lob
+    @Column(name = "mieu_ta1")
+    private String mieuTa1;
+
+    @Lob
+    @Column(name = "mieu_ta2")
+    private String mieuTa2;
 
     @Column(name = "chuc_vu", length = 255, nullable = false)
     private String chucVu;

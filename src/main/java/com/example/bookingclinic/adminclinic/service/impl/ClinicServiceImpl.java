@@ -48,7 +48,6 @@ public class ClinicServiceImpl implements ClinicService{
         entity.setGiayPhep(request.getGiayPhep());
         entity.setNgayCap(request.getNgayCap());
         entity.setNoiCap(request.getNoiCap());
-        entity.setTepDinhKem(request.getTepDinhKem());
         entity.setNguoiDaiDien(request.getNguoiDaiDien());
         entity.setSoDienThoaiNguoiDaiDien(request.getSoDienThoaiNguoiDaiDien());
 

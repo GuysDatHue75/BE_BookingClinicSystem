@@ -2,11 +2,13 @@ package com.example.bookingclinic.adminclinic.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,13 +33,10 @@ public class AppointmentScheduleEntity {
     @ManyToOne @JoinColumn(name = "ma_bac_si")
     private DoctorEntity doctor;
 
-    @ManyToOne @JoinColumn(name = "ma_phong_kham")
-    private ClinicEntity clinic;
-
     @Column(name = "ngay_kham", nullable = false)
     private LocalDate ngayKham;
 
-    @Column(name = "loai_kham", length = 100)
+    @Column(name = "loai_kham", length = 100, nullable = false)
     private String loaiKham;
 
     @Column(name = "trang_thai", length = 50)
@@ -46,6 +45,19 @@ public class AppointmentScheduleEntity {
     @Column(name = "ngay_tao", nullable = false)
     private LocalDateTime ngayTao;
 
-    @ManyToOne @JoinColumn(name = "ma_lich_lam_viec")
+    @Column(name = "danh_gia")
+    private Integer danhGia;
+
+    @Column(name = "da_gui_thong_bao")
+    private Integer daGuiThongBao;
+
+    @ManyToOne @JoinColumn(name = "ma_lich_lam")
     private DoctorScheduleEntity doctorSchedule;
+
+    @Lob
+    @Column(name = "ly_do_kham")
+    private String lyDoKham;
+
+    @Column(name = "gio_kham")
+    private LocalTime gioKham;
 }

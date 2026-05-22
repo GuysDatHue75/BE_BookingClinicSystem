@@ -1,4 +1,5 @@
 package com.example.bookingclinic.adminclinic.repository.projection;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.querydsl.core.annotations.QueryProjection;
@@ -11,6 +12,8 @@ public class DoctorProjection {
     private final String maBacSi;
     private final String tenBacSi;
     private final boolean gioiTinh;
+    private final LocalDate ngaySinh;
+    private final String queQuan;
 
     private final String soDienThoai;
     private final String email;
@@ -22,7 +25,8 @@ public class DoctorProjection {
     private final String bangCap;
     private final String kinhNghiem;
     private final String hoatDong;
-    private final String mieuTa;
+    private final String mieuTa1;
+    private final String mieuTa2;
 
     private final String chucVu;
     private final String hocHam;
@@ -46,6 +50,8 @@ public class DoctorProjection {
         String maBacSi,
         String tenBacSi,
         boolean gioiTinh,
+        LocalDate ngaySinh,
+        String queQuan,
         String soDienThoai,
         String email,
         String diaChi,
@@ -55,7 +61,8 @@ public class DoctorProjection {
         String bangCap,
         String kinhNghiem,
         String hoatDong,
-        String mieuTa,
+        String mieuTa1,
+        String mieuTa2,
         String chucVu,
         String hocHam,
         String cccd,
@@ -73,6 +80,8 @@ public class DoctorProjection {
         this.maBacSi = maBacSi;
         this.tenBacSi = tenBacSi;
         this.gioiTinh = gioiTinh;
+        this.ngaySinh = ngaySinh;
+        this.queQuan = queQuan;
         this.soDienThoai = soDienThoai;
         this.email = email;
         this.diaChi = diaChi;
@@ -82,7 +91,8 @@ public class DoctorProjection {
         this.bangCap = bangCap;
         this.kinhNghiem = kinhNghiem;
         this.hoatDong = hoatDong;
-        this.mieuTa = mieuTa;
+        this.mieuTa1 = mieuTa1;
+        this.mieuTa2 = mieuTa2;
         this.chucVu = chucVu;
         this.hocHam = hocHam;
         this.cccd = cccd;

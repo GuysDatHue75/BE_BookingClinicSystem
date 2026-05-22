@@ -25,7 +25,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
         WHERE LOWER(a.vaiTro) = LOWER(:vaiTro)
             AND (
                 d.clinic.maPhongKham = :maPhongKham
-                OR lk.clinic.maPhongKham = :maPhongKham
+                OR lk.doctor.clinic.maPhongKham = :maPhongKham
             )
     """)
     List<AccountEntity> findByVaiTroIgnoreCaseAndMaPhongKham(@Param("vaiTro") String vaiTro,@Param("maPhongKham") String maPhongKham);
@@ -43,7 +43,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
         SELECT DISTINCT p.account 
         FROM PatientsEntity p 
         JOIN AppointmentScheduleEntity lk ON p = lk.patient 
-        WHERE lk.clinic.maPhongKham = :maPhongKham 
+        WHERE lk.doctor.clinic.maPhongKham = :maPhongKham 
         AND p.account.vaiTro = 'BenhNhan'
     """)
     List<AccountEntity> findBenhNhanByMaPhongKham(@Param("maPhongKham") String maPhongKham);
@@ -55,7 +55,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
         LEFT JOIN PatientsEntity p ON a = p.account 
         LEFT JOIN AppointmentScheduleEntity lk ON p = lk.patient 
         WHERE a.maTaiKhoan = :maTaiKhoan 
-            AND (c.maPhongKham = :maPhongKham OR lk.clinic.maPhongKham = :maPhongKham)
+            AND (c.maPhongKham = :maPhongKham OR lk.doctor.clinic.maPhongKham = :maPhongKham)
     """)
     boolean checkUserBelongsToClinic(@Param("maTaiKhoan") String maTaiKhoan, @Param("maPhongKham") String maPhongKham);
 }
