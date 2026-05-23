@@ -9,20 +9,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.bookingclinic.auth.dto.UserDTO;
-import com.example.bookingclinic.adminsystem.entity.AccountEntity;
+import com.example.bookingclinic.adminclinic.entity.AccountEntity;
+import com.example.bookingclinic.adminclinic.repository.AccountRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
 // import com.example.bookingclinic.user.entity.Account;
 // import com.example.bookingclinic.user.repository.AccountRepository;
 // import com.example.bookingclinic.user.repository.ClinicRepository;
 // import com.example.bookingclinic.user.repository.DoctorReponsitory;
-import com.example.bookingclinic.adminsystem.repository.AccountRepository;
-import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
-import com.example.bookingclinic.adminsystem.repository.DoctorRepository;
-import com.example.bookingclinic.user.repository.PatientRepository;
+// import com.example.bookingclinic.adminsystem.repository.AccountRepository;
+// import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
+// import com.example.bookingclinic.adminsystem.repository.DoctorRepository;
+// import com.example.bookingclinic.user.repository.PatientRepository;
+import com.example.bookingclinic.adminclinic.repository.DoctorRepository;
+import com.example.bookingclinic.adminclinic.repository.PatientsRepository;
 
 @Service
 public class LoginService {
     private AccountRepository accountRepository;
-    private PatientRepository patientRepository;
+    private PatientsRepository patientsRepository;
     private DoctorRepository doctorRepository;
     private ClinicRepository clinicRepository;
 
@@ -31,13 +35,13 @@ public class LoginService {
     public LoginService(
             AccountRepository accountRepository,
             PasswordEncoder passwordEncoder,
-            PatientRepository patientRepository,
+            PatientsRepository patientsRepository,
             DoctorRepository doctorRepository,
             ClinicRepository clinicRepository) {
         this.accountRepository = accountRepository;
         this.clinicRepository = clinicRepository;
         this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
+        this.patientsRepository = patientsRepository;
     }
 
     public ResponseEntity<?> login(UserDTO infors) {
@@ -47,7 +51,9 @@ public class LoginService {
         //     return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         // }
         // if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
-        Optional<AccountEntity> optionalUser = accountRepository.findBySoDt(infors.getPhone());
+        String phoneToSearch = infors.getPhone().trim();
+        System.out.println(">>> ĐANG TÌM SĐT: [" + phoneToSearch + "]");
+        Optional<AccountEntity> optionalUser = accountRepository.findBySoDt(phoneToSearch);
         
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(404)
@@ -60,7 +66,7 @@ public class LoginService {
             System.out.print(infors.getPhone());
             Object profileData = null;
             if ("BenhNhan".equals(user.getVaiTro())) {
-                profileData = patientRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
+                profileData = patientsRepository.findByAccount_MaTaiKhoan(user.getMaTaiKhoan());
             } else if ("BacSi".equals(user.getVaiTro())) {
                 profileData = doctorRepository.findByAccount_MaTaiKhoan(user.getMaTaiKhoan());
             } else if ("PhongKham".equals(user.getVaiTro())) {

@@ -70,7 +70,10 @@ public class NotificationServiceImpl implements NotificationService{
         }
 
     private Set<String> getValidUserIdsForClinic(NotificationRequest request){
-        ClinicEntity clinic = clinicRepository.findByAccount_MaTaiKhoan(request.getMaTaiKhoan()).orElseThrow(() -> new RuntimeException("Lỗi tài khoản gửi"));
+        ClinicEntity clinic = clinicRepository.findByAccount_MaTaiKhoan(request.getMaTaiKhoan());
+        if (clinic == null) {
+            throw new RuntimeException("Không tìm thấy tài khoản phòng khám");
+        }
 
         String maPhongKham = clinic.getMaPhongKham();
 
