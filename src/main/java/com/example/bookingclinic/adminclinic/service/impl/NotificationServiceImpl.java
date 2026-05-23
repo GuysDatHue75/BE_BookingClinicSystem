@@ -18,7 +18,7 @@ import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.NotificationAccountEntity;
 import com.example.bookingclinic.adminclinic.entity.NotificationAccountId;
 import com.example.bookingclinic.adminclinic.entity.NotificationEntity;
-import com.example.bookingclinic.adminclinic.repository.AccountRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicAccountRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
 import com.example.bookingclinic.adminclinic.repository.NotificationAccountRepository;
 import com.example.bookingclinic.adminclinic.repository.NotificationRepository;
@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class NotificationServiceImpl implements NotificationService{
     private final NotificationRepository notificationRepository;
     private final NotificationAccountRepository notificationAccountRepository;
-    private final AccountRepository accountRepository;
+    private final ClinicAccountRepository accountRepository;
     private final ClinicRepository clinicRepository;
     private final SimpMessagingTemplate messagingTemplate;
 

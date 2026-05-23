@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.example.bookingclinic.adminclinic.dto.response.DailyScheduleResponse;
 import com.example.bookingclinic.adminclinic.dto.response.DoctorWeeklyScheduleResponse;
 import com.example.bookingclinic.adminclinic.dto.response.SlotItemDTO;
-import com.example.bookingclinic.adminclinic.repository.DoctorScheduleRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicDoctorScheduleRepository;
 import com.example.bookingclinic.adminclinic.service.DoctorScheduleService;
 import com.example.bookingclinic.adminclinic.utils.DateUtils;
 
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DoctorScheduleServiceImpl implements DoctorScheduleService{
-    private final DoctorScheduleRepository doctorScheduleRepository;
+    private final ClinicDoctorScheduleRepository doctorScheduleRepository;
 
     public List<DailyScheduleResponse> getFormattedWeeklySchedule(String maPhongKham, String maBacSi, LocalDate targetDate){
         LocalDate dateToQuery = (targetDate != null) ? targetDate : LocalDate.now();

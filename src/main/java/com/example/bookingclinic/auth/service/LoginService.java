@@ -10,7 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.bookingclinic.auth.dto.UserDTO;
 import com.example.bookingclinic.adminclinic.entity.AccountEntity;
-import com.example.bookingclinic.adminclinic.repository.AccountRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicAccountRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicDoctorRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicPatientsRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
 // import com.example.bookingclinic.user.entity.Account;
 // import com.example.bookingclinic.user.repository.AccountRepository;
@@ -20,28 +22,27 @@ import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
 // import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
 // import com.example.bookingclinic.adminsystem.repository.DoctorRepository;
 // import com.example.bookingclinic.user.repository.PatientRepository;
-import com.example.bookingclinic.adminclinic.repository.DoctorRepository;
-import com.example.bookingclinic.adminclinic.repository.PatientsRepository;
 
 @Service
 public class LoginService {
-    private AccountRepository accountRepository;
-    private PatientsRepository patientsRepository;
-    private DoctorRepository doctorRepository;
+    private ClinicAccountRepository accountRepository;
+    private ClinicPatientsRepository patientsRepository;
+    private ClinicDoctorRepository doctorRepository;
     private ClinicRepository clinicRepository;
 
-    @Autowired
+    
     private BCryptPasswordEncoder passwordEncoder;
     public LoginService(
-            AccountRepository accountRepository,
+            ClinicAccountRepository accountRepository,
             PasswordEncoder passwordEncoder,
-            PatientsRepository patientsRepository,
-            DoctorRepository doctorRepository,
+            ClinicPatientsRepository patientsRepository,
+            ClinicDoctorRepository doctorRepository,
             ClinicRepository clinicRepository) {
         this.accountRepository = accountRepository;
         this.clinicRepository = clinicRepository;
         this.doctorRepository = doctorRepository;
         this.patientsRepository = patientsRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     public ResponseEntity<?> login(UserDTO infors) {
@@ -86,5 +87,4 @@ public class LoginService {
             return ResponseEntity.status(401).body("Mật khẩu không đúng!");
         }
     }
-
 }
