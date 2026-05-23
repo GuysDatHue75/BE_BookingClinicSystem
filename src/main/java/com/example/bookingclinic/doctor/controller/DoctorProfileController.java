@@ -1,6 +1,7 @@
 package com.example.bookingclinic.doctor.controller;
 
 import com.example.bookingclinic.doctor.dto.DoctorProfileDTO;
+import com.example.bookingclinic.doctor.entity.Doctor;
 import com.example.bookingclinic.doctor.service.DoctorProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,8 @@ public class DoctorProfileController {
 
     // Lấy thông tin Profile
     @GetMapping("/{maBacSi}")
-    public ResponseEntity<DoctorProfileDTO> getProfile(@PathVariable String maBacSi) {
-        DoctorProfileDTO profile = doctorProfileService.getDoctorProfile(maBacSi);
+    public ResponseEntity<Doctor> getProfile(@PathVariable String maBacSi) {
+        Doctor profile = doctorProfileService.getDoctorProfile(maBacSi);
         return ResponseEntity.ok(profile);
     }
 

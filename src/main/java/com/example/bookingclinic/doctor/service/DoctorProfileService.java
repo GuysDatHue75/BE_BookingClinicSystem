@@ -13,75 +13,131 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DoctorProfileService {
-    private final DoctorRepository doctorRepository;
-    private final AccountRepository accountRepository;
 
-    // lấy hồ sơ bác sĩ
-    public DoctorProfileDTO getDoctorProfile(String maBacSi) {
-        Doctor doctor = doctorRepository.findById(maBacSi)
-                .orElseThrow(() -> new RuntimeException("Không tim thấy bác sĩ " + maBacSi));
-        Account account = accountRepository.findById(doctor.getTaiKhoan().getMaTaiKhoan())
-                .orElseThrow(() -> new RuntimeException("Lỗi: không tìm thấy bác sĩ có tài khoản"));
+        private final DoctorRepository doctorRepository;
+        private final AccountRepository accountRepository;
 
-        DoctorProfileDTO dto = new DoctorProfileDTO();
-        dto.setMaTaiKhoan(account.getMaTaiKhoan());
-        dto.setHoVaTen(account.getHoVaTen());
-        dto.setEmail(account.getEmail());
-        dto.setSoDienThoai(account.getSoDienThoai());
-        dto.setAnhDaiDien(account.getAnhDaiDien());
-        dto.setGioiTinh(account.getGioiTinh());
-        dto.setNgaySinh(account.getNgaySinh());
-        dto.setCccd(account.getCccd());
-        dto.setDiaChi(account.getDiaChi());
+        // 1. LẤY HỒ SƠ BÁC SĨ (GET)
+        public Doctor getDoctorProfile(String maBacSi) {
+                return doctorRepository.findByMaBacSi(maBacSi);
+                // DoctorProfileDTO dto = new DoctorProfileDTO();
 
-        // --- THÔNG TIN CHUYÊN MÔN (Từ bảng bac_si) ---
-        dto.setMaBacSi(doctor.getMaBacSi());
-        dto.setChuyenKhoa(doctor.getChuyenKhoa());
-        dto.setBangCap(doctor.getBangCap());
-        dto.setKinhNghiem(doctor.getKinhNghiem());
-        dto.setHoatDong(doctor.getHoatDong());
-        dto.setMieuTa(doctor.getMieuTa());
-        dto.setChucVu(doctor.getChucVu());
-        dto.setHocHam(doctor.getHocHam());
-        dto.setSoGiapPhep(doctor.getSoGiapPhep());
-        dto.setNoiCap(doctor.getNoiCap());
+                // // --- 1. THÔNG TIN TỪ BẢNG TÀI KHOẢN ---
+                // if (doctor.getTaiKhoan() != null) {
+                // Account account = doctor.getTaiKhoan();
+                // dto.setMaTaiKhoan(account.getMaTaiKhoan());
+                // dto.setHoVaTen(account.getHoVaTen());
+                // }
 
-        return dto;
-    }
+                // // --- 2. THÔNG TIN TỪ BẢNG BÁC SĨ ---
+                // dto.setMaBacSi(doctor.getMaBacSi());
 
-    // 2. CẬP NHẬT HỒ SƠ BÁC SĨ (PUT)
-    @Transactional
-    public DoctorProfileDTO updateDoctorProfile(String maBacSi, DoctorProfileDTO updateDTO) {
-        Doctor doctor = doctorRepository.findById(maBacSi)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bác sĩ!"));
-        Account account = accountRepository.findById(doctor.getTaiKhoan().getMaTaiKhoan())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản!"));
+                // // Các trường cá nhân
+                // dto.setEmail(doctor.getEmail());
+                // dto.setSoDienThoai(doctor.getSoDienThoai());
+                // dto.setAnhDaiDien(doctor.getAvt());
+                // dto.setNgaySinh(doctor.getNgaySinh());
+                // dto.setGioiTinh(doctor.getGioiTinh());
+                // dto.setDiaChi(doctor.getDiaChi());
+                // dto.setCccd(doctor.getCccd());
 
-        // Cập nhật bảng TaiKhoan
-        account.setHoVaTen(updateDTO.getHoVaTen());
-        account.setSoDienThoai(updateDTO.getSoDienThoai());
-        account.setGioiTinh(updateDTO.getGioiTinh());
-        account.setNgaySinh(updateDTO.getNgaySinh());
-        account.setCccd(updateDTO.getCccd());
-        account.setDiaChi(updateDTO.getDiaChi());
-        // (Lưu ý: Không nên cho đổi Email/Mã tài khoản ở đây vì nó liên quan đến định
-        // danh đăng nhập)
+                // dto.setMaChuyenKhoa(doctor.getMaChuyenKhoa());
 
-        // Cập nhật bảng BacSi
-        doctor.setChuyenKhoa(updateDTO.getChuyenKhoa());
-        doctor.setBangCap(updateDTO.getBangCap());
-        doctor.setKinhNghiem(updateDTO.getKinhNghiem());
-        doctor.setHoatDong(updateDTO.getHoatDong());
-        doctor.setMieuTa(updateDTO.getMieuTa());
-        doctor.setChucVu(updateDTO.getChucVu());
-        doctor.setHocHam(updateDTO.getHocHam());
+                // dto.setBangCap(doctor.getBangCap());
+                // dto.setKinhNghiem(doctor.getKinhNghiem());
+                // dto.setHoatDong(doctor.getHoatDong());
 
-        // Lưu xuống DB
-        accountRepository.save(account);
-        doctorRepository.save(doctor);
+                // dto.setMieuTa1(doctor.getMieuTa1());
+                // dto.setMieuTa2(doctor.getMieuTa2());
 
-        // Gọi lại hàm Get để trả về data mới nhất
-        return getDoctorProfile(maBacSi);
-    }
+                // dto.setChucVu(doctor.getChucVu());
+                // dto.setHocHam(doctor.getHocHam());
 
+                // // Giấy phép & phòng khám
+                // dto.setSoGiayPhep(doctor.getSoGiayPhep());
+                // dto.setNgayCap(doctor.getNgayCap());
+                // dto.setNoiCap(doctor.getNoiCap());
+
+                // // [BỔ SUNG]: Trả thêm mã phòng khám về cho FE hiển thị nếu cần
+                // // dto.setMaPhongKham(doctor.getMaPhongKham());
+
+                // return dto;
+        }
+
+        // 2. CẬP NHẬT HỒ SƠ BÁC SĨ (PUT)
+        @Transactional
+        public DoctorProfileDTO updateDoctorProfile(String maBacSi, DoctorProfileDTO updateDTO) {
+                Doctor doctor = doctorRepository.findById(maBacSi)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ bác sĩ!"));
+
+                // --- 1. CẬP NHẬT BẢNG TÀI KHOẢN ---
+                if (doctor.getTaiKhoan() != null) {
+                        Account account = doctor.getTaiKhoan();
+                        account.setHoVaTen(updateDTO.getHoVaTen());
+                        accountRepository.save(account);
+                }
+
+                // --- 2. CẬP NHẬT BẢNG BÁC SĨ ---
+                // Thông tin cá nhân
+                doctor.setSoDienThoai(updateDTO.getSoDienThoai());
+                doctor.setNgaySinh(updateDTO.getNgaySinh());
+                doctor.setGioiTinh(updateDTO.getGioiTinh());
+                doctor.setDiaChi(updateDTO.getDiaChi());
+                doctor.setAvt(updateDTO.getAnhDaiDien());
+                doctor.setCccd(updateDTO.getCccd());
+
+                // Thông tin chuyên môn
+                doctor.setMaChuyenKhoa(updateDTO.getMaChuyenKhoa());
+                doctor.setBangCap(updateDTO.getBangCap());
+                doctor.setKinhNghiem(updateDTO.getKinhNghiem());
+                doctor.setHoatDong(updateDTO.getHoatDong());
+                doctor.setMieuTa1(updateDTO.getMieuTa1());
+                doctor.setMieuTa2(updateDTO.getMieuTa2());
+                doctor.setChucVu(updateDTO.getChucVu());
+                doctor.setHocHam(updateDTO.getHocHam());
+
+                // Giấy phép hành nghề
+                doctor.setSoGiayPhep(updateDTO.getSoGiayPhep());
+                doctor.setNoiCap(updateDTO.getNoiCap());
+                doctor.setNgayCap(updateDTO.getNgayCap());
+
+                // Lưu xuống DB
+                Doctor savedDoctor = doctorRepository.save(doctor);
+
+                // ✅ ĐÃ FIX: Trả về đúng kiểu DoctorProfileDTO sau khi map dữ liệu mới nhất
+                return mapToDTO(savedDoctor);
+        }
+
+        // 🔄 Hàm phụ trợ giúp chuyển đổi Entity sang DTO nhanh gọn
+        private DoctorProfileDTO mapToDTO(Doctor doctor) {
+                DoctorProfileDTO dto = new DoctorProfileDTO();
+
+                if (doctor.getTaiKhoan() != null) {
+                        Account account = doctor.getTaiKhoan();
+                        dto.setMaTaiKhoan(account.getMaTaiKhoan());
+                        dto.setHoVaTen(account.getHoVaTen());
+                }
+
+                dto.setMaBacSi(doctor.getMaBacSi());
+                dto.setEmail(doctor.getEmail());
+                dto.setSoDienThoai(doctor.getSoDienThoai());
+                dto.setAnhDaiDien(doctor.getAvt());
+                dto.setNgaySinh(doctor.getNgaySinh());
+                dto.setGioiTinh(doctor.getGioiTinh());
+                dto.setDiaChi(doctor.getDiaChi());
+                dto.setCccd(doctor.getCccd());
+                dto.setMaChuyenKhoa(doctor.getMaChuyenKhoa());
+                dto.setBangCap(doctor.getBangCap());
+                dto.setKinhNghiem(doctor.getKinhNghiem());
+                dto.setHoatDong(doctor.getHoatDong());
+                dto.setMieuTa1(doctor.getMieuTa1());
+                dto.setMieuTa2(doctor.getMieuTa2());
+                dto.setChucVu(doctor.getChucVu());
+                dto.setHocHam(doctor.getHocHam());
+                dto.setSoGiayPhep(doctor.getSoGiayPhep());
+                dto.setNgayCap(doctor.getNgayCap());
+                dto.setNoiCap(doctor.getNoiCap());
+
+                return dto;
+        }
 }

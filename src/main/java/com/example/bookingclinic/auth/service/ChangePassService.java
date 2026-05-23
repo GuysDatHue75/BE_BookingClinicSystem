@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.auth.dto.ApiResponse;
 import com.example.bookingclinic.auth.dto.ChangePassDTO;
-import com.example.bookingclinic.user.entity.Account;
-import com.example.bookingclinic.user.repository.AccountRepository;
+import com.example.bookingclinic.doctor.entity.Account;
+import com.example.bookingclinic.doctor.repository.AccountRepository;
 
 @Service
 public class ChangePassService {

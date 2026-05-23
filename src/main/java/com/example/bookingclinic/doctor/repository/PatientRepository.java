@@ -16,29 +16,32 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
         @Query("SELECT p FROM Patient p " +
                         "JOIN FETCH p.taiKhoan t " + // FETCH giúp lấy kèm dữ liệu tài khoản
                         "WHERE t.vaiTro = 'BenhNhan' " +
-                        "AND (:keyword IS NULL OR t.soDienThoai LIKE %:keyword% OR t.hoVaTen LIKE %:keyword%)")
+                        "AND (:keyword IS NULL OR t.soDt LIKE %:keyword% OR t.hoVaTen LIKE %:keyword%)")
         Page<Patient> searchPatients(@Param("keyword") String keyword, Pageable pageable);
 
         // 2 Lấy danh sách bệnh nhân
-        // 2 Lấy danh sách bệnh nhân
-        @Query("SELECT DISTINCT new com.example.bookingclinic.doctor.dto.Patient.PatientmanagerDTO(" +
-                        "bn.maBenhNhan, tk.hoVaTen, tk.ngaySinh, tk.gioiTinh, tk.soDienThoai, tk.diaChi, tk.anhDaiDien) "
-                        +
-                        "FROM Appointment lk " +
-                        "JOIN lk.benhNhan bn " +
-                        "JOIN bn.taiKhoan tk " +
-                        "JOIN lk.lichLamViec llv " +
-                        "WHERE lk.trangThai = :status " +
-                        "AND llv.bacSi.maBacSi = :maBacSi " +
-                        "AND llv.bacSi.maPhongKham = :maPhongKham " +
-                        "AND (:keyword IS NULL OR tk.hoVaTen LIKE %:keyword% OR tk.soDienThoai LIKE %:keyword%)")
+        @Query("SELECT new com.example.bookingclinic.doctor.dto.Patient.PatientmanagerDTO(" +
+                        "p.maBenhNhan, " +
+                        "acc.hoVaTen, " + // 2. String
+                        "p.ngaySinh, " + // 3. LocalDate
+                        "p.gioiTinh, " + // 4. Boolean
+                        "acc.soDt, " + // 5. String (hoặc acc.soDienThoai tùy biến sếp đặt ở Account)
+                        "p.diaChi, " + // 6. String
+                        "acc.anhDaiDien) " + // 7. String (avatar thường nằm ở tài khoản hoặc patient)
+                        "FROM Appointment a " +
+                        "JOIN a.benhNhan p " +
+                        "JOIN p.taiKhoan acc " +
+                        "JOIN a.lichLamViec ds " +
+                        "WHERE ds.bacSi.maBacSi = :maBacSi " +
+                        "AND ds.maPhongKham = :maPhongKham " +
+                        "AND a.trangThai = :trangThai " +
+                        "AND (:keyword IS NULL OR acc.hoVaTen LIKE %:keyword% OR p.maBenhNhan LIKE %:keyword%)")
         Page<PatientmanagerDTO> findDetailedPatients(
                         @Param("maBacSi") String maBacSi,
                         @Param("maPhongKham") String maPhongKham,
                         @Param("keyword") String keyword,
-                        @Param("status") String status,
+                        @Param("trangThai") String trangThai,
                         Pageable pageable);
-
         // // 3. Thêm bệnh nhân
         // boolean existsByBenhNhan_MaBenhNhan(String maBenhNhan);
 
@@ -48,5 +51,8 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 
         // // 4. Cập nhập thông tin bệnh nhân
         // Optional<Patient> findByBenhNhan_MaBenhNhan(String maBenhNhan);
+
+        // Tìm Patient thông qua khóa ngoại liên kết với bảng Account
+        Patient findByTaiKhoan_MaTaiKhoan(String maTaiKhoan);
 
 }

@@ -7,5 +7,5 @@ import com.example.bookingclinic.doctor.entity.Account;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
-
+    Account findBysoDt(String soDt);
 }

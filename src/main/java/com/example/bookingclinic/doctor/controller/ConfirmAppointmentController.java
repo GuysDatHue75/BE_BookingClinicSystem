@@ -4,8 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bookingclinic.doctor.dto.MessageResponse;
-import com.example.bookingclinic.doctor.dto.ConfirmAppointment.AppointmentRequestDTO;
-import com.example.bookingclinic.doctor.dto.ConfirmAppointment.AppointmentResponseDTO;
+import com.example.bookingclinic.doctor.dto.schedule.ScheduleResponseDTO;
 import com.example.bookingclinic.doctor.service.ConfirmAppointmentService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,14 +26,14 @@ public class ConfirmAppointmentController {
     // 1 Xem danh sách chờ duyệt
     // http://localhost:8080/api/v1/confirm-appointment/pending?maBacSi=BS01
     @GetMapping("/pending")
-    public ResponseEntity<List<AppointmentResponseDTO>> getPending(@RequestParam String maBacSi) {
+    public ResponseEntity<List<ScheduleResponseDTO>> getPending(@RequestParam String maBacSi) {
 
         return ResponseEntity.ok(confirmAppointmentService.layDSChoDuyet(maBacSi));
     }
 
     // 2. Duyệt/Hủy lịch khám
     @PutMapping("/approve")
-    public ResponseEntity<?> approve(@RequestBody AppointmentRequestDTO requestDTO) {
+    public ResponseEntity<?> approve(@RequestBody ScheduleResponseDTO requestDTO) {
         try {
             String result = confirmAppointmentService.approveAppointment(requestDTO);
             return ResponseEntity.ok(new MessageResponse(result));
@@ -42,6 +41,5 @@ public class ConfirmAppointmentController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
 }

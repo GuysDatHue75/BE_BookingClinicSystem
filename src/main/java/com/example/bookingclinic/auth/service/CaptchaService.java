@@ -3,7 +3,6 @@ package com.example.bookingclinic.auth.service;
 import com.example.bookingclinic.auth.dto.CaptchaResponseDTO;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Map;
@@ -41,7 +40,8 @@ public class CaptchaService {
     public boolean validateCaptcha(String captchaId, String input) {
         String real = captchaStore.get(captchaId);
 
-        if (real == null) return false;
+        if (real == null)
+            return false;
 
         boolean result = real.equalsIgnoreCase(input);
         captchaStore.remove(captchaId);

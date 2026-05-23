@@ -8,10 +8,9 @@ import com.example.bookingclinic.auth.dto.ChangePassDTO;
 import com.example.bookingclinic.auth.service.ChangePassService;
 import com.example.bookingclinic.auth.service.CaptchaService;
 import com.example.bookingclinic.auth.dto.ApiResponse;
-import com.example.bookingclinic.auth.dto.CaptchaResponseDTO;
+// import com.example.bookingclinic.auth.dto.CaptchaResponseDTO;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,10 +24,10 @@ public class ChangePassController {
         this.captchaService = captchaService;
     }
 
-    @GetMapping("/captcha")
-    public CaptchaResponseDTO getCaptcha() throws Exception {
-        return captchaService.generateCaptcha();
-    }
+    // @GetMapping("/captcha")
+    // public CaptchaResponseDTO getCaptcha() throws Exception {
+    //     return captchaService.generateCaptcha();
+    // }
 
     @PostMapping("/change-password")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePassDTO dto) {

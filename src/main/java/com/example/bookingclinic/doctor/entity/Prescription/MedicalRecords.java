@@ -2,14 +2,9 @@ package com.example.bookingclinic.doctor.entity.Prescription;
 
 import java.time.LocalDateTime;
 
-import com.example.bookingclinic.doctor.entity.ConfirmAppointment;
+import com.example.bookingclinic.doctor.entity.Schedule.Appointment;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,15 +17,25 @@ import lombok.NoArgsConstructor;
 public class MedicalRecords {
 
     @Id
+    @Column(name = "ma_ho_so", length = 10)
     private String maHoSo;
+
+    @Column(name = "trieu_chung", columnDefinition = "NVARCHAR(MAX)")
     private String trieuChung;
+
+    @Column(name = "chuan_doan", columnDefinition = "NVARCHAR(MAX)")
     private String chuanDoan;
+
+    @Column(name = "ket_luan", columnDefinition = "NVARCHAR(MAX)")
     private String ketLuan;
+
+    @Column(name = "ghi_chu", columnDefinition = "NVARCHAR(MAX)")
     private String ghiChu;
+
+    @Column(name = "ngay_lap")
     private LocalDateTime ngayLap;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ma_lich_kham")
-    private ConfirmAppointment confirmAppointment;
+    private Appointment appointment;
 }
-
