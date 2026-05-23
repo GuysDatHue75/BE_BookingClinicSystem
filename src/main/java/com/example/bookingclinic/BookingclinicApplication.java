@@ -3,9 +3,6 @@ package com.example.bookingclinic;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-//@SpringBootApplication
-//@SpringBootApplication
-// (exclude = { DataSourceAutoConfiguration.class })
 @SpringBootApplication(scanBasePackages = "com.example.bookingclinic")
 public class BookingclinicApplication {
     public static void main(String[] args) {
