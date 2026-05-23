@@ -8,7 +8,7 @@ import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResp
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
 import com.example.bookingclinic.adminsystem.dto.response.ClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.entity.BrowseClinicEntity;
-import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
+import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 
 @Mapper(componentModel = "spring")
 public interface BrowseClinicMapper {

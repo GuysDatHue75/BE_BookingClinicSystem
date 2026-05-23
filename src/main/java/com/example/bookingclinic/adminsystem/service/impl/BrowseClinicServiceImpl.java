@@ -14,14 +14,14 @@ import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicActionReque
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicDetailResponse;
 import com.example.bookingclinic.adminsystem.dto.response.BrowseClinicResponse;
-import com.example.bookingclinic.adminsystem.entity.AccountEntity;
+import com.example.bookingclinic.adminclinic.entity.AccountEntity;
 import com.example.bookingclinic.adminsystem.entity.BrowseClinicEntity;
-import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
+import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminsystem.entity.SubscriptionPackageEntity;
 import com.example.bookingclinic.adminsystem.mapper.BrowseClinicMapper;
-import com.example.bookingclinic.adminsystem.repository.AccountRepository;
+import com.example.bookingclinic.adminsystem.repository.SystemAccountRepository;
 import com.example.bookingclinic.adminsystem.repository.BrowseClinicRepository;
-import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
+import com.example.bookingclinic.adminsystem.repository.SystemClinicRepository;
 import com.example.bookingclinic.adminsystem.repository.SubscriptionPackageRepository;
 import com.example.bookingclinic.adminsystem.service.BrowseClinicService;
 
@@ -36,10 +36,10 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
 
     private static final Logger log = LoggerFactory.getLogger(BrowseClinicServiceImpl.class);
     private final BrowseClinicRepository browseClinicRepository;
-    private final ClinicRepository clinicRepository;
+    private final SystemClinicRepository clinicRepository;
     private final BrowseClinicMapper browseClinicMapper;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
-    private final AccountRepository accountRepository;
+    private final SystemAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
 
