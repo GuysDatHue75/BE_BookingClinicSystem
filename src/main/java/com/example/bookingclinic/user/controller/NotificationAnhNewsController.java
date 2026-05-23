@@ -34,10 +34,15 @@ public class NotificationAnhNewsController {
     }
 
     @GetMapping("/clinic/news") // xem toàn bộ tin tức của 1 phòng khám
-    public List<UNews> getListNewsInClinic(@RequestParam String id){
-        return uNewsRepository.findByPhongKham_MaPhongKham(id);
+    public Page<UNews> getListNewsInClinic(@RequestParam String id, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UNews> result = uNewsRepository.findByPhongKham_MaPhongKham(id,pageable);
+        return result;
     }
-
+    @GetMapping("/clinic/t-3news") // xem toàn bộ tin tức của 1 phòng khám được sắp xếp theo thời gian
+    public List<UNews> getListNewsTop3InClinic(@RequestParam String id){
+        return uNewsRepository.findByPhongKham_MaPhongKhamOrderByNgayTaoDesc(id);
+    }
     @GetMapping("/news") // xem toàn bộ tin tức của nhiều phòng khám trong 1 tỉnh
     public Page<UNews> getListNewsInCity(@RequestParam String tp, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int size){
         Pageable pageable = PageRequest.of(page,size);
@@ -71,7 +76,7 @@ public class NotificationAnhNewsController {
     }
 
     @GetMapping("/c-notification") // đếm thông báo
-    public int countNotification(@RequestParam String idAccount, @RequestParam Integer isRead){
+    public int countNotification(@RequestParam String idAccount, @RequestParam Boolean isRead){
         return accountNotificationService.countNotification(idAccount, isRead);
     }
 

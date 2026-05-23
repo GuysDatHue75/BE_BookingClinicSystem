@@ -16,7 +16,7 @@ import lombok.Data;
 @Table(name = "benh_nhan")
 public class Patient {
     @Id 
-    @Column(length = 10)
+    @Column(name = "ma_benh_nhan")
     private String maBenhNhan;
     private LocalDate ngaySinh;
     private String queQuan;

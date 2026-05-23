@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
 
 @Repository
-public interface TimeSlotRepository extends JpaRepository<TimeSlot, String> {
+public interface DTimeSlotRepository extends JpaRepository<TimeSlot, String> {
 
 }

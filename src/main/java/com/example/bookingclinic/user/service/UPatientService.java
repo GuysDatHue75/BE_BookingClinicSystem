@@ -38,7 +38,8 @@ public class UPatientService {
     }
 
     @Transactional
-    public Patient editPatient(Patient newPatient, String id) {
+    public Patient editPatient(String id, Patient newPatient) {
+
         return patientRepository.findById(id).map(oldPatient -> {
 
             if (newPatient.getSoDienThoai() != null) {
@@ -54,6 +55,7 @@ public class UPatientService {
             }
 
             oldPatient.setCanNang(newPatient.getCanNang());
+            oldPatient.getTaiKhoan().setHoVaTen(newPatient.getTaiKhoan().getHoVaTen());
             oldPatient.setChieuCao(newPatient.getChieuCao());
             oldPatient.setDiaChi(newPatient.getDiaChi());
             oldPatient.setEmail(newPatient.getEmail());

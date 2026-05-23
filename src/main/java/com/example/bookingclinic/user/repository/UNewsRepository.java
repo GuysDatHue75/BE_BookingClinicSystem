@@ -9,7 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.bookingclinic.user.entity.UNews;
 
 public interface UNewsRepository extends JpaRepository<UNews, String> {
-    List<UNews> findByPhongKham_MaPhongKham(String id);
+    Page<UNews> findByPhongKham_MaPhongKham(String id, Pageable pageable);
+
     UNews findByMaTinTuc(String id);
-     Page<UNews> findByPhongKham_TinhThanhPhoContainingIgnoreCase(String tp ,Pageable pageable);
+
+    List<UNews> findByPhongKham_MaPhongKhamOrderByNgayTaoDesc(String id);
+
+    Page<UNews> findByPhongKham_TinhThanhPhoContainingIgnoreCase(String tp, Pageable pageable);
 }

@@ -37,7 +37,8 @@ public class AdvisoryController {
     @GetMapping("/advisorys")// xem câu hỏi và câu trả lời có phân trang
     public Page<Advisory> getAdvisoryByPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam String city){
         Pageable pageable = PageRequest.of(page,size);
-        Page<Advisory> result = advisoryRepository.findByTrangThaiTraLoiAndClinic_TinhThanhPhoContainingIgnoreCase(1,pageable,city);
+        Page<Advisory> result = advisoryRepository.findByTrangThaiTraLoiAndClinic_TinhThanhPhoContainingIgnoreCase(true,pageable,city);
+
         return result;
     }
 }

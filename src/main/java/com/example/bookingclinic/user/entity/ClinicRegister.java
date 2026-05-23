@@ -14,7 +14,7 @@ import lombok.Data;
 public class ClinicRegister {
     @Id
     private String maPhongKham;
-    private String maChuyenKhoa;
+
     private String tenPhongKham;
     private LocalDate ngayThanhLap;
     private String diaChi;
@@ -23,14 +23,16 @@ public class ClinicRegister {
     private String email;
     private Time gioBatDauLamViec;
     private Time gioKetThucLamViec;
-    private String giapPhep;
+
+    private String giayPhep;
     private LocalDate ngayCap;
+    private String anhPhongKham;
+
     private String noiCap;
     private String nguoiDaiDien;
     private String soDienThoaiNguoiDaiDien;
     private String loaiHinhPhongKham;
     private String trangThai;
-    private String tepDinhKep;
     private String maGoi; 
     private String moTa;
     private String lyDoTuChoi;

@@ -11,4 +11,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, String> {
     Doctor findByTaiKhoan_MaTaiKhoan(String maTaiKhoan);
 
     Doctor findByMaBacSi(String id);
+
 }

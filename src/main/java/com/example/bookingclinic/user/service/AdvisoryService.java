@@ -25,7 +25,7 @@ public class AdvisoryService {
         newAdvisory.setDoctor(null);
         newAdvisory.setPatient(advisory.getPatient());
         newAdvisory.setThoiGianHoi(LocalDateTime.now());
-        newAdvisory.setTrangThaiTraLoi(0);
+        newAdvisory.setTrangThaiTraLoi(false);
         return advisoryRepository.save(newAdvisory);
     }
 

@@ -9,10 +9,7 @@ import com.example.bookingclinic.user.entity.Account;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 import com.example.bookingclinic.user.repository.UDoctorReponsitory;
 import com.example.bookingclinic.user.repository.UPatientRepository;
-import com.example.bookingclinic.adminclinic.entity.AccountEntity;
-import com.example.bookingclinic.adminclinic.repository.ClinicAccountRepository;
-import com.example.bookingclinic.adminclinic.repository.ClinicDoctorRepository;
-import com.example.bookingclinic.adminclinic.repository.ClinicPatientsRepository;
+
 import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
 
 // import com.example.bookingclinic.user.entity.Account;
@@ -49,19 +46,20 @@ public class LoginService {
     }
 
     public ResponseEntity<?> login(UserDTO infors) {
-        Account user = accountRepository.findBySoDt(infors.getPhone());
+        Account user = accountRepository.findBySoDt(infors.getPhone()) .orElseThrow(() -> new RuntimeException("Không tìm thấy số điện thoại"));;
         if (user == null) {
             return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         }
-        if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
+        // if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
+        if(infors.getPass().equals(user.getMatKhau())){
             Object profileData = null;
-            if ("BN".equals(user.getVaiTro())) {
+            if ("BenhNhan".equals(user.getVaiTro())) {
                 profileData = patientRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
-            } else if ("BS".equals(user.getVaiTro())) {
+            } else if ("BacSi".equals(user.getVaiTro())) {
                 profileData = doctorRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
-            } else if ("PK".equals(user.getVaiTro())) {
+            } else if ("PhongKham".equals(user.getVaiTro())) {
                 profileData = clinicRepository.findByAccount_MaTaiKhoan(user.getMaTaiKhoan());
-
+            }else if("Admin".equals(user.getVaiTro())){
             }
             if (profileData == null) {
                 return ResponseEntity.status(404).body("Không tìm thấy thông tin chi tiết người dùng.");

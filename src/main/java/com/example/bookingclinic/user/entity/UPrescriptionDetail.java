@@ -11,12 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity 
 @Table(name = "chi_tiet_don_thuoc") 
 @Data
-public class PrescriptionDtail {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UPrescriptionDetail {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer maChiTiet;
@@ -24,7 +28,7 @@ public class PrescriptionDtail {
     @JoinColumn(name = "ma_so_don_thuoc")
     @JsonIgnore
     private Prescription prescription;
-    private String tenThuoc;
+    private String tenThuoc;    
     private String lieuDung;
     private Integer soLuong;
     private BigDecimal donGia;

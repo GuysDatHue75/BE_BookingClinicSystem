@@ -38,4 +38,5 @@ public class ScheduleResponseDTO {
 
     // 10. ds.khungGioKham.maKhungGio
     private String maKhungGio;
+
 }

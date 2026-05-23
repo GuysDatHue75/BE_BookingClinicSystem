@@ -10,8 +10,10 @@ import com.example.bookingclinic.user.entity.NotificationAccountId;
 
 @Repository
 public interface AccountNotificationsRepository extends JpaRepository<AccountNotification, NotificationAccountId> {
-    List<AccountNotification> findByAccount_MaTaiKhoan(String id);
+    List<AccountNotification> findByAccount_MaTaiKhoanOrderByNotification_ThoiGianGuiDesc(String id);
     AccountNotification findFirstByNotification_MaThongBao(String id);
     AccountNotification findByAccount_MaTaiKhoanAndNotification_MaThongBao(String idAccount, String idNoti);
-    int countByAccount_MaTaiKhoanAndIsRead(String idAccount, Integer isRead);
+    int countByAccount_MaTaiKhoanAndIsRead(String idAccount, Boolean isRead);
+    Boolean existsByNotification_MaThongBao(String id);
+
 }

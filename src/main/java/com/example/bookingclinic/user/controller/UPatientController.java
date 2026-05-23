@@ -28,7 +28,7 @@ public class UPatientController {
 
     @PutMapping("/patient/{id}") // chỉnh sửa thông tin cá nhân của bệnh nhân
     public Patient editPatient(@PathVariable String id, @RequestBody Patient newPatient){
-        return patientService.editPatient(newPatient, id);
+        return patientService.editPatient(id,newPatient);
     }
 
     @PutMapping("/patientQQ/{id}") // chỉnh sửa thông tin quê quán của bệnh nhân

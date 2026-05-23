@@ -2,11 +2,10 @@ package com.example.bookingclinic.user.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -16,7 +15,7 @@ import lombok.Data;
 public class FeedBack {
     @Id
     private String maDanhGia;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ma_benh_nhan")
     private Patient benhNhan;
     private String maBacSi;

@@ -19,6 +19,6 @@ public class PackageController {
 
     @GetMapping("/packages")
     public List<Package> getAllPackage(){
-        return packageService.getAllPackage();
+        return packageService.getAllPackages();
     }
 }

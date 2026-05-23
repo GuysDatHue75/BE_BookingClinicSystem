@@ -89,7 +89,7 @@ public class SecurityConfig {
                                                                 newAccount.setMaTaiKhoan("TK" + randomSuffix);
                                                                 newAccount.setHoVaTen(name);
                                                                 newAccount.setAnhDaiDien(picture);
-                                                                newAccount.setVaiTro("BN");
+                                                                newAccount.setVaiTro("BenhNhan");
                                                                 newAccount.setTrangThai(true);
                                                                 newAccount.setNgayTao(LocalDateTime.now());
                                                                 newAccount.setProvider(provider);
@@ -110,14 +110,16 @@ public class SecurityConfig {
                                                                 idAccount = savedAccount.getMaTaiKhoan();
 
                                                         } else {
-                                                                Patient patient = patientRepository
+                                                                        Patient patient = patientRepository
+
                                                                                 .findByTaiKhoan(account);
 
                                                                 idPatient = patient.getMaBenhNhan();
                                                                 idAccount = account.getMaTaiKhoan();
                                                         }
                                                         response.sendRedirect(frontendUrl +
-                                                                        "/login-success?role=BN&idPatient=" + idPatient
+                                                                        "/login-success?role=BenhNhan&idPatient=" + idPatient
+
                                                                         + "&idAccount=" + idAccount);
 
                                                 }));

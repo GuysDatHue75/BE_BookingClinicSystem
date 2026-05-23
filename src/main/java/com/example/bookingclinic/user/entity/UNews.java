@@ -2,7 +2,6 @@ package com.example.bookingclinic.user.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -15,7 +14,6 @@ import lombok.Data;
 @Table(name = "tin_tuc")
 public class UNews {
     @Id
-    @Column(length = 10)
     private String maTinTuc;
     private String tieuDe;
     private String moTaNgan;

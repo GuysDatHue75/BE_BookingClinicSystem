@@ -13,8 +13,7 @@ public class PackageService {
     public PackageService(PackageRepository packageRepository){
         this.packageRepository = packageRepository;
     }
-
-    public List<Package> getAllPackage(){
-        return packageRepository.findAll();
+    public List<Package> getAllPackages() {
+        return packageRepository.findByIsDeletedFalse();
     }
 }
