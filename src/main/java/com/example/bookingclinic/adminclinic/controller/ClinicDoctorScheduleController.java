@@ -4,7 +4,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bookingclinic.adminclinic.dto.response.DailyScheduleResponse;
-import com.example.bookingclinic.adminclinic.service.DoctorScheduleService;
+import com.example.bookingclinic.adminclinic.service.ClinicDoctorScheduleService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class ClinicDoctorScheduleController {
 
-    private final DoctorScheduleService doctorScheduleService;
+    private final ClinicDoctorScheduleService doctorScheduleService;
 
     @GetMapping("/{maPhongKham}/{maBacSi}/weeklySchedule")
     public ResponseEntity<List<DailyScheduleResponse>> getDoctorWeeklySchedule(

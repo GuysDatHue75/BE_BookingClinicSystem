@@ -3,25 +3,27 @@ package com.example.bookingclinic.auth.service;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.bookingclinic.auth.dto.UserDTO;
+
 import com.example.bookingclinic.adminclinic.entity.AccountEntity;
 import com.example.bookingclinic.adminclinic.repository.ClinicAccountRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicDoctorRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicPatientsRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
+
 // import com.example.bookingclinic.user.entity.Account;
 // import com.example.bookingclinic.user.repository.AccountRepository;
 // import com.example.bookingclinic.user.repository.ClinicRepository;
 // import com.example.bookingclinic.user.repository.DoctorReponsitory;
-// import com.example.bookingclinic.adminsystem.repository.AccountRepository;
-// import com.example.bookingclinic.adminsystem.repository.ClinicRepository;
-// import com.example.bookingclinic.adminsystem.repository.DoctorRepository;
-// import com.example.bookingclinic.user.repository.PatientRepository;
+
+// import com.example.bookingclinic.doctor.entity.Account;
+// import com.example.bookingclinic.doctor.repository.AccountRepository;
+// import com.example.bookingclinic.doctor.repository.DoctorRepository;
+// import com.example.bookingclinic.doctor.repository.PatientRepository;
 
 @Service
 public class LoginService {
@@ -52,7 +54,7 @@ public class LoginService {
         //     return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         // }
         // if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
-        String phoneToSearch = infors.getPhone().trim();
+        String phoneToSearch = infors.getPhone().trim(); // kiểm tra fix lỗi
         System.out.println(">>> ĐANG TÌM SĐT: [" + phoneToSearch + "]");
         Optional<AccountEntity> optionalUser = accountRepository.findBySoDt(phoneToSearch);
         

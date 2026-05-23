@@ -1,19 +1,16 @@
-package com.example.bookingclinic.adminclinic.dto.request;
+package com.example.bookingclinic.adminsystem.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class ClinicRequest {
+public class BrowseClinicDetailResponse {
+    private String maPhongKham;
     private String tenPhongKham;
     private LocalDate ngayThanhLap;
     private LocalDateTime ngayDangKy;
@@ -34,4 +31,8 @@ public class ClinicRequest {
 
     private String nguoiDaiDien;
     private String soDienThoaiNguoiDaiDien;
+    private String maGoi;
+    private String lyDoTuChoi;
+    private String anhPhongKham;
+    
 }
