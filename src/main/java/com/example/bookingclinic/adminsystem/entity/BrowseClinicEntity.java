@@ -1,10 +1,8 @@
-package com.example.bookingclinic.adminclinic.entity;
+package com.example.bookingclinic.adminsystem.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-import com.example.bookingclinic.adminsystem.entity.SubscriptionPackageEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,28 +10,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Table(name = "phong_kham")
+@Table(name = "duyet_phong_kham")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClinicEntity {
+public class BrowseClinicEntity {
     @Id
-    @Column(name = "ma_phong_kham", length = 255, nullable = false)
+    @Column(name = "ma_phong_kham", length = 225, nullable = false)
     private String maPhongKham;
 
     @Column(name = "ten_phong_kham", length = 255, nullable = false)
     private String tenPhongKham;
 
-    @Column(name = "ngay_thanh_lap", nullable = false)
+    @Column(name = "ngay_thanh_lap")
     private LocalDate ngayThanhLap;
 
-    @Column(name = "ngay_dang_ky", nullable = false)
+    @Column(name = "ngay_dang_ky")
     private LocalDateTime ngayDangKy;
 
     @Column(name = "so_luong_bac_si", nullable = false)
@@ -61,11 +58,10 @@ public class ClinicEntity {
     @Column(name = "gio_ket_thuc_lam_viec", nullable = false)
     private LocalTime gioKetThucLamViec;
 
-    @Lob
-    @Column(name = "giay_phep", nullable = false)
+    @Column(name = "giay_phep", length = 255, nullable = false)
     private String giayPhep;
 
-    @Column(name = "ngay_cap", nullable = false)
+    @Column(name = "ngay_cap")
     private LocalDate ngayCap;
 
     @Column(name = "noi_cap", length = 255, nullable = false)
@@ -86,22 +82,10 @@ public class ClinicEntity {
     @ManyToOne @JoinColumn(name = "ma_goi")
     private SubscriptionPackageEntity subpackage;
 
-    @Builder.Default
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    @Column(name = "ly_do_tu_choi", length= 255)
+    private String lyDoTuChoi;
 
-    @Column(name = "ngay_het_han")
-    private LocalDateTime ngayHetHan;
-
-    @OneToOne @JoinColumn(name = "ma_tai_khoan")
-    private AccountEntity account;
-
-     @Lob
+    @Lob
     @Column(name = "anh_phong_kham")
     private String anhPhongKham;
-
-    @Column(name = "so_sao", length = 255)
-    private String soSao;
-
-
 }

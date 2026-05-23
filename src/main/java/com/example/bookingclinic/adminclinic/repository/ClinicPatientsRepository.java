@@ -7,6 +7,6 @@ import com.example.bookingclinic.adminclinic.entity.PatientsEntity;
 
 public interface ClinicPatientsRepository extends JpaRepository<PatientsEntity, String>{
     PatientsEntity findByEmail(String email);
-    PatientsEntity findByAccount_MaTaiKhoan(String id);
+    PatientsEntity findByAccount_MaTaiKhoan(String maTaiKhoan);
     PatientsEntity findByAccount(AccountEntity account);
 }
