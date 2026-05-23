@@ -20,12 +20,12 @@ import org.springframework.stereotype.Service;
 import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorScheduleEntity;
-import com.example.bookingclinic.adminclinic.entity.ShiftsEntity;
 import com.example.bookingclinic.adminclinic.repository.ClinicDoctorScheduleRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicTimeSlotRepository;
 import com.example.bookingclinic.adminclinic.service.ClinicScheduleService;
 import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
 import com.example.bookingclinic.doctor.entity.Schedule.WorkShift;
+
 
 import lombok.RequiredArgsConstructor;
 

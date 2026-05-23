@@ -8,4 +8,5 @@ import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
 
 public interface ClinicTimeSlotRepository extends JpaRepository<TimeSlot, String>{
     List<TimeSlot> findByCaLamViec_MaCaLamViec(String maCaLamViec);
+
 }

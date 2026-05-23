@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -19,16 +20,17 @@ import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 import com.example.bookingclinic.user.repository.UPatientRepository;
 
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
         @Autowired
         private UPatientRepository patientRepository;
-
         @Autowired
         private UAccountRepository accountRepository;
         @Value("${app.frontend.url}")
         private String frontendUrl;
+
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
