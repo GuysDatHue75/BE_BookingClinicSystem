@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupedScheduleDTO {
-    private String thuTrongTuan; // Chứa chữ "Thứ 2", "Thứ 3"...
-    private List<ScheduleResponseDTO> danhSachLich; // Chứa danh sách các lịch của ngày đó
+    private String thuTrongTuan; // Chứa chữ "Thứ 2", "Thứ 3"..., "Chủ Nhật"
+    private List<SimpleDoctorScheduleDTO> danhSachLich; // Danh sách lịch tương ứng của ngày đó
 }
