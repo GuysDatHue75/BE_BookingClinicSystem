@@ -28,7 +28,7 @@ public class Account {
     @Column(name = "ho_va_ten")
     private String hoVaTen;
 
-    @Column(name = "anh_dai_dien", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "anh_dai_dien")
     private String anhDaiDien;
 
     @Column(name = "trang_thai")

@@ -48,6 +48,6 @@ public class UPrescriptionDetail {
     @Column(name = "don_vi", length = 50)
     private String donVi;
 
-    @Column(name = "ghi_chu", columnDefinition = "TEXT")
+    @Column(name = "ghi_chu")
     private String ghiChu;
 }

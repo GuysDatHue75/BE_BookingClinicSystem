@@ -25,7 +25,7 @@ public class UNews {
     @Column(name = "mo_ta_ngan", length = 500)
     private String moTaNgan;
 
-    @Column(name = "noi_dung", columnDefinition = "TEXT")
+    @Column(name = "noi_dung")
     private String noiDung;
 
     @Column(name = "ngay_tao")

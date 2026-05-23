@@ -22,10 +22,10 @@ public class Advise {
     @Column(name = "ma_phong_kham", nullable = false)
     private String maPhongKham;
 
-    @Column(name = "cau_hoi", columnDefinition = "TEXT")
+    @Column(name = "cau_hoi")
     private String cauHoi;
 
-    @Column(name = "cau_tra_loi", columnDefinition = "TEXT")
+    @Column(name = "cau_tra_loi")
     private String cauTraLoi;
 
     @Column(name = "thoi_gian_hoi")

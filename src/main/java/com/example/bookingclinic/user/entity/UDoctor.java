@@ -60,10 +60,10 @@ public class UDoctor {
     @Column(name = "hoat_dong", columnDefinition = "NVARCHAR(MAX)")
     private String hoatDong;
 
-    @Column(name = "mieu_ta_1", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "mieu_ta1", columnDefinition = "NVARCHAR(MAX)")
     private String mieuTa1;
 
-    @Column(name = "mieu_ta_2", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "mieu_ta2", columnDefinition = "NVARCHAR(MAX)")
     private String mieuTa2;
 
     @Column(name = "chuc_vu")
