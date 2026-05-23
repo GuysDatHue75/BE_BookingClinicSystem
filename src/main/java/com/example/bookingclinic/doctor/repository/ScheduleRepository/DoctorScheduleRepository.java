@@ -1,4 +1,4 @@
-package com.example.bookingclinic.doctor.repository;
+package com.example.bookingclinic.doctor.repository.ScheduleRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -6,14 +6,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.bookingclinic.doctor.entity.DoctorSchedule;
+import com.example.bookingclinic.doctor.entity.Schedule.DoctorSchedule;
 
 @Repository
 
 public interface DoctorScheduleRepository extends JpaRepository<DoctorSchedule, String> {
     // SELECT COUNT(*) > 0 FROM lich_lam_viec WHERE ma_bac_si = ? AND ngay_lam_viec
     // = ? AND khung_gio = ?
-    boolean existsByBacSi_MaBacSiAndNgayLamViecAndKhungGio(String maBacSi, LocalDate ngayLamViec, String khungGio);
+    boolean existsByBacSi_MaBacSiAndNgayLamViecAndKhungGioKham_MaKhungGio(String maBacSi, LocalDate ngayLamViec,
+            String khungGio);
 
     // Lấy danh sách lịch làm việc
     // SELECT *
@@ -22,7 +23,7 @@ public interface DoctorScheduleRepository extends JpaRepository<DoctorSchedule, 
     // ORERBY LLV.NGAYLAMVIEC DESC
 
     // Lấy lịch trong tuần của bác sĩ
-    List<DoctorSchedule> findByBacSi_MaBacSiAndNgayLamViecBetweenOrderByNgayLamViecAscKhungGioAsc(
+    List<DoctorSchedule> findByBacSi_MaBacSiAndNgayLamViecBetweenOrderByNgayLamViecAscKhungGioKham_KhungGioBatDauAsc(
             String maBacSi,
             LocalDate startDate,
             LocalDate endDate);
