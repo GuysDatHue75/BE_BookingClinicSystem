@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.bookingclinic.auth.dto.ForgotPasswordRequest;
 import com.example.bookingclinic.auth.dto.ResetPasswordRequest;
 import com.example.bookingclinic.auth.dto.VerifyOtpRequest;
-import com.example.bookingclinic.user.entity.Account;
+import com.example.bookingclinic.user.entity.UAccount;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 
 @Service
@@ -33,7 +33,7 @@ public class AuthService {
 
     public String sendOtpEmail(ForgotPasswordRequest request) {
 
-        Account tk = accountRepository
+        UAccount tk = accountRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
@@ -55,7 +55,7 @@ public class AuthService {
 
     public String sendOtpPhone(ForgotPasswordRequest request) {
 
-        Account tk = accountRepository
+        UAccount tk = accountRepository
                 .findBySoDt(request.getSoDt())
                 .orElseThrow(() -> new RuntimeException("Số điện thoại không tồn tại"));
 
@@ -77,7 +77,7 @@ public class AuthService {
 
     public String verifyOtp(VerifyOtpRequest request) {
 
-        Account tk = null;
+        UAccount tk = null;
 
         if (request.getEmail() != null) {
 
@@ -103,7 +103,7 @@ public class AuthService {
 
     public String resetPassword(ResetPasswordRequest request) {
 
-        Account tk = null;
+        UAccount tk = null;
 
         if (request.getEmail() != null) {
 

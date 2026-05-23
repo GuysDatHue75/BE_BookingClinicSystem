@@ -8,23 +8,32 @@ import java.time.LocalDateTime;
 @Table(name = "tu_van")
 @Data
 public class Advise {
+
     @Id
+    @Column(name = "ma_tu_van", length = 50)
     private String maTuVan;
 
+    @Column(name = "ma_benh_nhan", nullable = false)
     private String maBenhNhan;
 
+    @Column(name = "ma_bac_si", nullable = false)
     private String maBacSi;
 
+    @Column(name = "ma_phong_kham", nullable = false)
     private String maPhongKham;
 
+    @Column(name = "cau_hoi", columnDefinition = "TEXT")
     private String cauHoi;
 
+    @Column(name = "cau_tra_loi", columnDefinition = "TEXT")
     private String cauTraLoi;
 
+    @Column(name = "thoi_gian_hoi")
     private LocalDateTime thoiGianHoi;
 
+    @Column(name = "thoi_gian_tra_loi")
     private LocalDateTime thoiGianTraLoi;
 
-    @Column(name = "trang_thai", nullable = false)
-    private Boolean trangThai = false; // 0: Chưa trả lời, 1: Đã trả lời
+    @Column(name = "trang_thai")
+    private Boolean trangThai = false;
 }

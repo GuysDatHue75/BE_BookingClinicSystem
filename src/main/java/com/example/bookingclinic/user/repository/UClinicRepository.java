@@ -14,7 +14,7 @@ import com.example.bookingclinic.user.entity.UClinic;
 public interface UClinicRepository extends JpaRepository<UClinic, String> {
 List<UClinic> findByTenPhongKhamContainingIgnoreCaseAndTinhThanhPhoContainingIgnoreCase(String name,String tp);
     Page<UClinic> findByTinhThanhPhoContainingIgnoreCase(String tp, Pageable pageable);  
-    @Query("Select c from Clinic c " +
+    @Query("Select c from UClinic c " +
             "Join c.specicaltys s " +
             "where c.tinhThanhPho like %:tp% " +
             "and s.maChuyenKhoa = :maChuyenKhoa")

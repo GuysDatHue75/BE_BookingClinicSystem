@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.user.dto.UpdateImageDTO;
-import com.example.bookingclinic.user.entity.Account;
+import com.example.bookingclinic.user.entity.UAccount;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 
 import jakarta.transaction.Transactional;
@@ -16,8 +16,8 @@ public class AccountService {
     private UAccountRepository accountRepository;
 
     @Transactional
-    public Account updateImage(UpdateImageDTO infors) { // đăng tải 1 tấm ảnh
-        Account exitsAccount = accountRepository.findById(infors.getMaTaiKhoan()).orElse(null);
+    public UAccount updateImage(UpdateImageDTO infors) { // đăng tải 1 tấm ảnh
+        UAccount exitsAccount = accountRepository.findById(infors.getMaTaiKhoan()).orElse(null);
 
         if (infors.getAnhBase64() != null && !infors.getAnhBase64().isEmpty()) {
             if (!infors.getAnhBase64().startsWith("data:image/")) {
@@ -33,12 +33,12 @@ public class AccountService {
     }
 
     public String convertStatusLoginOne(String id) { // chuyển lần đầu đăng nhập từ 0 - 1
-        Account account = accountRepository.findById(id).orElse(null);
+        UAccount account = accountRepository.findById(id).orElse(null);
         if (account == null) {
             return "Không tìm thấy account";
         }
         account.setLanDauDangNhap(0);
-        Account res = accountRepository.save(account);
+        UAccount res = accountRepository.save(account);
         if (res != null) {
             return "Chuyển trạng thái thành công";
         } else {

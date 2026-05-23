@@ -22,7 +22,7 @@ public class FileImage {
     @ManyToOne
     @JoinColumn(name = "ma_ho_so")
     @JsonIgnore
-    private File file;
+    private MedicalFile file;
     private String duongDanAnh;
     private String tenAnh;
 }

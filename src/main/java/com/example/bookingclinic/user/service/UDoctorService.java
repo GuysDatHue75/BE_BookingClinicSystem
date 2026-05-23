@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.bookingclinic.user.entity.Doctor;
+import com.example.bookingclinic.user.entity.UDoctor;
 import com.example.bookingclinic.user.repository.UDoctorReponsitory;
 
 @Service
@@ -16,15 +16,15 @@ public class UDoctorService {
         this.doctorReponsitory = doctorReponsitory;
     }
 
-    public Doctor getDoctorDetail(String id) {
+    public UDoctor getDoctorDetail(String id) {
         return doctorReponsitory.findById(id).orElse(null);
     }
 
-    public Page<Doctor> getAllDoctorInCity(String tp, Pageable pageable) {
+    public Page<UDoctor> getAllDoctorInCity(String tp, Pageable pageable) {
         return doctorReponsitory.findByPhongKham_TinhThanhPhoContainingIgnoreCase(tp, pageable);
     }
 
-    public Page<Doctor> filterDoctorsByHocHamOrChuyenKhoa(String hh, String ck, String tp, Pageable pageable) {
+    public Page<UDoctor> filterDoctorsByHocHamOrChuyenKhoa(String hh, String ck, String tp, Pageable pageable) {
         if (hh == "") {
             return doctorReponsitory.findBySpecialty_MaChuyenKhoaAndPhongKham_TinhThanhPhoContainingIgnoreCase(ck, tp,
                     pageable);
@@ -36,12 +36,12 @@ public class UDoctorService {
                 ck, tp, pageable);
     }
 
-    public List<Doctor> searchDoctorWithAI(String specialty, String aiCity, String currentCity, int limit) {
+    public List<UDoctor> searchDoctorWithAI(String specialty, String aiCity, String currentCity, int limit) {
         String finalCity = (aiCity == null || aiCity.isEmpty() || aiCity.equalsIgnoreCase("all")
                 || aiCity.equalsIgnoreCase("value"))
                         ? currentCity
                         : aiCity;
-        List<Doctor> result = doctorReponsitory
+        List<UDoctor> result = doctorReponsitory
                 .findBySpecialty_TenChuyenKhoaContainingIgnoreCaseAndPhongKham_TinhThanhPhoContainingIgnoreCase(
                         specialty, finalCity);
 

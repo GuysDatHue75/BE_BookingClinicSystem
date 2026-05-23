@@ -47,15 +47,15 @@ public class Appointment {
 
     // --- KHÓA NGOẠI KẾT NỐI ---
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_lich_lam")
     private DoctorSchedule lichLamViec; // Trỏ tới lịch làm việc gốc của bác sĩ
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_benh_nhan", nullable = false)
     private Patient benhNhan; // Ai đặt lịch?
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_bac_si", nullable = false)
     private Doctor bacSi; // Đặt lịch với bác sĩ nào?
 

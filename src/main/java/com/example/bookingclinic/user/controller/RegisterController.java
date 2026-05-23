@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.example.bookingclinic.user.dto.RegisterRequest;
-import com.example.bookingclinic.user.entity.Account;
-import com.example.bookingclinic.user.entity.Patient;
+import com.example.bookingclinic.user.entity.UAccount;
+import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 import com.example.bookingclinic.user.repository.UPatientRepository;
 
@@ -48,7 +48,7 @@ public class RegisterController {
                 System.out.println("Phone đã trùng" + phone);
                 return ResponseEntity.badRequest().body("Số điện thoại đã được đăng ký.");
             }
-            Account newUser = new Account();
+            UAccount newUser = new UAccount();
             String id = "TK" + System.currentTimeMillis();
             newUser.setMaTaiKhoan(id);
             newUser.setSoDt(phone);
@@ -61,7 +61,7 @@ public class RegisterController {
             newUser.setMatKhau(passwordEncoder.encode(request.getPassword()));
             accountRepository.save(newUser);
 
-            Patient newPatient = new Patient();
+            UPatient newPatient = new UPatient();
             newPatient.setMaBenhNhan("BN" + System.currentTimeMillis());
             newPatient.setTaiKhoan(newUser);
             newPatient.setSoDienThoai(phone);

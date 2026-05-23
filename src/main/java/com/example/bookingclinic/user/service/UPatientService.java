@@ -3,8 +3,8 @@ package com.example.bookingclinic.user.service;
 import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.user.dto.UpdateAddressDTO;
-import com.example.bookingclinic.user.entity.Account;
-import com.example.bookingclinic.user.entity.Patient;
+import com.example.bookingclinic.user.entity.UAccount;
+import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.repository.UPatientRepository;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 
@@ -19,17 +19,17 @@ public class UPatientService {
         this.uAccountRepository = uAccountRepository;
     }
 
-    public Patient getPatientById(String id) {
+    public UPatient getPatientById(String id) {
         return patientRepository.findById(id).orElse(null);
     }
 
     public String updateQueQuan(String id, UpdateAddressDTO qq) {
-        Patient patient = patientRepository.findById(id).orElse(null);
+        UPatient patient = patientRepository.findById(id).orElse(null);
         if (patient == null) {
             return "Cập nhật thất bại";
         }
         patient.setQueQuan(qq.getQq());
-        Patient p = patientRepository.save(patient);
+        UPatient p = patientRepository.save(patient);
         if (p != null) {
             return "Cập nhật thành công";
         } else {
@@ -38,12 +38,12 @@ public class UPatientService {
     }
 
     @Transactional
-    public Patient editPatient(String id, Patient newPatient) {
+    public UPatient editPatient(String id, UPatient newPatient) {
 
         return patientRepository.findById(id).map(oldPatient -> {
 
             if (newPatient.getSoDienThoai() != null) {
-                Account acc = oldPatient.getTaiKhoan();
+                UAccount acc = oldPatient.getTaiKhoan();
                 
                 if (!newPatient.getSoDienThoai().equals(acc.getSoDt())) {
                     if (uAccountRepository.existsBySoDt(newPatient.getSoDienThoai())) {

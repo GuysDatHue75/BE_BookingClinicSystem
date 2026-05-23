@@ -21,10 +21,11 @@ import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorScheduleEntity;
 import com.example.bookingclinic.adminclinic.entity.ShiftsEntity;
-import com.example.bookingclinic.adminclinic.entity.TimeSlotsEntity;
 import com.example.bookingclinic.adminclinic.repository.ClinicDoctorScheduleRepository;
 import com.example.bookingclinic.adminclinic.repository.ClinicTimeSlotRepository;
 import com.example.bookingclinic.adminclinic.service.ClinicScheduleService;
+import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
+import com.example.bookingclinic.doctor.entity.Schedule.WorkShift;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,11 +56,11 @@ import lombok.RequiredArgsConstructor;
                     LocalDate date = dateEntity.getKey();
                     List<DoctorScheduleEntity> schedulesInDay = dateEntity.getValue();
                     List<WeeklyScheduleResponse.ShiftScheduleDto> shiftSchedulesList = schedulesInDay.stream()
-                        .collect(Collectors.groupingBy(schedule -> schedule.getTimeslot().getShift()))
+                        .collect(Collectors.groupingBy(schedule -> schedule.getTimeslot().getCaLamViec()))
                         .entrySet().stream()
                         .sorted(Comparator.comparing(shiftEntry -> shiftEntry.getKey().getGioBatDau()))
                         .map(shiftEntry -> {
-                            ShiftsEntity shift = shiftEntry.getKey();
+                            WorkShift shift = shiftEntry.getKey();
                             List<DoctorScheduleEntity> schedulesInShift = shiftEntry.getValue();
                             List<WeeklyScheduleResponse.DoctorBasicDto> doctorBasicDtos = schedulesInShift.stream()
                                 .map(DoctorScheduleEntity::getDoctor)
@@ -110,7 +111,7 @@ import lombok.RequiredArgsConstructor;
             validateUpdateDeadline(request.getNgayLamViec());
             
             List<DoctorScheduleEntity> currentSchedules = doctorScheduleRepository
-                .findByClinic_MaPhongKhamAndNgayLamViecAndTimeslot_Shift_MaCaLamViec(maPhongKham, request.getNgayLamViec(), request.getMaCaLamViec());
+                .findByClinic_MaPhongKhamAndNgayLamViecAndTimeslot_CaLamViec_MaCaLamViec(maPhongKham, request.getNgayLamViec(), request.getMaCaLamViec());
             
             Set<String> currentDoctorIds = currentSchedules.stream()
                 .map(schedule -> schedule.getDoctor().getMaBacSi())
@@ -141,7 +142,7 @@ import lombok.RequiredArgsConstructor;
             doctorsToAdd.removeAll(currentDoctorIds);
 
             if(!doctorsToAdd.isEmpty()){
-                List<TimeSlotsEntity> slots = timeSlotRepository.findByShift_MaCaLamViec(request.getMaCaLamViec());
+                List<TimeSlot> slots = timeSlotRepository.findByCaLamViec_MaCaLamViec(request.getMaCaLamViec());
                 ClinicEntity clinicRef = ClinicEntity.builder().maPhongKham(maPhongKham).build();
                 long currentTimeStamp = System.currentTimeMillis();
                 AtomicInteger counter = new AtomicInteger(1);
@@ -150,7 +151,7 @@ import lombok.RequiredArgsConstructor;
                 for(String maBacSi : doctorsToAdd){
                     DoctorEntity doctorRef = DoctorEntity.builder().maBacSi(maBacSi).build();
                     
-                    for(TimeSlotsEntity slot: slots) {
+                    for(TimeSlot slot: slots) {
                         newSchedulesToSave.add(DoctorScheduleEntity.builder()
                             .maLichLamViec("LV" +  currentTimeStamp + "_" + counter.getAndIncrement())
                             .clinic(clinicRef)

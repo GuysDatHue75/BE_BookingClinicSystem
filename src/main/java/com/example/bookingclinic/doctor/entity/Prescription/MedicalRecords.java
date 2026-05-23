@@ -35,7 +35,7 @@ public class MedicalRecords {
     @Column(name = "ngay_lap")
     private LocalDateTime ngayLap;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "ma_lich_kham")
     private Appointment appointment;
 }

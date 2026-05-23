@@ -22,19 +22,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Specialty {
+
     @Id
-    @Column(length = 10)
+    @Column(name = "ma_chuyen_khoa", length = 10)
     private String maChuyenKhoa;
+
+    @Column(name = "ten_chuyen_khoa")
     private String tenChuyenKhoa;
+
+    @Column(name = "mo_ta")
     private String moTa;
+
+    @Column(name = "trang_thai")
     private Boolean trangThai;
+
+    @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+
     @ManyToMany(mappedBy = "specicaltys")
     @JsonIgnore
     private List<UClinic> clinics;
 
-
     @Builder.Default
+    @Column(name = "is_deleted")
     private Boolean isDeleted = false;
-
 }

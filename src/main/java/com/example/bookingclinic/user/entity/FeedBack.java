@@ -2,6 +2,7 @@ package com.example.bookingclinic.user.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -14,10 +15,11 @@ import lombok.Data;
 @Table(name = "danh_gia")
 public class FeedBack {
     @Id
+    @Column(name = "ma_danh_gia")
     private String maDanhGia;
     @ManyToOne
     @JoinColumn(name = "ma_benh_nhan")
-    private Patient benhNhan;
+    private UPatient benhNhan;
     private String maBacSi;
     private String maPhongKham;
     private int soSaoPhongKham;

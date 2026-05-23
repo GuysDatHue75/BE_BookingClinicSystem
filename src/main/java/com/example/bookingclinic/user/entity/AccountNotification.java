@@ -31,7 +31,7 @@ public class AccountNotification {
     @ManyToOne
     @MapsId("maTaiKhoan")
     @JoinColumn(name = "ma_tai_khoan")
-    private Account account;
+    private UAccount account;
 
     @Column(name = "is_read")
     @Builder.Default

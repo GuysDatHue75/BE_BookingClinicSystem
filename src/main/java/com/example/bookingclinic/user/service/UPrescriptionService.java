@@ -10,10 +10,10 @@ import com.example.bookingclinic.user.dto.FileImageDTO;
 import com.example.bookingclinic.user.dto.MedicalHistoryDTO;
 import com.example.bookingclinic.user.dto.PrescriptionItemDTO;
 import com.example.bookingclinic.user.entity.Calendar;
-import com.example.bookingclinic.user.entity.Doctor;
-import com.example.bookingclinic.user.entity.File;
+import com.example.bookingclinic.user.entity.UDoctor;
+import com.example.bookingclinic.user.entity.MedicalFile;
 import com.example.bookingclinic.user.entity.FileImage;
-import com.example.bookingclinic.user.entity.Prescription;
+import com.example.bookingclinic.user.entity.UPrescription;
 import com.example.bookingclinic.user.entity.UPrescriptionDetail;
 import com.example.bookingclinic.user.repository.CalendarRepository;
 import com.example.bookingclinic.user.repository.FileRepository;
@@ -51,7 +51,7 @@ public class UPrescriptionService {
             dto.setDanhGia(calendar.getDanhGia());
 
             // bác sĩ
-            Doctor doctor = calendar.getBacSi();
+            UDoctor doctor = calendar.getBacSi();
 
             if (doctor != null) {
 
@@ -85,12 +85,12 @@ public class UPrescriptionService {
             }
 
             // hồ sơ
-            Optional<File> optionalFile = fileRepository.findByCalendar_MaLichKham(
+            Optional<MedicalFile> optionalFile = fileRepository.findByCalendar_MaLichKham(
                     calendar.getMaLichKham());
 
             if (optionalFile.isPresent()) {
 
-                File file = optionalFile.get();
+                MedicalFile file = optionalFile.get();
 
                 dto.setTrieuChung(file.getTrieuChung());
                 dto.setChuanDoan(file.getChuanDoan());
@@ -112,11 +112,11 @@ public class UPrescriptionService {
 
 
                 // đơn thuốc
-                Optional<Prescription> optionalPrescription = prescriptionRepository.findByFile_MaHoSo(
+                Optional<UPrescription> optionalPrescription = prescriptionRepository.findByMedicalFile_MaHoSo(
                         file.getMaHoSo());
 
                 if (optionalPrescription.isPresent()) {
-                    Prescription prescription = optionalPrescription.get();
+                    UPrescription prescription = optionalPrescription.get();
                     dto.setMaSoDonThuoc(prescription.getMaSoDonThuoc());
                     dto.setNgayLapDon(prescription.getNgayLap());
                     List<PrescriptionItemDTO> items = new ArrayList<>();

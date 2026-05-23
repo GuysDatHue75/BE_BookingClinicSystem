@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.bookingclinic.user.entity.Doctor;
+import com.example.bookingclinic.user.entity.UDoctor;
 import com.example.bookingclinic.user.entity.UClinic;
 import com.example.bookingclinic.user.repository.UClinicRepository;
 import com.example.bookingclinic.user.repository.UDoctorReponsitory;
@@ -34,7 +34,7 @@ public class ServiceController {
     }
 
     @GetMapping("/doctors") // Tìm kiếm bác sĩ theo tên & thành phố
-    public List<Doctor> searchDoctors(@RequestParam String name, @RequestParam String tp) {
+    public List<UDoctor> searchDoctors(@RequestParam String name, @RequestParam String tp) {
         if (name == null || name.isEmpty()) {
             return doctorReponsitory.findAll();
         }
@@ -44,20 +44,20 @@ public class ServiceController {
     }
 
     @GetMapping("/doctors/{id}") // xem chi tiết 1 bác sĩ
-    public Doctor doctorDetail(@PathVariable String id) {
+    public UDoctor doctorDetail(@PathVariable String id) {
         return doctorService.getDoctorDetail(id);
     }
 
     @GetMapping("/doctors/city/{tp}") // Xem tất cả bác sĩ của 1 tỉnh/ tp
-    public Page<Doctor> getAllDoctorInCity(@PathVariable String tp, @RequestParam(defaultValue = "0") int page,
+    public Page<UDoctor> getAllDoctorInCity(@PathVariable String tp, @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "0") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Doctor> result = doctorService.getAllDoctorInCity(tp, pageable);
+        Page<UDoctor> result = doctorService.getAllDoctorInCity(tp, pageable);
         return result;
     }
 
     @RequestMapping("clinic/doctors") // xem tất cả các bác sĩ của 1 phòng khám
-    public List<Doctor> ListDoctorsInClinic(@RequestParam String id) {
+    public List<UDoctor> ListDoctorsInClinic(@RequestParam String id) {
         return doctorReponsitory.findByPhongKham_MaPhongKham(id);
     }
 

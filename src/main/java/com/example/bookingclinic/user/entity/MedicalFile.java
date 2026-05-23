@@ -21,18 +21,35 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class File {
-    @Id 
-    @Column(length = 10)
+public class MedicalFile {
+
+    @Id
+    @Column(name = "ma_ho_so", length = 10)
     private String maHoSo;
-    @OneToOne 
+
+    @OneToOne
     @JoinColumn(name = "ma_lich_kham")
     private Calendar calendar;
+
+    @Column(name = "trieu_chung")
     private String trieuChung;
+
+    @Column(name = "chuan_doan")
     private String chuanDoan;
+
+    @Column(name = "ket_luan")
     private String ketLuan;
+
+    @Column(name = "ghi_chu")
     private String ghiChu;
+
+    @Column(name = "ngay_lap")
     private LocalDateTime ngayLap;
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<FileImage> ListImage;
+
+    @OneToMany(
+        mappedBy = "file",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.EAGER
+    )
+    private List<FileImage> listImage;
 }

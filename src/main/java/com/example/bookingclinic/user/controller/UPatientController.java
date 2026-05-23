@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bookingclinic.user.dto.UpdateAddressDTO;
-import com.example.bookingclinic.user.entity.Patient;
+import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.service.UPatientService;
 
 @RestController
@@ -22,12 +22,12 @@ public class UPatientController {
     }
 
     @GetMapping("/patient/{id}") // xem thôn tin cá nhân của bệnh nhân
-    public Patient patientDrtail(@PathVariable String id){
+    public UPatient patientDrtail(@PathVariable String id){
         return patientService.getPatientById(id);
     }
 
     @PutMapping("/patient/{id}") // chỉnh sửa thông tin cá nhân của bệnh nhân
-    public Patient editPatient(@PathVariable String id, @RequestBody Patient newPatient){
+    public UPatient editPatient(@PathVariable String id, @RequestBody UPatient newPatient){
         return patientService.editPatient(id,newPatient);
     }
 

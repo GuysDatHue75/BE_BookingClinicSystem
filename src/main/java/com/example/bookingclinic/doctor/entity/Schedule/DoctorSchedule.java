@@ -30,13 +30,13 @@ public class DoctorSchedule {
 
     // --- KHÓA NGOẠI ---
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_bac_si", nullable = false)
     @JsonIgnore
     private Doctor bacSi;
 
     // Đã thay thế String khungGio bằng Object TimeSlot
-    @ManyToOne(fetch = FetchType.LAZY)  
+    @ManyToOne  
     @JoinColumn(name = "ma_khung_gio")
     private TimeSlot khungGioKham;
 }

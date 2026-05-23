@@ -22,23 +22,27 @@ import lombok.NoArgsConstructor;
 @Table(name = "don_thuoc")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Prescription {
-    @Id 
-    @Column(length = 10)
+public class UPrescription {
+
+    @Id
+    @Column(name = "ma_so_don_thuoc", length = 10)
     private String maSoDonThuoc;
 
-    @OneToOne 
+    @OneToOne
     @JoinColumn(name = "ma_ho_so")
-    private File file;
-    
+    private MedicalFile medicalFile;
+
+    @Column(name = "ngay_lap")
     private LocalDateTime ngayLap;
+
     @ManyToOne
     @JoinColumn(name = "ma_bac_si")
-    private Doctor bacSi;
+    private UDoctor bacSi;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "ma_benh_nhan")
-    private Patient patient;
+    private UPatient patient;
+
     @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UPrescriptionDetail> danhSachThuoc;
 }

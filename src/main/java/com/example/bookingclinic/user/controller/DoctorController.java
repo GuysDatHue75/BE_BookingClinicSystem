@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.bookingclinic.user.entity.Doctor;
+import com.example.bookingclinic.user.entity.UDoctor;
 import com.example.bookingclinic.user.service.UDoctorService;
 
 import com.example.bookingclinic.user.repository.UDoctorReponsitory;
@@ -27,13 +27,13 @@ public class DoctorController {
     }
 
     @GetMapping("/doctorAll/doctors") //filter bác sĩ theo học hàm và chuyên khoa
-    public Page<Doctor> filterDoctorsByHocHamAndChuyenKhoa(@RequestParam String hh,@RequestParam String ck,@RequestParam String tp,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int size){
+    public Page<UDoctor> filterDoctorsByHocHamAndChuyenKhoa(@RequestParam String hh,@RequestParam String ck,@RequestParam String tp,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int size){
         Pageable pageable = PageRequest.of(page, size);
-        Page<Doctor> result = doctorService.filterDoctorsByHocHamOrChuyenKhoa(hh, ck, tp, pageable);
+        Page<UDoctor> result = doctorService.filterDoctorsByHocHamOrChuyenKhoa(hh, ck, tp, pageable);
         return result;
     }
     @GetMapping("/doctors-top-8") // lấy ra 8 bác sĩ có số sao lớn nhất
-    public List<Doctor> getDoctorTop8(@RequestParam String city){
+    public List<UDoctor> getDoctorTop8(@RequestParam String city){
         return uDoctorReponsitory.getDoctorsTop8(city);
     }
 }

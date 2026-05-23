@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.example.bookingclinic.user.entity.Account;
-import com.example.bookingclinic.user.entity.Patient;
+import com.example.bookingclinic.user.entity.UAccount;
+import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 import com.example.bookingclinic.user.repository.UPatientRepository;
 
@@ -78,14 +78,14 @@ public class SecurityConfig {
                                                         String idPatient = "";
                                                         int isOneLogin;
                                                         String idAccount = "";
-                                                        Account account = accountRepository.findByProviderAndProviderId(
+                                                        UAccount account = accountRepository.findByProviderAndProviderId(
                                                                         provider, providerId);
 
                                                         if (account == null) {
                                                                 String randomSuffix = UUID.randomUUID().toString()
                                                                                 .substring(0, 8);
 
-                                                                Account newAccount = new Account();
+                                                                UAccount newAccount = new UAccount();
                                                                 newAccount.setMaTaiKhoan("TK" + randomSuffix);
                                                                 newAccount.setHoVaTen(name);
                                                                 newAccount.setAnhDaiDien(picture);
@@ -97,10 +97,10 @@ public class SecurityConfig {
                                                                 newAccount.setMatKhau("OAUTH2_USER");
                                                                 newAccount.setLanDauDangNhap(1);
 
-                                                                Account savedAccount = accountRepository
+                                                                UAccount savedAccount = accountRepository
                                                                                 .save(newAccount);
 
-                                                                Patient newPatient = new Patient();
+                                                                UPatient newPatient = new UPatient();
                                                                 idPatient = "BN" + randomSuffix;
                                                                 newPatient.setMaBenhNhan(idPatient);
                                                                 newPatient.setEmail(email);
@@ -110,7 +110,7 @@ public class SecurityConfig {
                                                                 idAccount = savedAccount.getMaTaiKhoan();
 
                                                         } else {
-                                                                        Patient patient = patientRepository
+                                                                        UPatient patient = patientRepository
 
                                                                                 .findByTaiKhoan(account);
 

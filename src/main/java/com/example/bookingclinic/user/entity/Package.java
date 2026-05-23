@@ -15,21 +15,34 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "goi_dang_ky")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "goi_dang_ky")
 public class Package {
+
     @Id
     @Column(name = "ma_goi")
     private String maGoi;
+
+    @Column(name = "ten_goi")
     private String tenGoi;
-    private double gia;
-    private int thoiHanNgay;
+
+    @Column(name = "gia")
+    private Double gia;
+
+    @Column(name = "thoi_han_ngay")
+    private Integer thoiHanNgay;
+
+    @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
+
+    @Column(name = "trang_thai")
     private String trangThai;
+
     @Builder.Default
+    @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -39,5 +52,4 @@ public class Package {
         inverseJoinColumns = @JoinColumn(name = "ma_tinh_nang")
     )
     private List<Feature> tinhNangs;
-
 }

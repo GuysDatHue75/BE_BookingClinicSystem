@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bookingclinic.user.dto.UpdateImageDTO;
-import com.example.bookingclinic.user.entity.Account;
+import com.example.bookingclinic.user.entity.UAccount;
 import com.example.bookingclinic.user.service.AccountService;
 
 @RestController
@@ -18,8 +18,8 @@ public class AccountController {
     private AccountService accountService;
 
     @PutMapping("/update-image")// tải 1 ảnh lên
-    public Account updateProfile(@RequestBody UpdateImageDTO request) {
-        Account updatedImageAccount = accountService.updateImage(request);
+    public UAccount updateProfile(@RequestBody UpdateImageDTO request) {
+        UAccount updatedImageAccount = accountService.updateImage(request);
         return updatedImageAccount;
     }
 

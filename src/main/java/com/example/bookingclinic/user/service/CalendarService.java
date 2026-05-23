@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.bookingclinic.doctor.entity.DoctorSchedule;
+import com.example.bookingclinic.adminclinic.entity.DoctorScheduleEntity;
 import com.example.bookingclinic.doctor.repository.DDoctorScheduleRepository;
 import com.example.bookingclinic.user.dto.CalendarDelDTO;
 import com.example.bookingclinic.user.dto.CountBookingDTO;
@@ -40,7 +40,7 @@ public class CalendarService {
         }
         try {
             calendarRepository.deleteById(body.getIdCalendar());
-            DoctorSchedule doctorSchedule = doctorScheduleRepository.findById(body.getIdSchedule()).orElse(null);
+            DoctorScheduleEntity doctorSchedule = doctorScheduleRepository.findById(body.getIdSchedule()).orElse(null);
             doctorSchedule.setTrangThai("HoatDong");
             return "Hủy lịch khám thành công";
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class CalendarService {
 
     @Transactional
     public String bookingCalendar(Calendar calendar, String idChedule) {
-        DoctorSchedule doctorSchedule = doctorScheduleRepository
+        DoctorScheduleEntity doctorSchedule = doctorScheduleRepository
                 .findById(idChedule)
                 .orElse(null);
 

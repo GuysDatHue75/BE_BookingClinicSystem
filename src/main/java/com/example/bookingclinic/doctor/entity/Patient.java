@@ -82,7 +82,7 @@ public class Patient {
     // --- MỐI QUAN HỆ ---
 
     // Khóa ngoại kết nối 1-1 với Account
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "ma_tai_khoan")
     @JsonManagedReference
     @JsonIgnore

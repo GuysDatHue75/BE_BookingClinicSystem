@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.bookingclinic.auth.dto.UserDTO;
-import com.example.bookingclinic.user.entity.Account;
+import com.example.bookingclinic.user.entity.UAccount;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 import com.example.bookingclinic.user.repository.UDoctorReponsitory;
 import com.example.bookingclinic.user.repository.UPatientRepository;
@@ -46,12 +46,12 @@ public class LoginService {
     }
 
     public ResponseEntity<?> login(UserDTO infors) {
-        Account user = accountRepository.findBySoDt(infors.getPhone()) .orElseThrow(() -> new RuntimeException("Không tìm thấy số điện thoại"));;
+        UAccount user = accountRepository.findBySoDt(infors.getPhone()) .orElseThrow(() -> new RuntimeException("Không tìm thấy số điện thoại"));;
         if (user == null) {
             return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         }
-        // if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
-        if(infors.getPass().equals(user.getMatKhau())){
+        if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
+        // if(infors.getPass().equals(user.getMatKhau())){
             Object profileData = null;
             if ("BenhNhan".equals(user.getVaiTro())) {
                 profileData = patientRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
