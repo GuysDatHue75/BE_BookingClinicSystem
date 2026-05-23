@@ -70,11 +70,11 @@ public class Account {
     // Trong file Account.java
     // --- MỐI QUAN HỆ ---
 
-    @OneToOne(mappedBy = "taiKhoan", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "taiKhoan")
     @JsonBackReference
     private Patient patient;
 
-    @OneToOne(mappedBy = "taiKhoan", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "taiKhoan")
     @JsonBackReference(value = "account-doctor") // Đặt tên value để tránh trùng lặp với patient
     private Doctor doctor;
 }

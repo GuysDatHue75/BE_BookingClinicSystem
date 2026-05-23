@@ -2,7 +2,8 @@ package com.example.bookingclinic.doctor.service;
 
 import com.example.bookingclinic.doctor.repository.DoctorRepository;
 import com.example.bookingclinic.doctor.repository.ScheduleRepository.DoctorScheduleRepository;
-import com.example.bookingclinic.doctor.repository.ScheduleRepository.TimeSlotRepository;
+import com.example.bookingclinic.doctor.repository.ScheduleRepository.DTimeSlotRepository;
+
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import com.example.bookingclinic.doctor.dto.schedule.WeeklyScheduleRequestDTO;
 import com.example.bookingclinic.doctor.entity.Schedule.DoctorSchedule;
 import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
 
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +34,7 @@ public class DoctorScheduleService {
 
     private final DoctorRepository doctorRepository;
     private final DoctorScheduleRepository doctorScheduleRepository;
-    private final TimeSlotRepository timeSlotRepository; // Bổ sung Repository lấy Khung Giờ
+    private final DTimeSlotRepository timeSlotRepository; // Bổ sung Repository lấy Khung Giờ
 
     // BẮT BUỘC CÓ: Đảm bảo nếu lỗi ở giữa chừng thì sẽ HỦY BỎ toàn bộ
     @Transactional
@@ -46,11 +48,9 @@ public class DoctorScheduleService {
         // VÒNG FOR 1: Duyệt qua từng NGÀY
         for (DailyScheduleDTO ngayDTO : requestDTO.getDanhSachNgayLamViec()) {
             LocalDate ngayLamViec = ngayDTO.getNgayLamViec();
-
             if (ngayLamViec.isBefore(homNay)) {
                 throw new RuntimeException("Không thể lên lịch cho ngày trong quá khứ: " + ngayLamViec);
             }
-
             if (ngayLamViec.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 throw new RuntimeException("Hệ thống nghỉ Chủ Nhật. Không thể lên lịch ngày: " + ngayLamViec);
             }
@@ -84,7 +84,6 @@ public class DoctorScheduleService {
                 schedule.setTrangThai(ngayDTO.getTrangThai());
                 // schedule.setMaPhongKham(ngayDTO.getMaPhongKham()); // Đừng quên map thêm mã
                 // phòng khám nếu DTO có gửi lên
-
                 schedulesToSave.add(schedule);
             }
         }
@@ -92,51 +91,51 @@ public class DoctorScheduleService {
         if (schedulesToSave.isEmpty()) {
             throw new RuntimeException("Tất cả các khung giờ bạn chọn đều đã được tạo từ trước đó hoặc không hợp lệ!");
         }
-
         return doctorScheduleRepository.saveAll(schedulesToSave);
     }
 
     // 2. Lấy danh sách lịch khám việc
+    // 2. Lấy danh sách lịch khám việc
     public List<GroupedScheduleDTO> getGroupedWeeklySchedules(String maBacSi, LocalDate starDate, LocalDate endDate) {
 
-        // Lấy data (Hàm Repository này cũng cần sửa lại tên biến khungGioKham nhé)
+        // 1. Lấy data từ DB
         List<DoctorSchedule> rawList = doctorScheduleRepository
-                .findByBacSi_MaBacSiAndNgayLamViecBetweenOrderByNgayLamViecAscKhungGioKham_KhungGioBatDauAsc(
-                        maBacSi, starDate, endDate);
+                .findByBacSi_MaBacSiAndNgayLamViecBetweenOrderByNgayLamViecAscKhungGioKham_KhungGioBatDauAsc(maBacSi, starDate, endDate);
 
-        // Gom nhóm
+        // 2. Gom nhóm thành Map
         Map<String, List<SimpleDoctorScheduleDTO>> groupedMap = rawList.stream()
                 .map(schedule -> {
                     SimpleDoctorScheduleDTO dto = new SimpleDoctorScheduleDTO();
                     dto.setMaLichLam(schedule.getMaLichLam());
                     dto.setNgayLamViec(schedule.getNgayLamViec());
-
-                    // Lấy ra chuỗi giờ để Frontend hiển thị (VD: "07:00 - 07:30")
                     if (schedule.getKhungGioKham() != null) {
                         String gioHienThi = schedule.getKhungGioKham().getKhungGioBatDau() + " - " +
                                 schedule.getKhungGioKham().getKhungGioKetThuc();
                         dto.setKhungGio(gioHienThi);
                         // dto.setMaKhungGio(schedule.getKhungGioKham().getMaKhungGio());
                     }
-
                     dto.setLoaiHinhKham(schedule.getLoaiHinhKham());
                     dto.setTrangThai(schedule.getTrangThai());
                     return dto;
                 })
                 .collect(Collectors.groupingBy(
+                        // Chuyển đổi "2026-05-05" sang "Thứ 3"
                         (SimpleDoctorScheduleDTO dto) -> getDayOfWeekString(dto.getNgayLamViec()),
-                        () -> new LinkedHashMap<>(),
+                        () -> new LinkedHashMap<String, List<SimpleDoctorScheduleDTO>>(),
                         Collectors.toList()));
 
         List<GroupedScheduleDTO> resultList = new ArrayList<>();
+
+        // Duyệt qua từng nhóm trong Map (Entry gồm có Key là "Thứ 2", Value là danh
+        // sách lịch)
         for (Map.Entry<String, List<SimpleDoctorScheduleDTO>> entry : groupedMap.entrySet()) {
-            resultList.add(new GroupedScheduleDTO(entry.getKey(), entry.getValue()));
+            GroupedScheduleDTO groupedDTO = new GroupedScheduleDTO(entry.getKey(), entry.getValue());
+            resultList.add(groupedDTO);
         }
 
         return resultList;
     }
 
-    // 3. Cập nhật lịch làm việc
     @Transactional
     public List<DoctorSchedule> updateSchedules(List<UpdateSchedulesDTO> requestList) {
         List<DoctorSchedule> updateSchedules = new ArrayList<>();
@@ -149,7 +148,7 @@ public class DoctorScheduleService {
         return doctorScheduleRepository.saveAll(updateSchedules);
     }
 
-    // Hàm phụ
+
     private String getDayOfWeekString(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         if (dayOfWeek == DayOfWeek.SUNDAY) {

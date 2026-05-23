@@ -20,7 +20,7 @@ public class PrescriptionDetail {
     private Integer maChiTiet;
 
     // Khóa ngoại liên kết tới bảng don_thuoc
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_so_don_thuoc", nullable = false)
     @JsonIgnore // Tránh lỗi vòng lặp khi render JSON
     private Prescription prescription;

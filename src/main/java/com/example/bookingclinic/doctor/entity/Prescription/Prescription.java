@@ -26,17 +26,17 @@ public class Prescription {
     @Column(name = "ngay_lap")
     private LocalDateTime ngayLap;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_ho_so", nullable = false)
     private MedicalRecords medicalRecord;
 
     // --- BỔ SUNG 2 KHÓA NGOẠI TỪ SQL ---
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_bac_si")
     private Doctor doctor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_benh_nhan")
     private Patient patient;
 

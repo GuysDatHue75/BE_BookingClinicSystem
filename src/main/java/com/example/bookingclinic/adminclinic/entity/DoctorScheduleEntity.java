@@ -2,6 +2,8 @@ package com.example.bookingclinic.adminclinic.entity;
 
 import java.time.LocalDate;
 
+import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "DoctorScheduleEntity")
 @Table(name = "lich_lam_viec")
 @Getter
 @Setter
@@ -34,7 +36,7 @@ public class DoctorScheduleEntity {
     private ClinicEntity clinic;
 
     @ManyToOne @JoinColumn(name = "ma_khung_gio")
-    private TimeSlotsEntity timeslot;
+    private TimeSlot timeslot;
     
     @Column(name = "ngay_lam_viec", nullable = false)
     private LocalDate ngayLamViec;
@@ -44,7 +46,4 @@ public class DoctorScheduleEntity {
 
     @Column(name = "trang_thai", length = 20, nullable = false)
     private String trangThai;
-
-    @Version
-    private Long version;
 }

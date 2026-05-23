@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+.env
+
+src/main/resources/*firebase*.json
+
+# Application config
+src/main/resources/application.properties
+src/main/resources/*.json
+src/main/resources/booking-clinic-51caa-firebase-adminsdk-fbsvc-4c1c2c74d4.json

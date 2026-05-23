@@ -27,7 +27,7 @@ public class TimeSlot {
     private Boolean isDeleted;
 
     // Khóa ngoại trỏ về bảng ca_lam_viec
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ma_ca_lam_viec", nullable = false)
     private WorkShift caLamViec;
 }

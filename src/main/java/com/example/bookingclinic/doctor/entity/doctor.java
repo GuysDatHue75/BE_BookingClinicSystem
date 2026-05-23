@@ -91,10 +91,10 @@ public class Doctor {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    // --- MỐI QUAN HỆ ---
 
     @OneToOne
     @JoinColumn(name = "ma_tai_khoan")
     @JsonManagedReference
     private Account taiKhoan;
 }
+

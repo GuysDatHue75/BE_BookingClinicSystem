@@ -2,6 +2,9 @@ package com.example.bookingclinic.auth.service;
 
 import com.example.bookingclinic.auth.dto.CaptchaResponseDTO;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
@@ -14,9 +17,10 @@ import java.awt.image.BufferedImage;
 
 @Service
 public class CaptchaService {
-
-    private final DefaultKaptcha kaptcha;
-    private final Map<String, String> captchaStore = new ConcurrentHashMap<>();
+    @Autowired
+    @Qualifier("defaultKaptcha")
+    private DefaultKaptcha kaptcha;
+    private Map<String, String> captchaStore = new ConcurrentHashMap<>();
 
     public CaptchaService(DefaultKaptcha kaptcha) {
         this.kaptcha = kaptcha;
@@ -39,10 +43,8 @@ public class CaptchaService {
 
     public boolean validateCaptcha(String captchaId, String input) {
         String real = captchaStore.get(captchaId);
-
         if (real == null)
             return false;
-
         boolean result = real.equalsIgnoreCase(input);
         captchaStore.remove(captchaId);
 

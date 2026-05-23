@@ -1,7 +1,6 @@
 package com.example.bookingclinic.doctor.controller;
 
 import com.example.bookingclinic.doctor.dto.schedule.GroupedScheduleDTO;
-import com.example.bookingclinic.doctor.dto.schedule.ScheduleResponseDTO;
 import com.example.bookingclinic.doctor.dto.schedule.SimpleDoctorScheduleDTO;
 import com.example.bookingclinic.doctor.dto.schedule.UpdateSchedulesDTO;
 import com.example.bookingclinic.doctor.dto.schedule.WeeklyScheduleRequestDTO;
@@ -67,20 +66,6 @@ public class DoctorScheduleController {
         return ResponseEntity.ok(result);
     }
 
-    // // 3. update lịch làm việc
-    // // http://localhost:8080/api/v1/doctor-schedules/update
-    // @PutMapping("/update")
-    // public ResponseEntity<?> updateSchedules(@RequestBody
-    // List<UpdateSchedulesDTO> requesList) {
-    // try {
-    // List<DoctorSchedule> result =
-    // doctorScheduleService.updateSchedules(requesList);
-    // return ResponseEntity.ok(result);
-    // } catch (RuntimeException e) {
-    // return ResponseEntity.badRequest().body(e.getMessage());
-    // }
-    // }
-
     // 3. update lịch làm việc
     // http://localhost:8080/api/v1/doctor-schedules/update
     @PutMapping("/update")
@@ -108,7 +93,6 @@ public class DoctorScheduleController {
 
             // 3. Trả về mảng DTO sạch sẽ
             return ResponseEntity.ok(responseDTOs);
-
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

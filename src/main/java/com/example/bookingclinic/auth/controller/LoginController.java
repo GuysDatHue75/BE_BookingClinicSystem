@@ -1,5 +1,4 @@
 package com.example.bookingclinic.auth.controller;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,8 @@ public class LoginController {
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
+    @PostMapping("/login") // đăng nhập
 
-    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO infors){
         return loginService.login(infors);
     }
