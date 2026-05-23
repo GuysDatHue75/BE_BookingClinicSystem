@@ -24,5 +24,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Personal inbox sending messages back to React
         registry.enableSimpleBroker("/user");
         registry.setUserDestinationPrefix("/user");
+        registry.enableSimpleBroker("/topic");
     }
 }

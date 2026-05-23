@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.example.bookingclinic.adminsystem.dto.request.BrowseClinicSearchRequest;
-import com.example.bookingclinic.adminsystem.entity.ClinicEntity;
+import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 
 public interface ClinicRepositoryCustom {
 
