@@ -1,0 +1,35 @@
+package com.example.bookingclinic.adminclinic.dto.response;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class ClinicResponse {
+    private String maPhongKham;
+    private String tenPhongKham;
+    private LocalDateTime ngayThanhLap;
+    private LocalDateTime ngayDangKy;
+    private Integer soLuongBacSi;
+    private String loaiHinhPhongKham;
+    private String diaChi;
+    private String tinhThanhPho;
+    private String soDienThoai;
+    private String email;
+    private LocalTime gioBatDauLamViec;
+    private LocalTime gioKetThucLamViec;
+    private String trangThai;
+    private String moTa;
+    
+    private String giayPhep;
+    private LocalDateTime ngayCap;
+    private String noiCap;
+
+    private String nguoiDaiDien;
+    private String soDienThoaiNguoiDaiDien;
+    private String maGoi;
+    private LocalDateTime ngayHetHan;
+}
