@@ -17,8 +17,9 @@ import com.example.bookingclinic.adminclinic.entity.AccountEntity;
 import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
 import com.example.bookingclinic.adminclinic.entity.SpecialtyEntity;
-import com.example.bookingclinic.adminclinic.repository.AccountRepository;
-import com.example.bookingclinic.adminclinic.repository.DoctorRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicAccountRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicDoctorRepository;
+
 import com.example.bookingclinic.adminclinic.repository.projection.DoctorProjection;
 import com.example.bookingclinic.adminclinic.service.DoctorService;
 
@@ -30,8 +31,8 @@ import org.slf4j.Logger;
 public class DoctorServiceImpl implements DoctorService {
     private static final Logger log = LoggerFactory.getLogger(DoctorServiceImpl.class);
 
-    private final DoctorRepository doctorRepository;
-    private final AccountRepository accountRepository;
+    private final ClinicDoctorRepository doctorRepository;
+    private final ClinicAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
 

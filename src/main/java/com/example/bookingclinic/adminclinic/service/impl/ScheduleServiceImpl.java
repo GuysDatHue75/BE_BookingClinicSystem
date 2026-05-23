@@ -22,8 +22,8 @@ import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorScheduleEntity;
 import com.example.bookingclinic.adminclinic.entity.ShiftsEntity;
 import com.example.bookingclinic.adminclinic.entity.TimeSlotsEntity;
-    import com.example.bookingclinic.adminclinic.repository.DoctorScheduleRepository;
-    import com.example.bookingclinic.adminclinic.repository.TimeSlotRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicDoctorScheduleRepository;
+import com.example.bookingclinic.adminclinic.repository.ClinicTimeSlotRepository;
     import com.example.bookingclinic.adminclinic.service.ScheduleService;
 
     import lombok.RequiredArgsConstructor;
@@ -32,8 +32,8 @@ import com.example.bookingclinic.adminclinic.entity.TimeSlotsEntity;
     @RequiredArgsConstructor
     @Transactional
     public class ScheduleServiceImpl implements ScheduleService{
-        private final DoctorScheduleRepository doctorScheduleRepository;
-        private final TimeSlotRepository timeSlotRepository;
+        private final ClinicDoctorScheduleRepository doctorScheduleRepository;
+        private final ClinicTimeSlotRepository timeSlotRepository;
 
         @Override
         @Transactional(readOnly = true)
