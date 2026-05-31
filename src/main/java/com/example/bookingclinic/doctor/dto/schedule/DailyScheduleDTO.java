@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public class DailyScheduleDTO {
     private LocalDate ngayLamViec;
-
     private List<String> khungGio;
-    private String loaiHinhKham; 
+    private String loaiHinhKham;
+    private String maPhongKham;
     private String trangThai; // VD: "Trống", "Đã khóa"
 
 }

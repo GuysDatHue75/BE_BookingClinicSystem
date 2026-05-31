@@ -42,6 +42,7 @@ public class DoctorScheduleController {
                 }
                 dto.setLoaiHinhKham(schedule.getLoaiHinhKham());
                 dto.setTrangThai(schedule.getTrangThai());
+                dto.setMaPhongKham(schedule.getMaPhongKham());
                 return dto;
             }).collect(Collectors.toList());
 

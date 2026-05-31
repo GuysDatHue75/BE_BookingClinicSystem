@@ -4,7 +4,6 @@ import com.example.bookingclinic.doctor.repository.DoctorRepository;
 import com.example.bookingclinic.doctor.repository.ScheduleRepository.DoctorScheduleRepository;
 import com.example.bookingclinic.doctor.repository.ScheduleRepository.DTimeSlotRepository;
 
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import com.example.bookingclinic.doctor.dto.schedule.UpdateSchedulesDTO;
 import com.example.bookingclinic.doctor.dto.schedule.WeeklyScheduleRequestDTO;
 import com.example.bookingclinic.doctor.entity.Schedule.DoctorSchedule;
 import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
-
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +80,7 @@ public class DoctorScheduleService {
                 schedule.setKhungGioKham(timeSlot); // Set thẳng Object TimeSlot vào đây
                 schedule.setLoaiHinhKham(ngayDTO.getLoaiHinhKham());
                 schedule.setTrangThai(ngayDTO.getTrangThai());
-                // schedule.setMaPhongKham(ngayDTO.getMaPhongKham()); // Đừng quên map thêm mã
+                schedule.setMaPhongKham(ngayDTO.getMaPhongKham());
                 // phòng khám nếu DTO có gửi lên
                 schedulesToSave.add(schedule);
             }
@@ -95,12 +93,12 @@ public class DoctorScheduleService {
     }
 
     // 2. Lấy danh sách lịch khám việc
-    // 2. Lấy danh sách lịch khám việc
     public List<GroupedScheduleDTO> getGroupedWeeklySchedules(String maBacSi, LocalDate starDate, LocalDate endDate) {
 
         // 1. Lấy data từ DB
         List<DoctorSchedule> rawList = doctorScheduleRepository
-                .findByBacSi_MaBacSiAndNgayLamViecBetweenOrderByNgayLamViecAscKhungGioKham_KhungGioBatDauAsc(maBacSi, starDate, endDate);
+                .findByBacSi_MaBacSiAndNgayLamViecBetweenOrderByNgayLamViecAscKhungGioKham_KhungGioBatDauAsc(maBacSi,
+                        starDate, endDate);
 
         // 2. Gom nhóm thành Map
         Map<String, List<SimpleDoctorScheduleDTO>> groupedMap = rawList.stream()
@@ -147,7 +145,6 @@ public class DoctorScheduleService {
         }
         return doctorScheduleRepository.saveAll(updateSchedules);
     }
-
 
     private String getDayOfWeekString(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
