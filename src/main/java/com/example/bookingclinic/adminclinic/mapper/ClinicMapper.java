@@ -12,6 +12,6 @@ public interface ClinicMapper {
     @Mapping(source = "subpackage.tenGoi", target = "tenGoi")
     @Mapping(source = "account.maTaiKhoan", target = "maTaiKhoan")
     @Mapping(source = "account.soDt", target = "soDt")
-    @Mapping(source = "account.matKhau", target = "matKhau")
+    // @Mapping(source = "account.matKhau", target = "matKhau")
     ClinicResponse toDetailResponseFromClinic(ClinicEntity entity);
 }

@@ -6,10 +6,8 @@ import lombok.Data;
 
 @Data
 public class DoctorSearchRequest {
-    private String tenBacSi;
+    private String keyword;
     private String maChuyenKhoa;
-    private String soDienThoai;
-    private String diaChi;
     private String kinhNghiem;
     private String chucVu;
     private String hocHam;

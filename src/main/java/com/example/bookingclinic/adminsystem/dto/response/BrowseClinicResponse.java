@@ -18,4 +18,5 @@ public class BrowseClinicResponse {
     private String trangThai;
     private LocalDateTime ngayDangKy;
     private String maGoi;
+    private String email;
 }

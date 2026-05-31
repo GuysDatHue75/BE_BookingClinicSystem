@@ -3,6 +3,8 @@ package com.example.bookingclinic.adminsystem.dto.request;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +23,6 @@ public class NotificationRequest {
     private String doiTuongNhan;
     List<String> danhSachNguoiNhan;
     private LocalDateTime thoiGianGui;
-    private String files;
-    private String anhThongBao;
+    private MultipartFile files;
+    private MultipartFile anhThongBao;
 }
