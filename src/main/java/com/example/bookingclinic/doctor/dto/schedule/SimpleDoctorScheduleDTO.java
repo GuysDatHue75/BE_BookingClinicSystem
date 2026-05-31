@@ -10,5 +10,6 @@ public class SimpleDoctorScheduleDTO {
     private LocalDate ngayLamViec;
     private String khungGio;
     private String loaiHinhKham;
+    private String maPhongKham;
     private String trangThai;
 }
