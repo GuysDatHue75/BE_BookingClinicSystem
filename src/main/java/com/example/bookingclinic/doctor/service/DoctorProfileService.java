@@ -20,48 +20,7 @@ public class DoctorProfileService {
         // 1. LẤY HỒ SƠ BÁC SĨ (GET)
         public Doctor getDoctorProfile(String maBacSi) {
                 return doctorRepository.findByMaBacSi(maBacSi);
-                // DoctorProfileDTO dto = new DoctorProfileDTO();
-
-                // // --- 1. THÔNG TIN TỪ BẢNG TÀI KHOẢN ---
-                // if (doctor.getTaiKhoan() != null) {
-                // Account account = doctor.getTaiKhoan();
-                // dto.setMaTaiKhoan(account.getMaTaiKhoan());
-                // dto.setHoVaTen(account.getHoVaTen());
-                // }
-
-                // // --- 2. THÔNG TIN TỪ BẢNG BÁC SĨ ---
-                // dto.setMaBacSi(doctor.getMaBacSi());
-
-                // // Các trường cá nhân
-                // dto.setEmail(doctor.getEmail());
-                // dto.setSoDienThoai(doctor.getSoDienThoai());
-                // dto.setAnhDaiDien(doctor.getAvt());
-                // dto.setNgaySinh(doctor.getNgaySinh());
-                // dto.setGioiTinh(doctor.getGioiTinh());
-                // dto.setDiaChi(doctor.getDiaChi());
-                // dto.setCccd(doctor.getCccd());
-
-                // dto.setMaChuyenKhoa(doctor.getMaChuyenKhoa());
-
-                // dto.setBangCap(doctor.getBangCap());
-                // dto.setKinhNghiem(doctor.getKinhNghiem());
-                // dto.setHoatDong(doctor.getHoatDong());
-
-                // dto.setMieuTa1(doctor.getMieuTa1());
-                // dto.setMieuTa2(doctor.getMieuTa2());
-
-                // dto.setChucVu(doctor.getChucVu());
-                // dto.setHocHam(doctor.getHocHam());
-
-                // // Giấy phép & phòng khám
-                // dto.setSoGiayPhep(doctor.getSoGiayPhep());
-                // dto.setNgayCap(doctor.getNgayCap());
-                // dto.setNoiCap(doctor.getNoiCap());
-
-                // // [BỔ SUNG]: Trả thêm mã phòng khám về cho FE hiển thị nếu cần
-                // // dto.setMaPhongKham(doctor.getMaPhongKham());
-
-                // return dto;
+                
         }
 
         // 2. CẬP NHẬT HỒ SƠ BÁC SĨ (PUT)
@@ -104,11 +63,11 @@ public class DoctorProfileService {
                 // Lưu xuống DB
                 Doctor savedDoctor = doctorRepository.save(doctor);
 
-                // ✅ ĐÃ FIX: Trả về đúng kiểu DoctorProfileDTO sau khi map dữ liệu mới nhất
+                // Trả về đúng kiểu DoctorProfileDTO sau khi map dữ liệu mới nhất
                 return mapToDTO(savedDoctor);
         }
 
-        // 🔄 Hàm phụ trợ giúp chuyển đổi Entity sang DTO nhanh gọn
+        // Hàm phụ trợ giúp chuyển đổi Entity sang DTO nhanh gọn
         private DoctorProfileDTO mapToDTO(Doctor doctor) {
                 DoctorProfileDTO dto = new DoctorProfileDTO();
 

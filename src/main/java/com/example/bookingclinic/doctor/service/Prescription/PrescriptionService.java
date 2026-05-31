@@ -1,5 +1,6 @@
-package com.example.bookingclinic.doctor.service;
+package com.example.bookingclinic.doctor.service.Prescription;
 
+import com.example.bookingclinic.doctor.repository.PrescriptionRepository.FilePrescriptionRepository;
 import com.example.bookingclinic.doctor.repository.PrescriptionRepository.MedicalRecordsRepository;
 import com.example.bookingclinic.doctor.repository.PrescriptionRepository.PrescriptionRepository;
 import com.example.bookingclinic.doctor.repository.ScheduleRepository.AppointmentRepository;
@@ -15,10 +16,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.doctor.dto.Prescription.MedicalRecordsDTO;
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDTO;
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDetailDTO;
+import com.example.bookingclinic.doctor.entity.Prescription.FilePrescription;
 import com.example.bookingclinic.doctor.entity.Prescription.MedicalRecords;
 import com.example.bookingclinic.doctor.entity.Prescription.Prescription;
 import com.example.bookingclinic.doctor.entity.Prescription.PrescriptionDetail;
@@ -33,10 +36,12 @@ public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final AppointmentRepository appointmentRepository; // 1. Inject thêm Repository này vào nhé sếp
+    private final FilePrescriptionRepository filePrescriptionRepository;
+    private final FileStorageService fileStorageService;
 
     // Tạo đơn thuốc và hoàn tất cuộc khám
     @Transactional
-    public String CreatePrescription(MedicalRecordsDTO dto) {
+    public String CreatePrescription(MedicalRecordsDTO dto, List<MultipartFile> files) {
 
         // B0. Tìm lịch khám gốc và cập nhật trạng thái sang "DaKham"
         Appointment lichKham = appointmentRepository.findById(dto.getMaLichKham())
@@ -83,7 +88,26 @@ public class PrescriptionService {
         // Gán danh sách con vào cha
         prescription.setChiTietDonThuoc(details);
         prescriptionRepository.save(prescription); // Lưu đơn thuốc và chi tiết đơn thuốc
+        // B3. LƯU FILE ẢNH (XQUANG, SIÊU ÂM...)
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    // Gọi FileStorageService để lưu file vào ổ cứng (thư mục uploads)
+                    String fileUrl = fileStorageService.storeFile(file);
 
+                    // Lưu thông tin file vào CSDL
+                    FilePrescription taiLieu = FilePrescription.builder()
+                            .maHoSo(medicalRecords.getMaHoSo())
+                            .tenTaiLieu(file.getOriginalFilename())
+                            .fileUrl(fileUrl)
+                            .loaiFile(file.getContentType())
+                            .phanLoai("CAN_LAM_SANG")
+                            .build();
+
+                    filePrescriptionRepository.save(taiLieu);
+                }
+            }
+        }
         return "Tạo đơn thuốc thành công và đã hoàn tất cuộc khám. Mã đơn: " + maDonThuoc;
     }
 
@@ -164,7 +188,20 @@ public class PrescriptionService {
             prescriptionDTO.setChuanDoan(prescription.getMedicalRecord().getChuanDoan());
             prescriptionDTO.setKetLuan(prescription.getMedicalRecord().getKetLuan());
             prescriptionDTO.setGhiChuHoSo(prescription.getMedicalRecord().getGhiChu());
-
+            String maHoSo = prescription.getMedicalRecord().getMaHoSo();
+            if (maHoSo != null) {
+                // Lấy các file có chung maHoSo từ Database
+                List<FilePrescription> files = filePrescriptionRepository.findByMaHoSo(maHoSo);
+                if (files != null && !files.isEmpty()) {
+                    // Trích xuất lấy cái fileUrl (hoặc tenTaiLieu tùy bạn) nhét vào 1 list
+                    List<String> fileUrls = files.stream()
+                            .map(file -> "http://localhost:8080/uploads/" + file.getFileUrl()) // Có thể đổi thành
+                                                                                               // getTenTaiLieu() nếu
+                                                                                               // muốn
+                            .collect(Collectors.toList());
+                    prescriptionDTO.setDanhSachFileAnh(fileUrls); // Gán vào DTO
+                }
+            }
             if (prescription.getMedicalRecord().getAppointment() != null) {
                 var lichKham = prescription.getMedicalRecord().getAppointment();
 

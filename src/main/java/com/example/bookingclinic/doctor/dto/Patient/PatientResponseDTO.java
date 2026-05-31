@@ -1,6 +1,11 @@
 package com.example.bookingclinic.doctor.dto.Patient;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDTO;
+import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDetailDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,4 +33,21 @@ public class PatientResponseDTO {
     private LocalDate ngaySinh;
     private Boolean gioiTinh;
     private String diaChi;
+
+    private List<MedicalHistoryDTO> lichSuKham;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MedicalHistoryDTO {
+    private String maHoSo;
+    private String maSoDonThuoc;
+    private LocalDateTime ngayLap;
+    private String trieuChung;
+    private String chuanDoan;
+    private String ketLuan;
+    private String ghiChu;
+    private String tenBacSi;
+    private List<PrescriptionDetailDTO> danhSachThuoc; // Sẽ rỗng nếu chỉ khámlâm sàng không kê thuốc
+    }
 }

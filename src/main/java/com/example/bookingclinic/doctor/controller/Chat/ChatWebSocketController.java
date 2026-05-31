@@ -18,31 +18,18 @@ public class ChatWebSocketController {
     // React will send messages to this endpoint: /app/chat
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessageDTO chatMessageDTO) {
-        // 1. Save message to DB
+        // 1. Lưu DB
         ChatMessageDTO savedMessage = chatRoomService.saveMessage(chatMessageDTO);
 
-        // 2. Push message to the recipient via WebSocket
-        // Recipient's listening channel: /user/{recipient_id}/queue/messages
-        messagingTemplate.convertAndSendToUser(
-                chatMessageDTO.getMaNguoiNhan(),
-                "/queue/messages",
+        // 2. Bắn cho người nhận qua kênh /topic/messages/{ID_Người_Nhận}
+        messagingTemplate.convertAndSend(
+                "/topic/messages/" + chatMessageDTO.getMaNguoiNhan(),
                 savedMessage);
-    }
 
-    // Endpoint để thông báo "Đã xem" qua WebSocket: /app/chat/read
-    @MessageMapping("/chat/read")
-    public void notifyReadStatus(@Payload ChatMessageDTO readReceipt) {
-        // 1. Cập nhật DB trước
-        chatRoomService.markAsRead(readReceipt.getMaNguoiGui(), readReceipt.getMaNguoiNhan());
-
-        // 2. Gửi thông báo đến NGƯỜI GỬI (để họ thấy chữ "Đã xem")
-        // Kênh nghe của người gửi: /user/{IdNguoi2}/queue/read-receipt
-        messagingTemplate.convertAndSendToUser(
-                readReceipt.getMaNguoiNhan(), // Gửi tới người nhắn cho mình
-                "/queue/read-receipt",
-                readReceipt.getMaPhongChat()); // Trả về mã phòng đã xem
-        System.out.println("==> Đã xác nhận xem tại phòng: " + readReceipt.getMaPhongChat());
-
+        // 3. Bắn ngược lại cho người gửi qua kênh /topic/messages/{ID_Người_Gửi}
+        messagingTemplate.convertAndSend(
+                "/topic/messages/" + chatMessageDTO.getMaNguoiGui(),
+                savedMessage);
     }
 
 }

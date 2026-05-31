@@ -1,0 +1,114 @@
+BEGIN:VCALENDAR
+METHOD:REQUEST
+PRODID:Microsoft Exchange Server 2010
+VERSION:2.0
+BEGIN:VTIMEZONE
+TZID:SE Asia Standard Time
+BEGIN:STANDARD
+DTSTART:16010101T000000
+TZOFFSETFROM:+0700
+TZOFFSETTO:+0700
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:16010101T000000
+TZOFFSETFROM:+0700
+TZOFFSETTO:+0700
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+ORGANIZER;CN=Thai Le Anh:mailto:ThaiLA1@fpt.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=npan2604@g
+ mail.com:mailto:npan2604@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=Nhat11832@
+ gmail.com:mailto:Nhat11832@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=Duchoang25
+ 1204@gmail.com:mailto:Duchoang251204@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=hoaine3456
+ @gmail.com:mailto:hoaine3456@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=22t1020351
+ @husc.edu.vn:mailto:22t1020351@husc.edu.vn
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=huymonkey6
+ 403@gmail.com:mailto:huymonkey6403@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=khaquydev0
+ 4@gmail.com:mailto:khaquydev04@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=ngodinhngo
+ canh@gmail.com:mailto:ngodinhngocanh@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=quachtinhi
+ t04@gmail.com:mailto:quachtinhit04@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=tranthanhh
+ oang20142003@gmail.com:mailto:tranthanhhoang20142003@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=truongtai0
+ 72424@gmail.com:mailto:truongtai072424@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=truongloc2
+ 40724@gmail.com:mailto:truongloc240724@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=hodangleng
+ an2909@gmail.com:mailto:hodanglengan2909@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=arl74vn@gm
+ ail.com:mailto:arl74vn@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=lenguyenvi
+ etquang1510@gmail.com:mailto:lenguyenvietquang1510@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=lethingoct
+ ram59@gmail.com:mailto:lethingoctram59@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=thanhphong
+ 1906200491@gmail.com:mailto:thanhphong1906200491@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=nhuy15z91z
+ @gmail.com:mailto:nhuy15z91z@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=ltngdiep.0
+ 8@gmail.com:mailto:ltngdiep.08@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=Nhanngo.29
+ 0301@gmail.com:mailto:Nhanngo.290301@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=Ngoc Cao T
+ hi Minh:mailto:ngocctm@fpt.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=Linh Ho Du
+ c:mailto:LinhHD5@fpt.com
+DESCRIPTION;LANGUAGE=en-US:Dear lớp\,\n\nChị gửi MR lịch học onli
+ ne tăng cường ôn thi Topik\,\n\nThời gian:\n\nDate\nThứ\nTime\nGV
+ \n2-Mar-26\nThứ 2\n09:00~11:00\nNgocCTM\n9-Mar-26\nThứ 2\n09:00~11:00\
+ nNgocCTM\n16-Mar-26\nThứ 2\n14:00~16:00\nHuyenNK26\n23-Mar-26\nThứ 2\n
+ 14:00~16:00\nHuyenNK26\n3-Apr-26\nThứ 6\n9:00~11:00\nTienNTH\n10-Apr-26\
+ nThứ 6\n9:00~11:00\nTienNTH\n\nMn join đúng giờ và hoàn thành bà
+ i tập trước buổi học nhé.\n\nThank you\, and Warmest Regards\,\n
+ THAI LE ANH (Ms.)\nTraining Officer\nFPT Software Academy | Central Learni
+ ng Solutions\n\n\n********************************************************
+ ***************\nIMPORTANT NOTICE\nThis email may contain confidential and
+ / or privileged information that belongs to FPT Software. If you are not t
+ he intended recipient or might have received this email by accident from a
+ n unreliable source\, please notify the sender from FPT Software immediate
+ ly and destroy this email. Keep in mind that any unauthorized copying\, ed
+ iting\, disclosure or distribution of the material in this email is strict
+ ly forbidden\, plus against the law by which FPT Software and involved cli
+ ents abide.\n
+RRULE:FREQ=WEEKLY;UNTIL=20260309T020000Z;INTERVAL=1;BYDAY=MO;WKST=SU
+UID:040000008200E00074C5B7101A82E00800000000401838324AA6DC01000000000000000
+ 010000000A5D0D14A87682D468813BA94B73E5190
+SUMMARY;LANGUAGE=en-US:[HUSC KS 02] MR học tăng cường 
+DTSTART;TZID=SE Asia Standard Time:20260302T090000
+DTEND;TZID=SE Asia Standard Time:20260302T110000
+CLASS:PUBLIC
+PRIORITY:5
+DTSTAMP:20260225T043051Z
+TRANSP:OPAQUE
+STATUS:CONFIRMED
+SEQUENCE:0
+LOCATION;LANGUAGE=en-US:Online via teams
+X-MICROSOFT-CDO-APPT-SEQUENCE:0
+X-MICROSOFT-CDO-OWNERAPPTID:-1302779926
+X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+X-MICROSOFT-CDO-IMPORTANCE:1
+X-MICROSOFT-CDO-INSTTYPE:1
+X-MICROSOFT-DONOTFORWARDMEETING:FALSE
+X-MICROSOFT-DISALLOW-COUNTER:FALSE
+X-MICROSOFT-REQUESTEDATTENDANCEMODE:DEFAULT
+X-MICROSOFT-ISRESPONSEREQUESTED:TRUE
+X-MICROSOFT-LOCATIONS:[ { "DisplayName" : "Online via teams"\, "LocationAnn
+ otation" : ""\, "LocationSource" : 0\, "Unresolved" : true\, "LocationUri"
+  : "" } ]
+BEGIN:VALARM
+DESCRIPTION:REMINDER
+TRIGGER;RELATED=START:-PT15M
+ACTION:DISPLAY
+END:VALARM
+END:VEVENT
+END:VCALENDAR

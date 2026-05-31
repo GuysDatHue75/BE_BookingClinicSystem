@@ -20,7 +20,6 @@ import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.repository.UAccountRepository;
 import com.example.bookingclinic.user.repository.UPatientRepository;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -31,19 +30,24 @@ public class SecurityConfig {
         @Value("${app.frontend.url}")
         private String frontendUrl;
 
-
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
                 http
-                                .cors()
-                                .and()
-                                .csrf().disable()
+                                // 1. Cấu hình CORS bằng Lambda mới
+                                .cors(cors -> cors.configure(http))
+                                // 2. Tắt CSRF
+                                .csrf(csrf -> csrf.disable())
+                                // 3. Cấu hình phân quyền Request
                                 .authorizeHttpRequests(auth -> auth
-                                        .requestMatchers("/api/stringee/**").permitAll()
+                                                .requestMatchers("/api/stringee/**").permitAll()
                                                 .requestMatchers("/api/v1/**").permitAll()
-                                                // DÒNG THÊM MỚI: Mở khóa cho toàn bộ API bắt đầu bằng /api/stringee/
+                                                // MỞ KHÓA WEBSOCKET: Thêm dòng này để cho phép socket đi qua
+                                                .requestMatchers("/ws-chat/**").permitAll()
                                                 .anyRequest().authenticated())
+                                // 4. ĐÂY LÀ ĐOẠN FIX LỖI: Tắt X-Frame-Options theo cú pháp Lambda mới
+                                .headers(headers -> headers
+                                                .frameOptions(frame -> frame.disable()))
+                                // 5. Cấu hình OAuth2 Login (Giữ nguyên logic xử lý của nhóm sếp)
                                 .oauth2Login(oauth2 -> oauth2
                                                 .successHandler((request, response, authentication) -> {
                                                         OAuth2User oauth2User = (OAuth2User) authentication
@@ -78,10 +82,10 @@ public class SecurityConfig {
                                                         }
 
                                                         String idPatient = "";
-                                                        int isOneLogin;
                                                         String idAccount = "";
-                                                        UAccount account = accountRepository.findByProviderAndProviderId(
-                                                                        provider, providerId);
+                                                        UAccount account = accountRepository
+                                                                        .findByProviderAndProviderId(provider,
+                                                                                        providerId);
 
                                                         if (account == null) {
                                                                 String randomSuffix = UUID.randomUUID().toString()
@@ -108,23 +112,19 @@ public class SecurityConfig {
                                                                 newPatient.setEmail(email);
                                                                 newPatient.setTaiKhoan(savedAccount);
                                                                 patientRepository.save(newPatient);
-                                                                isOneLogin = 1;
                                                                 idAccount = savedAccount.getMaTaiKhoan();
 
                                                         } else {
-                                                                        UPatient patient = patientRepository
-
+                                                                UPatient patient = patientRepository
                                                                                 .findByTaiKhoan(account);
-
                                                                 idPatient = patient.getMaBenhNhan();
                                                                 idAccount = account.getMaTaiKhoan();
                                                         }
-                                                        response.sendRedirect(frontendUrl +
-                                                                        "/login-success?role=BenhNhan&idPatient=" + idPatient
-
-                                                                        + "&idAccount=" + idAccount);
-
+                                                        response.sendRedirect(frontendUrl
+                                                                        + "/login-success?role=BenhNhan&idPatient="
+                                                                        + idPatient + "&idAccount=" + idAccount);
                                                 }));
+
                 return http.build();
         }
 }

@@ -21,26 +21,47 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 
         // 2 Lấy danh sách bệnh nhân
         @Query("SELECT new com.example.bookingclinic.doctor.dto.Patient.PatientmanagerDTO(" +
+
                         "p.maBenhNhan, " +
+
                         "acc.hoVaTen, " + // 2. String
+
                         "p.ngaySinh, " + // 3. LocalDate
+
                         "p.gioiTinh, " + // 4. Boolean
+
                         "acc.soDt, " + // 5. String (hoặc acc.soDienThoai tùy biến sếp đặt ở Account)
+
                         "p.diaChi, " + // 6. String
+
                         "acc.anhDaiDien) " + // 7. String (avatar thường nằm ở tài khoản hoặc patient)
+
                         "FROM Appointment a " +
+
                         "JOIN a.benhNhan p " +
+
                         "JOIN p.taiKhoan acc " +
+
                         "JOIN a.lichLamViec ds " +
+
                         "WHERE ds.bacSi.maBacSi = :maBacSi " +
+
                         "AND ds.maPhongKham = :maPhongKham " +
+
                         "AND a.trangThai = :trangThai " +
+
                         "AND (:keyword IS NULL OR acc.hoVaTen LIKE %:keyword% OR p.maBenhNhan LIKE %:keyword%)")
+
         Page<PatientmanagerDTO> findDetailedPatients(
+
                         @Param("maBacSi") String maBacSi,
+
                         @Param("maPhongKham") String maPhongKham,
+
                         @Param("keyword") String keyword,
+
                         @Param("trangThai") String trangThai,
+
                         Pageable pageable);
         // // 3. Thêm bệnh nhân
         // boolean existsByBenhNhan_MaBenhNhan(String maBenhNhan);

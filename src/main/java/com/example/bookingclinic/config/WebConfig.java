@@ -12,11 +12,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Ánh xạ URL /uploads/** vào thư mục vật lý ngoài đời thực
-        Path uploadDir = Paths.get("uploads");
-        String uploadPath = uploadDir.toFile().getAbsolutePath();
+        // Tự động lấy đường dẫn tuyệt đối và chuyển thành định dạng URI chuẩn
+        // (file:///...)
+        String uploadPath = Paths.get("uploads").toAbsolutePath().toUri().toString();
 
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/" + uploadPath + "/");
+                .addResourceLocations(uploadPath); // Không cần cộng chuỗi "file:/" thủ công nữa
     }
 }

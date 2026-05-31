@@ -1,5 +1,9 @@
 package com.example.bookingclinic.doctor.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -7,9 +11,13 @@ import org.springframework.stereotype.Service;
 
 import com.example.bookingclinic.doctor.dto.Patient.PatientRequestDTO;
 import com.example.bookingclinic.doctor.dto.Patient.PatientResponseDTO;
+import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDetailDTO;
 import com.example.bookingclinic.doctor.dto.Patient.PatientmanagerDTO;
 import com.example.bookingclinic.doctor.entity.Patient;
+import com.example.bookingclinic.doctor.entity.Prescription.MedicalRecords;
+import com.example.bookingclinic.doctor.entity.Prescription.Prescription;
 import com.example.bookingclinic.doctor.repository.PatientRepository;
+import com.example.bookingclinic.doctor.repository.PrescriptionRepository.PrescriptionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,15 +26,13 @@ import lombok.RequiredArgsConstructor;
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final PrescriptionRepository prescriptionRepository;
 
-    // 1. Lấy danh sách bệnh nhân
+    // 1. Lấy danh sách bệnh nhân duy nhất (Đã Khám)
     public Page<PatientmanagerDTO> getDetailedPatients(String maBacSi, String maPhongKham, String keyword, int page,
             int size) {
         Pageable pageable = PageRequest.of(page, size);
-
         String searchKeyword = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
-
-        // Khai báo trạng thái cần lọc
         String trangThai = "DaKham";
 
         return patientRepository.findDetailedPatients(
@@ -44,7 +50,7 @@ public class PatientService {
 
         PatientResponseDTO response = new PatientResponseDTO();
 
-        // MAPPING từ Patient (bảng benh_nhan nay đã có đủ các trường này)
+        // MAPPING từ Patient
         response.setMaBenhNhan(patient.getMaBenhNhan());
         response.setNgaySinh(patient.getNgaySinh());
         response.setGioiTinh(patient.getGioiTinh());
@@ -63,6 +69,60 @@ public class PatientService {
         if (patient.getTaiKhoan() != null) {
             response.setHoVaTen(patient.getTaiKhoan().getHoVaTen());
         }
+        List<Prescription> prescriptions = prescriptionRepository.findHistoryByMaBenhNhan(maBenhNhan);
+
+        if (prescriptions != null && !prescriptions.isEmpty()) {
+            List<PatientResponseDTO.MedicalHistoryDTO> historyList = prescriptions.stream().map(p -> {
+                PatientResponseDTO.MedicalHistoryDTO history = new PatientResponseDTO.MedicalHistoryDTO();
+
+                // Thông tin đơn thuốc
+                history.setMaSoDonThuoc(p.getMaSoDonThuoc());
+                history.setNgayLap(p.getNgayLap());
+
+                // Thông tin hồ sơ khám & Bác sĩ
+                if (p.getMedicalRecord() != null) {
+                    history.setMaHoSo(p.getMedicalRecord().getMaHoSo());
+                    history.setTrieuChung(p.getMedicalRecord().getTrieuChung());
+                    history.setChuanDoan(p.getMedicalRecord().getChuanDoan());
+                    history.setKetLuan(p.getMedicalRecord().getKetLuan());
+                    history.setGhiChu(p.getMedicalRecord().getGhiChu());
+
+                    // Móc tên bác sĩ qua bảng Appointment -> Doctor -> Account
+                    if (p.getMedicalRecord().getAppointment() != null
+                            && p.getMedicalRecord().getAppointment().getBacSi() != null
+                            && p.getMedicalRecord().getAppointment().getBacSi().getTaiKhoan() != null) {
+                        history.setTenBacSi(
+                                p.getMedicalRecord().getAppointment().getBacSi().getTaiKhoan().getHoVaTen());
+                    }
+                }
+
+                // Thông tin chi tiết các loại thuốc trong đơn
+                // Thông tin chi tiết các loại thuốc trong đơn
+                if (p.getChiTietDonThuoc() != null && !p.getChiTietDonThuoc().isEmpty()) {
+                    List<PrescriptionDetailDTO> listThuoc = p.getChiTietDonThuoc().stream()
+                            .map(chiTiet -> {
+                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO(); // ✅ ĐÃ SỬA CHỖ NÀY
+                                thuoc.setTenThuoc(chiTiet.getTenThuoc());
+                                thuoc.setLieuDung(chiTiet.getLieuDung());
+                                thuoc.setSoLuong(chiTiet.getSoLuong());
+                                thuoc.setDonVi(chiTiet.getDonVi());
+                                thuoc.setGhiChu(chiTiet.getGhiChu());
+                                return thuoc;
+                            }).collect(Collectors.toList());
+                    history.setDanhSachThuoc(listThuoc);
+                } else {
+                    history.setDanhSachThuoc(new ArrayList<>());
+                }
+
+                return history;
+            }).collect(Collectors.toList());
+
+            response.setLichSuKham(historyList);
+        } else {
+            // Nếu bệnh nhân chưa khám lần nào, trả về mảng rỗng (để Frontend không bị lỗi
+            // null map)
+            response.setLichSuKham(new ArrayList<>());
+        }
 
         return response;
     }
@@ -72,8 +132,6 @@ public class PatientService {
         Patient patient = patientRepository.findById(dto.getMaBenhNhan())
                 .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy hồ sơ bệnh nhân!"));
 
-        // Cập nhật thông tin (Nếu DTO có truyền thêm SĐT, Email, Địa chỉ... sếp có thể
-        // bổ sung set vào đây)
         patient.setChieuCao(dto.getChieuCao());
         patient.setCanNang(dto.getCanNang());
         patient.setTienSuBenhAn(dto.getTienSuBenhAn());
@@ -83,7 +141,7 @@ public class PatientService {
         // Lưu vào Database
         Patient savedPatient = patientRepository.save(patient);
 
-        // MAPPING trả về (Logic tương tự như hàm Detail)
+        // MAPPING trả về
         PatientResponseDTO response = new PatientResponseDTO();
         response.setMaBenhNhan(savedPatient.getMaBenhNhan());
         response.setNgaySinh(savedPatient.getNgaySinh());
@@ -100,6 +158,7 @@ public class PatientService {
         response.setTinhTrangSucKhoe(savedPatient.getTinhTrangSucKhoe());
 
         if (savedPatient.getTaiKhoan() != null) {
+            System.out.println("check tai khoan: " + savedPatient.getTaiKhoan().getHoVaTen());
             response.setHoVaTen(savedPatient.getTaiKhoan().getHoVaTen());
         }
 

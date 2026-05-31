@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor // Tự động tạo Constructor
 public class ChatRestController {
 
-    // Bỏ @Autowired, thêm từ khóa "final"
     private final ChatRoomService chatRoomService;
     private final SimpMessageSendingOperations messagingTemplate;
 
@@ -46,7 +45,7 @@ public class ChatRestController {
         return ResponseEntity.ok(chatRoomService.getInboxList(userId, page, size));
     }
 
-    // API: POST /api/v1/chat/read/TK01/TK02
+    // API: POST /api/v1/chat/read/TK01/TK02 (Dành cho HTTP REST thường)
     @PostMapping("/read/{IdNguoi1}/{IdNguoi2}")
     public ResponseEntity<?> markAsRead(
             @PathVariable String IdNguoi1,
@@ -55,7 +54,7 @@ public class ChatRestController {
         return ResponseEntity.ok().build();
     }
 
-    // Người dùng gửi tín hiệu đang gõ đến: /app/chat/typing
+    // 1. Người dùng gửi tín hiệu đang gõ đến: /app/chat/typing
     @MessageMapping("/chat/typing")
     public void handleTyping(@Payload Map<String, Object> payload) {
         String maNguoiGui = (String) payload.get("maNguoiGui");
@@ -66,7 +65,21 @@ public class ChatRestController {
         response.put("maNguoiGui", maNguoiGui);
         response.put("isTyping", isTyping);
 
-        // Bắn thẳng tín hiệu đến người nhận
-        messagingTemplate.convertAndSendToUser(maNguoiNhan, "/queue/typing", response);
+        // ĐÃ SỬA: Đổi sang convertAndSend (bắn thẳng) và nối chuỗi cho khớp với React
+        messagingTemplate.convertAndSend("/topic/typing/" + maNguoiNhan, response);
+    }
+
+    // 2. BỔ SUNG THÊM: Hứng tín hiệu "Đã xem" từ React: /app/chat/read
+    @MessageMapping("/chat/read")
+    public void handleRead(@Payload Map<String, Object> payload) {
+        // Lấy thông tin từ payload (khớp với cục JSON React gửi lên)
+        String maNguoiGui = (String) payload.get("maNguoiGui"); // Người gửi tin nhắn ban đầu
+        String maNguoiNhan = (String) payload.get("maNguoiNhan"); // Người vừa bấm vào đọc
+
+        // Lưu xuống DB đánh dấu là đã đọc (tái sử dụng hàm của service)
+        chatRoomService.markAsRead(maNguoiGui, maNguoiNhan);
+
+        // Bắn tín hiệu "đã đọc" qua WebSocket trả về cho người gửi ban đầu
+        messagingTemplate.convertAndSend("/topic/read/" + maNguoiGui, payload);
     }
 }

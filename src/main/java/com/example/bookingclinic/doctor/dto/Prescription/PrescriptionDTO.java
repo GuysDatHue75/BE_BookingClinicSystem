@@ -26,7 +26,7 @@ public class PrescriptionDTO {
     private String tenBenhNhan;
     private String sdtBenhNhan;
 
-
     // Danh sách thuốc
     private List<PrescriptionDetailDTO> danhSachThuoc;
+    private List<String> danhSachFileAnh;
 }
