@@ -8,7 +8,9 @@ import com.example.bookingclinic.adminclinic.repository.projection.NotificationP
 
 public interface NotificationRepositoryCustom {
 
-    Page<NotificationResponse> search(NotificationSearchRequest request);
+    Page<NotificationResponse> searchSentNotifications(NotificationSearchRequest request);
+
+Page<NotificationResponse> searchReceivedNotifications(NotificationSearchRequest request);
 
     NotificationProjection getDetail(String maThongBao);
     

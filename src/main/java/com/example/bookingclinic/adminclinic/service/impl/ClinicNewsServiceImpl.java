@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.adminclinic.dto.request.NewsRequest;
 import com.example.bookingclinic.adminclinic.dto.request.NewsSearchRequest;
@@ -14,6 +15,7 @@ import com.example.bookingclinic.adminclinic.entity.NewsEntity;
 import com.example.bookingclinic.adminclinic.repository.NewsRepository;
 import com.example.bookingclinic.adminclinic.repository.projection.NewsDetailProjection;
 import com.example.bookingclinic.adminclinic.service.ClinicNewsService;
+import com.example.bookingclinic.adminclinic.service.FileUploadService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class ClinicNewsServiceImpl implements ClinicNewsService{
     private final NewsRepository newsRepository;
+    private final FileUploadService fileUploadService;
 
     @Override
     public Page<NewsResponse> search(NewsSearchRequest request, String maPhongKham){
@@ -33,9 +36,13 @@ public class ClinicNewsServiceImpl implements ClinicNewsService{
     }
     
     @Override
-    public String createNews(NewsRequest request, String maPhongKham) {
+    public String createNews(String maPhongKham, NewsRequest request, MultipartFile anh) {
         String maTinTuc = generateMaTinTuc();
         ClinicEntity clinicProxy = ClinicEntity.builder().maPhongKham(maPhongKham).build();
+        String anhUrl = null;
+        if (anh != null && !anh.isEmpty()) {
+            anhUrl = fileUploadService.uploadFile(anh, "tintuc_anh"); // Lưu vào thư mục uploads/tintuc_anh
+        }
         NewsEntity news = NewsEntity.builder()
             .maTinTuc(maTinTuc)
             .tieuDe(request.getTieuDe())
@@ -43,7 +50,7 @@ public class ClinicNewsServiceImpl implements ClinicNewsService{
             .noiDung(request.getNoiDung())
             .ngayTao(LocalDateTime.now())
             .ngayCapNhat(LocalDateTime.now())
-            .anh(request.getAnh())
+            .anh(anhUrl)
             .clinic(clinicProxy)
             .isDeleted(false)
             .build();
@@ -52,14 +59,17 @@ public class ClinicNewsServiceImpl implements ClinicNewsService{
     }
 
     @Override
-    public String updateNews(NewsRequest request, String maTinTuc, String maPhongKham) {
+    public String updateNews(String maTinTuc, String maPhongKham, NewsRequest request, MultipartFile anh) {
         NewsEntity s = newsRepository.findByMaTinTucAndClinic_MaPhongKhamAndIsDeletedFalse(maTinTuc, maPhongKham)
                 .orElseThrow(() -> new RuntimeException("Tin tức không tồn tại"));
         s.setTieuDe(request.getTieuDe());
         s.setMoTaNgan(request.getMoTaNgan());
         s.setNoiDung(request.getNoiDung());
         s.setNgayCapNhat(LocalDateTime.now());
-        s.setAnh(request.getAnh());
+        if (anh != null && !anh.isEmpty()) {
+            String anhUrl = fileUploadService.uploadFile(anh, "tintuc_anh");
+            s.setAnh(anhUrl);
+        }
         newsRepository.save(s);
         return maTinTuc;
     }

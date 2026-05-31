@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.adminclinic.dto.request.NotificationRequest;
 import com.example.bookingclinic.adminclinic.dto.request.NotificationSearchRequest;
@@ -24,6 +25,7 @@ import com.example.bookingclinic.adminclinic.repository.NotificationAccountRepos
 import com.example.bookingclinic.adminclinic.repository.NotificationRepository;
 import com.example.bookingclinic.adminclinic.repository.projection.NotificationProjection;
 import com.example.bookingclinic.adminclinic.service.ClinicNotificationService;
+import com.example.bookingclinic.adminclinic.service.FileUploadService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +38,7 @@ public class ClinicNotificationServiceImpl implements ClinicNotificationService{
     private final ClinicAccountRepository accountRepository;
     private final ClinicRepository clinicRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final FileUploadService fileUploadService;
 
     private void saveNotificationAccount(NotificationEntity notification, String userId){
         AccountEntity account = accountRepository.findById(userId)
@@ -53,54 +56,136 @@ public class ClinicNotificationServiceImpl implements ClinicNotificationService{
     }
 
     @Override
-    public Page<NotificationResponse> search(NotificationSearchRequest request) {
-        return notificationRepository.search(request);
+    public Page<NotificationResponse> searchSentNotifications(NotificationSearchRequest request) {
+        return notificationRepository.searchSentNotifications(request);
+    }
+
+    @Override
+    public Page<NotificationResponse> searchReceivedNotifications(NotificationSearchRequest request) {
+        return notificationRepository.searchReceivedNotifications(request);
     }
 
     private String generateMaThongBao(){
-        String maxMaThongBao = notificationRepository.findMaxMaThongBao();
-            if(maxMaThongBao == null || maxMaThongBao.isEmpty()) {
-                return "TB01";
-            }
-                try {
-                    return String.format("TB%02d", Integer.parseInt(maxMaThongBao.substring(2)) + 1);
-                } catch(NumberFormatException e) {
-                    return "TB01";
-                }
+        // String maxMaThongBao = notificationRepository.findMaxMaThongBao();
+        //     if(maxMaThongBao == null || maxMaThongBao.isEmpty()) {
+        //         return "TB01";
+        //     }
+        //         try {
+        //             return String.format("TB%02d", Integer.parseInt(maxMaThongBao.substring(2)) + 1);
+        //         } catch(NumberFormatException e) {
+        //             return "TB01";
+        //         }
+        return "TB" + System.currentTimeMillis();
         }
 
+    // private Set<String> getValidUserIdsForClinic(NotificationRequest request){
+    //     ClinicEntity clinic = clinicRepository.findByAccount_MaTaiKhoan(request.getMaTaiKhoan());
+    //     if (clinic == null) {
+    //         throw new RuntimeException("Không tìm thấy tài khoản phòng khám");
+    //     }
+
+    //     String maPhongKham = clinic.getMaPhongKham();
+
+    //     Set<String> validUserIds = new HashSet<>();
+
+    //     if (request.getDanhSachNguoiNhan() != null && !request.getDanhSachNguoiNhan().isEmpty()) {
+    //         for (String userId : request.getDanhSachNguoiNhan()) {
+    //             if (!accountRepository.checkUserBelongsToClinic(userId, maPhongKham)) {
+    //                 throw new RuntimeException("Lỗi bảo mật: " + userId + " không thuộc phòng khám này!");
+    //             }
+    //             validUserIds.add(userId);
+    //         }
+    //     } else if (request.getDoiTuongNhan() != null && !request.getDoiTuongNhan().isEmpty()) {
+    //         String vaiTro = request.getDoiTuongNhan();
+    //         if (vaiTro.equals("BacSi")) {
+    //             validUserIds.addAll(accountRepository.findByVaiTroIgnoreCaseAndMaPhongKham(vaiTro, maPhongKham).stream().map(AccountEntity::getMaTaiKhoan).toList());
+    //         } else if (vaiTro.equals("BenhNhan")) {
+    //             validUserIds.addAll(accountRepository.findBenhNhanByMaPhongKham(maPhongKham).stream().map(AccountEntity::getMaTaiKhoan).toList());
+    //         } else { throw new RuntimeException("Chỉ được gửi cho BacSi hoặc BenhNhan"); }
+    //     }
+    //     return validUserIds;
+    // }
     private Set<String> getValidUserIdsForClinic(NotificationRequest request){
-        ClinicEntity clinic = clinicRepository.findByAccount_MaTaiKhoan(request.getMaTaiKhoan());
-        if (clinic == null) {
-            throw new RuntimeException("Không tìm thấy tài khoản phòng khám");
-        }
 
-        String maPhongKham = clinic.getMaPhongKham();
+    ClinicEntity clinic = clinicRepository.findByAccount_MaTaiKhoan(
+        request.getMaTaiKhoan()
+    );
 
-        Set<String> validUserIds = new HashSet<>();
+    if (clinic == null) {
+        throw new RuntimeException("Không tìm thấy tài khoản phòng khám");
+    }
 
-        if (request.getDanhSachNguoiNhan() != null && !request.getDanhSachNguoiNhan().isEmpty()) {
-            for (String userId : request.getDanhSachNguoiNhan()) {
-                if (!accountRepository.checkUserBelongsToClinic(userId, maPhongKham)) {
-                    throw new RuntimeException("Lỗi bảo mật: " + userId + " không thuộc phòng khám này!");
-                }
-                validUserIds.add(userId);
+    String maPhongKham = clinic.getMaPhongKham();
+
+    Set<String> validUserIds = new HashSet<>();
+    if (request.getDanhSachNguoiNhan() != null
+            && !request.getDanhSachNguoiNhan().isEmpty()) {
+
+        for (String userId : request.getDanhSachNguoiNhan()) {
+
+            boolean belongs =
+                    accountRepository.checkDoctorBelongsToClinic(
+                        userId,
+                        maPhongKham
+                    )
+                    ||
+                    accountRepository.checkPatientBelongsToClinic(
+                        userId,
+                        maPhongKham
+                    );
+
+            if (!belongs) {
+                throw new RuntimeException(
+                    "Tài khoản " + userId +
+                    " không thuộc phòng khám này"
+                );
             }
-        } else if (request.getDoiTuongNhan() != null && !request.getDoiTuongNhan().isEmpty()) {
-            String vaiTro = request.getDoiTuongNhan().toUpperCase();
-            if (vaiTro.equals("BacSi")) {
-                validUserIds.addAll(accountRepository.findByVaiTroIgnoreCaseAndMaPhongKham(vaiTro, maPhongKham).stream().map(AccountEntity::getMaTaiKhoan).toList());
-            } else if (vaiTro.equals("BenhNhan")) {
-                validUserIds.addAll(accountRepository.findBenhNhanByMaPhongKham(maPhongKham).stream().map(AccountEntity::getMaTaiKhoan).toList());
-            } else { throw new RuntimeException("Chỉ được gửi cho BacSi hoặc BENH_NHAN"); }
+
+            validUserIds.add(userId);
         }
+
         return validUserIds;
     }
+    String doiTuongNhan = request.getDoiTuongNhan();
+
+    if (doiTuongNhan == null || doiTuongNhan.isBlank()) {
+        return validUserIds;
+    }
+    if ("BacSi".equalsIgnoreCase(doiTuongNhan)) {
+
+        validUserIds.addAll(
+            accountRepository.findBacSiByMaPhongKham(maPhongKham)
+                .stream()
+                .map(AccountEntity::getMaTaiKhoan)
+                .toList()
+        );
+    }
+    else if ("BenhNhan".equalsIgnoreCase(doiTuongNhan)) {
+
+        validUserIds.addAll(
+            accountRepository.findBenhNhanByMaPhongKham(maPhongKham)
+                .stream()
+                .map(AccountEntity::getMaTaiKhoan)
+                .toList()
+        );
+    }
+
+    return validUserIds;
+}
     
     @Override
-    public void createNotification(NotificationRequest request) {
+    public void createNotification(NotificationRequest request, MultipartFile files, MultipartFile anhThongBao) {
         Set<String> validUserIds = getValidUserIdsForClinic(request);
         String maThongBao = generateMaThongBao();
+        String filesUrl = null;
+        if (files != null && !files.isEmpty()) {
+            filesUrl = fileUploadService.uploadFile(files, "thongbao_files");
+        }
+
+        String anhUrl = null;
+        if (anhThongBao != null && !anhThongBao.isEmpty()) {
+            anhUrl = fileUploadService.uploadFile(anhThongBao, "thongbao_anh");
+        }
         AccountEntity accountProxy = AccountEntity.builder().maTaiKhoan(request.getMaTaiKhoan()).build();
         NotificationEntity notification = NotificationEntity.builder()
             .maThongBao(maThongBao)
@@ -111,8 +196,8 @@ public class ClinicNotificationServiceImpl implements ClinicNotificationService{
             .doiTuongNhan(request.getDoiTuongNhan())
             .thoiGianGui(LocalDateTime.now())
             .isDeleted(false)
-            .files(request.getFiles())
-            .anhThongBao(request.getAnhThongBao())
+            .files(filesUrl)
+            .anhThongBao(anhUrl)
             .build();
 
         notificationRepository.save(notification);
@@ -123,12 +208,21 @@ public class ClinicNotificationServiceImpl implements ClinicNotificationService{
     }
 
     @Override
-    public void updateNotification(NotificationRequest request) {
+    public void updateNotification(NotificationRequest request, MultipartFile files, MultipartFile anhThongBao) {
         NotificationEntity oldNotification = notificationRepository.findById(request.getMaThongBao())
             .orElseThrow(() -> new RuntimeException("Không tìm thấy thông báo"));
         
         if (Boolean.TRUE.equals(oldNotification.getIsDeleted())) {
             throw new RuntimeException("Thông báo này đã bị xóa và không thể cập nhật");
+        }
+        String filesUrl = oldNotification.getFiles(); 
+        if (files != null && !files.isEmpty()) {
+            filesUrl = fileUploadService.uploadFile(files, "thongbao_files"); // Ghi đè nếu có file mới
+        }
+
+        String anhUrl = oldNotification.getAnhThongBao();
+        if (anhThongBao != null && !anhThongBao.isEmpty()) {
+            anhUrl = fileUploadService.uploadFile(anhThongBao, "thongbao_anh"); // Ghi đè nếu có ảnh mới
         }
 
         Set<String> newUserIds = getValidUserIdsForClinic(request);
@@ -154,8 +248,8 @@ public class ClinicNotificationServiceImpl implements ClinicNotificationService{
                 .doiTuongNhan(request.getDoiTuongNhan())
                 .thoiGianGui(LocalDateTime.now())
                 .isDeleted(false)
-                .files(request.getFiles())
-                .anhThongBao(request.getAnhThongBao())
+                .files(filesUrl)
+                .anhThongBao(anhUrl)
                 .build();
             
             notificationRepository.save(newNotification);
@@ -168,6 +262,8 @@ public class ClinicNotificationServiceImpl implements ClinicNotificationService{
             
             oldNotification.setLoaiThongBao(request.getLoaiThongBao());
             oldNotification.setDoiTuongNhan(request.getDoiTuongNhan());
+            oldNotification.setFiles(filesUrl);
+            oldNotification.setAnhThongBao(anhUrl);
             notificationRepository.save(oldNotification);
 
             List<NotificationAccountEntity> existingMappings = notificationAccountRepository.findByIdMaThongBao(oldNotification.getMaThongBao());

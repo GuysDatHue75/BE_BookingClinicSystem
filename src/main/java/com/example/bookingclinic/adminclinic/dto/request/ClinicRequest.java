@@ -1,7 +1,7 @@
 package com.example.bookingclinic.adminclinic.dto.request;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+// import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class ClinicRequest {
     private String tenPhongKham;
     private LocalDate ngayThanhLap;
-    private LocalDateTime ngayDangKy;
-    private Integer soLuongBacSi;
+    // private LocalDateTime ngayDangKy;
+    // private Integer soLuongBacSi;
     private String loaiHinhPhongKham;
     private String diaChi;
     private String tinhThanhPho;
@@ -25,10 +25,10 @@ public class ClinicRequest {
     private String email;
     private LocalTime gioBatDauLamViec;
     private LocalTime gioKetThucLamViec;
-    private String trangThai;
+    // private String trangThai;
     private String moTa;
     
-    private String giayPhep;
+    // private String giayPhep;
     private LocalDate ngayCap;
     private String noiCap;
 

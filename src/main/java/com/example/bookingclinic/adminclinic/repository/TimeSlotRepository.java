@@ -1,4 +1,4 @@
-package com.example.bookingclinic.adminclinic.reponsitory;
+package com.example.bookingclinic.adminclinic.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -22,7 +22,7 @@ public class ClinicRegisterService {
             clinic.setNgayDangKy(LocalDate.now());
 
             if (clinic.getTrangThai() == null || clinic.getTrangThai().isEmpty()) {
-                clinic.setTrangThai("ChoDuyet");
+                clinic.setTrangThai("Chờ duyệt");
             }
             clinicRegisterRepository.save(clinic);
 

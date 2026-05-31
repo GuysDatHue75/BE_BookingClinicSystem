@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import com.example.bookingclinic.adminclinic.dto.request.NotificationSearchRequest;
 import com.example.bookingclinic.adminclinic.dto.response.NotificationIsReadResponse;
 import com.example.bookingclinic.adminclinic.dto.response.NotificationResponse;
-import com.example.bookingclinic.adminclinic.entity.QAccountEntity;
+// import com.example.bookingclinic.adminclinic.entity.QAccountEntity;
 import com.example.bookingclinic.adminclinic.entity.QNotificationAccountEntity;
 import com.example.bookingclinic.adminclinic.entity.QNotificationEntity;
 import com.example.bookingclinic.adminclinic.repository.custom.NotificationRepositoryCustom;
@@ -29,20 +29,20 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<NotificationResponse> search(NotificationSearchRequest request) {
+    public Page<NotificationResponse> searchSentNotifications(NotificationSearchRequest request) {
 
     QNotificationEntity n = QNotificationEntity.notificationEntity;
-    QNotificationAccountEntity na = QNotificationAccountEntity.notificationAccountEntity;
-    QAccountEntity a = QAccountEntity.accountEntity;
+    // QNotificationAccountEntity na = QNotificationAccountEntity.notificationAccountEntity;
+    // QAccountEntity a = QAccountEntity.accountEntity;
 
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(n.isDeleted.eq(false));
+    builder.and(n.account.maTaiKhoan.eq(request.getMaTaiKhoan()));
 
     if(request.getKeyword() != null && !request.getKeyword().isEmpty()){
-        String keyword = request.getKeyword();
         builder.and(
-            n.tieuDe.contains(keyword)
-            .or(n.noiDung.contains(keyword))
+            n.tieuDe.contains(request.getKeyword())
+            .or(n.noiDung.contains(request.getKeyword()))
         );
     }
 
@@ -62,9 +62,14 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
         builder.and(n.thoiGianGui.loe(request.getToDate()));
     }
 
-    String currentUserId = request.getMaTaiKhoan();
+    String sortDir = request.getSortDirection() == null ? "desc" : request.getSortDirection();
+    Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+    // com.querydsl.core.types.OrderSpecifier<?> orderSpecifier = sortDir.equalsIgnoreCase("desc") 
+    var orderSpecifier = sortDir.equalsIgnoreCase("desc")
+        ? n.thoiGianGui.desc() 
+        : n.thoiGianGui.asc();
 
-    var query = queryFactory
+    List<NotificationResponse> content = queryFactory
         .select(Projections.constructor(NotificationResponse.class,
             n.maThongBao,
             n.account.maTaiKhoan,
@@ -74,32 +79,30 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             n.doiTuongNhan,
             n.thoiGianGui
         ))
-        .from(n);
-
-    if(currentUserId != null) {
-        query.leftJoin(na).on(n.maThongBao.eq(na.id.maThongBao))
-             .leftJoin(a).on(a.maTaiKhoan.eq(na.id.maTaiKhoan));
-        builder.and(na.id.maTaiKhoan.eq(request.getMaTaiKhoan()).or(n.account.maTaiKhoan.eq(request.getMaTaiKhoan())));
-        if(request.getIsRead() != null) {
-            builder.and(na.isRead.eq(request.getIsRead()));
-        }
-    }
-    String sortDir = request.getSortDirection() == null ? "desc" : request.getSortDirection();
-    Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-    com.querydsl.core.types.OrderSpecifier<?> orderSpecifier = sortDir.equalsIgnoreCase("desc") 
-        ? n.thoiGianGui.desc() 
-        : n.thoiGianGui.asc();
-    
-    List<NotificationResponse> content = query
+        .from(n)
         .where(builder)
-        .distinct()
         .orderBy(orderSpecifier)
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .fetch();
 
+    // if(request.getMaTaiKhoan() != null && !request.getMaTaiKhoan().isEmpty()) {
+    //     String currentUserId = request.getMaTaiKhoan();
+    //     BooleanBuilder notificationCondition = new BooleanBuilder();
+    //     notificationCondition.or(n.account.maTaiKhoan.eq(currentUserId));
+
+    //     BooleanBuilder receivedCondition = new BooleanBuilder();
+    //     receivedCondition.and(na.account.maTaiKhoan.eq(currentUserId));
+
+    //     if(request.getIsRead() != null) {
+    //         receivedCondition.and(na.isRead.eq(request.getIsRead()));
+    //     }
+    //     notificationCondition.or(receivedCondition);
+
+    //     builder.and(notificationCondition);
+    // }
     Long total = queryFactory
-        .select(n.maThongBao.countDistinct())
+        .select(n.count())
         .from(n)
         .where(builder)
         .fetchOne();
@@ -107,6 +110,63 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     if(total == null) total = 0L;
 
     return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<NotificationResponse> searchReceivedNotifications(NotificationSearchRequest request) {
+
+    QNotificationEntity n = QNotificationEntity.notificationEntity;
+    QNotificationAccountEntity na = QNotificationAccountEntity.notificationAccountEntity;
+
+    BooleanBuilder builder = new BooleanBuilder();
+
+    builder.and(n.isDeleted.eq(false));
+
+    // CHỈ lấy thông báo mình nhận được
+    builder.and(
+        na.account.maTaiKhoan.eq(request.getMaTaiKhoan())
+    );
+
+    if (request.getIsRead() != null) {
+        builder.and(na.isRead.eq(request.getIsRead()));
+    }
+
+    Pageable pageable = PageRequest.of(
+        request.getPage(),
+        request.getSize()
+    );
+
+    List<NotificationResponse> content = queryFactory
+        .select(Projections.constructor(
+            NotificationResponse.class,
+            n.maThongBao,
+            n.account.maTaiKhoan,
+            n.tieuDe,
+            n.noiDung,
+            n.loaiThongBao,
+            n.doiTuongNhan,
+            n.thoiGianGui
+        ))
+        .from(na)
+        .join(na.notification, n)
+        .where(builder)
+        .orderBy(n.thoiGianGui.desc())
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetch();
+
+    Long total = queryFactory
+        .select(na.count())
+        .from(na)
+        .join(na.notification, n)
+        .where(builder)
+        .fetchOne();
+
+    return new PageImpl<>(
+        content,
+        pageable,
+        total == null ? 0 : total
+    );
     }
 
     @Override

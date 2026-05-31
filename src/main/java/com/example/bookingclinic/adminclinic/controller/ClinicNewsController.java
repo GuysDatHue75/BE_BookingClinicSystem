@@ -1,7 +1,9 @@
 package com.example.bookingclinic.adminclinic.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.adminclinic.dto.request.NewsRequest;
 import com.example.bookingclinic.adminclinic.dto.request.NewsSearchRequest;
@@ -12,6 +14,7 @@ import com.example.bookingclinic.adminclinic.service.ClinicNewsService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 
 
@@ -35,15 +39,21 @@ public class ClinicNewsController {
     }
     
     //thêm tn tức
-    @PostMapping("/create/{maPhongKham}")
-    public ResponseEntity<String> createNews (@RequestBody NewsRequest request, @PathVariable String maPhongKham) {
-        return ResponseEntity.ok(newsService.createNews(request, maPhongKham));
+    @PostMapping(value = "/create/{maPhongKham}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createNews (@PathVariable String maPhongKham, 
+            @ModelAttribute NewsRequest request,
+            @RequestParam(value = "anh", required = false) MultipartFile anh
+    ) {
+        return ResponseEntity.ok(newsService.createNews(maPhongKham, request, anh));
     }
     
     //sửa tin tức
-    @PutMapping("/update/{maTinTuc}/{maPhongKham}")
-    public ResponseEntity<String> updateNews (@RequestBody NewsRequest request, @PathVariable String maTinTuc, @PathVariable String maPhongKham){
-        return ResponseEntity.ok(newsService.updateNews(request, maTinTuc, maPhongKham));
+    @PutMapping(value =  "/update/{maTinTuc}/{maPhongKham}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateNews (@PathVariable String maTinTuc, @PathVariable String maPhongKham,
+            @ModelAttribute NewsRequest request,
+            @RequestParam(value = "anh", required = false) MultipartFile anh
+    ){
+        return ResponseEntity.ok(newsService.updateNews(maTinTuc, maPhongKham, request, anh));
     }
     //xóa tin tức
     @DeleteMapping("/{maTinTuc}/{maPhongKham}")

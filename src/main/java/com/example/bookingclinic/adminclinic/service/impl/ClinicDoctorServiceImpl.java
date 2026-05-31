@@ -9,10 +9,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.adminclinic.dto.request.DoctorRequest;
 import com.example.bookingclinic.adminclinic.dto.request.DoctorSearchRequest;
 import com.example.bookingclinic.adminclinic.dto.response.DoctorResponse;
+import com.example.bookingclinic.adminclinic.dto.response.DoctorSimpleResponse;
 import com.example.bookingclinic.adminclinic.entity.AccountEntity;
 import com.example.bookingclinic.adminclinic.entity.ClinicEntity;
 import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
@@ -22,6 +24,7 @@ import com.example.bookingclinic.adminclinic.repository.ClinicDoctorRepository;
 
 import com.example.bookingclinic.adminclinic.repository.projection.DoctorProjection;
 import com.example.bookingclinic.adminclinic.service.ClinicDoctorService;
+import com.example.bookingclinic.adminclinic.service.FileUploadService;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -35,6 +38,7 @@ public class ClinicDoctorServiceImpl implements ClinicDoctorService {
     private final ClinicAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
+    private final FileUploadService fileUploadService;
 
     private synchronized String generateMaTaiKhoan() {
          return "TK" + System.currentTimeMillis();
@@ -47,9 +51,18 @@ public class ClinicDoctorServiceImpl implements ClinicDoctorService {
 
     @Override
     @Transactional
-    public String createDoctor(DoctorRequest request, String maPhongKham) {
+    public String createDoctor(String maPhongKham, DoctorRequest request, MultipartFile avtFile, MultipartFile tepDinhKemFile) {
         if(accountRepository.existsBySoDt(request.getSoDienThoai())) {
             throw new RuntimeException("Số điện thoại đã tồn tại");
+        }
+        String avtUrl = "";
+        if (avtFile != null && !avtFile.isEmpty()) {
+            avtUrl = fileUploadService.uploadFile(avtFile, "bacsi_avt"); // Lưu vào thư mục uploads/bacsi_avt
+        }
+
+        String tepDinhKemUrl = "";
+        if (tepDinhKemFile != null && !tepDinhKemFile.isEmpty()) {
+            tepDinhKemUrl = fileUploadService.uploadFile(tepDinhKemFile, "bacsi_docs"); // Lưu vào thư mục uploads/bacsi_docs
         }
 
         String maTaiKhoan = generateMaTaiKhoan();
@@ -63,10 +76,11 @@ public class ClinicDoctorServiceImpl implements ClinicDoctorService {
                 .matKhau(encodedPassword)
                 .vaiTro("BacSi")
                 .hoVaTen(request.getTenBacSi())
-                .anhDaiDien(request.getAvt())
+                .anhDaiDien(avtUrl)
                 .trangThai(true)
                 .ngayTao(LocalDateTime.now())
                 .ngayCapNhat(LocalDateTime.now())
+                .email(request.getEmail())
                 .isDeleted(false)
                 .build();
         accountRepository.save(account);
@@ -83,7 +97,7 @@ public class ClinicDoctorServiceImpl implements ClinicDoctorService {
                 .soDienThoai(request.getSoDienThoai())
                 .email(request.getEmail())
                 .diaChi(request.getDiaChi())
-                .avt(request.getAvt())
+                .avt(avtUrl)
                 .specialty(specialtyProxy)
                 .bangCap(request.getBangCap())
                 .kinhNghiem(request.getKinhNghiem())
@@ -99,7 +113,7 @@ public class ClinicDoctorServiceImpl implements ClinicDoctorService {
                 .account(account)
                 .clinic(clinicProxy)
                 .ngayDangKy(LocalDateTime.now())
-                .tepDinhKem(request.getTepDinhKem())
+                .tepDinhKem(tepDinhKemUrl)
                 .isDeleted(false)
                 .build();
         doctorRepository.save(doctor);
@@ -161,5 +175,10 @@ public class ClinicDoctorServiceImpl implements ClinicDoctorService {
     public List<DoctorResponse> getAllDoctors(String maPhongKham) {
         return doctorRepository.findAllDoctors(maPhongKham);
     }
-        
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<DoctorSimpleResponse> getActiveDoctors(String maPhongKham) {
+        return doctorRepository.findActiveDoctorsByClinic(maPhongKham);
+    }
 }
