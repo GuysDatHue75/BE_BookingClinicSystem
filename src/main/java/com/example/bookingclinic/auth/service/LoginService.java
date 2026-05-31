@@ -44,8 +44,8 @@ public class LoginService {
         if (user == null) {
             return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         }
-        //if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
-         if(infors.getPass().equals(user.getMatKhau())){
+        // if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
+        if(infors.getPass().equals(user.getMatKhau())){
             Object profileData = null;
             if ("BenhNhan".equals(user.getVaiTro())) {
                 profileData = patientRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
@@ -54,6 +54,7 @@ public class LoginService {
             } else if ("PhongKham".equals(user.getVaiTro())) {
                 profileData = clinicRepository.findByAccount_MaTaiKhoan(user.getMaTaiKhoan());
             }else if("Admin".equals(user.getVaiTro())){
+                profileData = user;
             }
             if (profileData == null) {
                 return ResponseEntity.status(404).body("Không tìm thấy thông tin chi tiết người dùng.");

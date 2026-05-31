@@ -43,7 +43,8 @@ public class NewsEntity {
     @Column(name = "ngay_cap_nhat")
     private LocalDateTime ngayCapNhat;
 
-    @Column(name = "anh", length = 255, nullable = false)
+    @Lob
+    @Column(name = "anh")
     private String anh;
 
     @ManyToOne @JoinColumn(name = "ma_phong_kham")

@@ -21,6 +21,6 @@ public class NotificationRequest {
     private String doiTuongNhan;
     List<String> danhSachNguoiNhan;
     private LocalDateTime thoiGianGui;
-    private String files;
-    private String anhThongBao;
+    // private String files;
+    // private String anhThongBao;
 }

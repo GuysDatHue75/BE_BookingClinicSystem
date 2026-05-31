@@ -1,9 +1,13 @@
 package com.example.bookingclinic.adminclinic.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.bookingclinic.adminclinic.dto.response.DoctorSimpleResponse;
 import com.example.bookingclinic.adminclinic.entity.DoctorEntity;
 import com.example.bookingclinic.adminclinic.repository.custom.DoctorRepositoryCustom;
 
@@ -13,4 +17,8 @@ public interface ClinicDoctorRepository extends JpaRepository<DoctorEntity, Stri
     Integer findMaxDoctorIdNumber();
 
     DoctorEntity findByAccount_MaTaiKhoan(String maTaiKhoan);
+
+    @Query("SELECT new com.example.bookingclinic.adminclinic.dto.response.DoctorSimpleResponse(d.maBacSi, d.tenBacSi) " +
+           "FROM DoctorEntity d WHERE d.clinic.maPhongKham = :maPhongKham AND d.isDeleted = false")
+    List<DoctorSimpleResponse> findActiveDoctorsByClinic(@Param("maPhongKham") String maPhongKham);
 }

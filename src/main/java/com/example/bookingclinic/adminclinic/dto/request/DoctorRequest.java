@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DoctorRequest {
 
-    private String maTaiKhoan;
+    // private String maTaiKhoan;
     private String tenBacSi;
     private boolean gioiTinh;
     private LocalDate ngaySinh;
@@ -24,7 +24,7 @@ public class DoctorRequest {
     private String email;
     private String diaChi;
 
-    private String avt;
+    // private String avt;
     private String maChuyenKhoa;
     private String bangCap;
     private String kinhNghiem;
@@ -40,5 +40,5 @@ public class DoctorRequest {
     private LocalDateTime ngayCap;
     private String noiCap;
 
-    private String tepDinhKem;
+    // private String tepDinhKem;
 }

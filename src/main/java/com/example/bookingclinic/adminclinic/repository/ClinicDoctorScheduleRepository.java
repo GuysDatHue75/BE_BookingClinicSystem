@@ -2,6 +2,7 @@ package com.example.bookingclinic.adminclinic.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -45,4 +46,7 @@ public interface ClinicDoctorScheduleRepository
             @Param("maPhongKham") String maPhongKham,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT MAX(d.ngayLamViec) FROM DoctorScheduleEntity d WHERE d.clinic.maPhongKham = :maPhongKham")
+    Optional<LocalDate> findMaxNgayLamViecByClinicMaPhongKham(@Param("maPhongKham") String maPhongKham);
 }

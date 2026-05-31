@@ -19,7 +19,7 @@ import lombok.*;
 @Builder
 public class NotificationEntity {
     @Id
-    @Column(name = "ma_thong_bao", length = 10, nullable = false)
+    @Column(name = "ma_thong_bao", length = 255, nullable = false)
     private String maThongBao;
 
     @ManyToOne @JoinColumn(name = "ma_tai_khoan")

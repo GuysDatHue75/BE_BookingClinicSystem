@@ -1,6 +1,7 @@
 package com.example.bookingclinic.adminclinic.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.adminclinic.dto.request.NewsRequest;
 import com.example.bookingclinic.adminclinic.dto.request.NewsSearchRequest;
@@ -10,9 +11,9 @@ import com.example.bookingclinic.adminclinic.repository.projection.NewsDetailPro
 public interface ClinicNewsService {
     Page<NewsResponse> search(NewsSearchRequest request, String maPhongKham);
 
-    String createNews(NewsRequest request, String maPhongKham);
+    String createNews(String maPhongKham, NewsRequest request, MultipartFile anh);
 
-    String updateNews(NewsRequest request, String maTinTuc, String maPhongKham);
+    String updateNews(String maTinTuc, String maPhongKham, NewsRequest request, MultipartFile anh);
 
     void deleteNews(String maTinTuc, String maPhongKham);
 

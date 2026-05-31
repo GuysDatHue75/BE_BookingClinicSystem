@@ -14,5 +14,4 @@ public class NewsRequest {
     private String tieuDe;
     private String moTaNgan;
     private String noiDung;
-    private String anh;
 }

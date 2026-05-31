@@ -16,46 +16,97 @@ public interface ClinicAccountRepository extends JpaRepository<AccountEntity, St
 
     boolean existsBySoDt(String soDt);
 
-    @Query("""
-        SELECT DISTINCT a
-        FROM AccountEntity a
-        LEFT JOIN DoctorEntity d ON d.account = a
-        LEFT JOIN PatientsEntity p ON p.account = a
-        LEFT JOIN AppointmentScheduleEntity lk ON lk.patient = p
-        WHERE LOWER(a.vaiTro) = LOWER(:vaiTro)
-            AND (
-                d.clinic.maPhongKham = :maPhongKham
-                OR lk.doctor.clinic.maPhongKham = :maPhongKham
-            )
-    """)
-    List<AccountEntity> findByVaiTroIgnoreCaseAndMaPhongKham(@Param("vaiTro") String vaiTro,@Param("maPhongKham") String maPhongKham);
+    // @Query("""
+    //     SELECT DISTINCT a
+    //     FROM AccountEntity a
+    //     LEFT JOIN DoctorEntity d ON d.account = a
+    //     LEFT JOIN PatientsEntity p ON p.account = a
+    //     LEFT JOIN AppointmentScheduleEntity lk ON lk.patient = p
+    //     WHERE LOWER(a.vaiTro) = LOWER(:vaiTro)
+    //         AND (
+    //             d.clinic.maPhongKham = :maPhongKham
+    //             OR lk.doctor.clinic.maPhongKham = :maPhongKham
+    //         )
+    // """)
+    // List<AccountEntity> findByVaiTroIgnoreCaseAndMaPhongKham(@Param("vaiTro") String vaiTro,@Param("maPhongKham") String maPhongKham);
     
     Optional<AccountEntity> findBySoDt(String soDt);
 
+    // @Query("""
+    //     SELECT DISTINCT bs.account 
+    //     FROM DoctorEntity bs
+    //     WHERE bs.clinic.maPhongKham = :maPhongKham AND bs.account.vaiTro = 'BacSi'
+    // """)
+    // List<AccountEntity> findBacSiByMaPhongKham(@Param("maPhongKham") String maPhongKham);
+
+    // @Query("""
+    //     SELECT DISTINCT p.account 
+    //     FROM PatientsEntity p 
+    //     JOIN AppointmentScheduleEntity lk ON p = lk.patient 
+    //     WHERE lk.doctor.clinic.maPhongKham = :maPhongKham 
+    //     AND p.account.vaiTro = 'BenhNhan'
+    // """)
+    // List<AccountEntity> findBenhNhanByMaPhongKham(@Param("maPhongKham") String maPhongKham);
+
+    // @Query("""
+    //     SELECT COUNT(a) > 0 
+    //     FROM AccountEntity a
+    //     LEFT JOIN ClinicEntity c ON c.account = a 
+    //     LEFT JOIN PatientsEntity p ON a = p.account 
+    //     LEFT JOIN AppointmentScheduleEntity lk ON p = lk.patient 
+    //     WHERE a.maTaiKhoan = :maTaiKhoan 
+    //         AND (c.maPhongKham = :maPhongKham OR lk.doctor.clinic.maPhongKham = :maPhongKham)
+    // """)
+    // boolean checkUserBelongsToClinic(@Param("maTaiKhoan") String maTaiKhoan, @Param("maPhongKham") String maPhongKham);
     @Query("""
-        SELECT DISTINCT bs.account 
-        FROM DoctorEntity bs
-        WHERE bs.clinic.maPhongKham = :maPhongKham AND bs.account.vaiTro = 'BacSi'
+        SELECT DISTINCT d.account
+        FROM DoctorEntity d
+        WHERE d.clinic.maPhongKham = :maPhongKham
     """)
-    List<AccountEntity> findBacSiByMaPhongKham(@Param("maPhongKham") String maPhongKham);
+    List<AccountEntity> findBacSiByMaPhongKham(
+        @Param("maPhongKham") String maPhongKham
+    );
+
+    /*
+     * =========================
+     * DANH SÁCH BỆNH NHÂN
+     * =========================
+     */
+    @Query("""
+        SELECT DISTINCT p.account
+        FROM PatientsEntity p
+        JOIN AppointmentScheduleEntity a 
+            ON a.patient = p
+        WHERE a.doctor.clinic.maPhongKham = :maPhongKham
+    """)
+    List<AccountEntity> findBenhNhanByMaPhongKham(
+        @Param("maPhongKham") String maPhongKham
+    );
+
+    /*
+     * =========================
+     * CHECK USER THUỘC PHÒNG KHÁM
+     * =========================
+     */
+    @Query("""
+        SELECT COUNT(d) > 0
+        FROM DoctorEntity d
+        WHERE d.account.maTaiKhoan = :maTaiKhoan
+            AND d.clinic.maPhongKham = :maPhongKham
+    """)
+    boolean checkDoctorBelongsToClinic(
+        @Param("maTaiKhoan") String maTaiKhoan,
+        @Param("maPhongKham") String maPhongKham
+    );
 
     @Query("""
-        SELECT DISTINCT p.account 
-        FROM PatientsEntity p 
-        JOIN AppointmentScheduleEntity lk ON p = lk.patient 
-        WHERE lk.doctor.clinic.maPhongKham = :maPhongKham 
-        AND p.account.vaiTro = 'BenhNhan'
+        SELECT COUNT(a) > 0
+        FROM AppointmentScheduleEntity a
+        WHERE a.patient.account.maTaiKhoan = :maTaiKhoan
+            AND a.doctor.clinic.maPhongKham = :maPhongKham
     """)
-    List<AccountEntity> findBenhNhanByMaPhongKham(@Param("maPhongKham") String maPhongKham);
-
-    @Query("""
-        SELECT COUNT(a) > 0 
-        FROM AccountEntity a
-        LEFT JOIN ClinicEntity c ON c.account = a 
-        LEFT JOIN PatientsEntity p ON a = p.account 
-        LEFT JOIN AppointmentScheduleEntity lk ON p = lk.patient 
-        WHERE a.maTaiKhoan = :maTaiKhoan 
-            AND (c.maPhongKham = :maPhongKham OR lk.doctor.clinic.maPhongKham = :maPhongKham)
-    """)
-    boolean checkUserBelongsToClinic(@Param("maTaiKhoan") String maTaiKhoan, @Param("maPhongKham") String maPhongKham);
+    boolean checkPatientBelongsToClinic(
+        @Param("maTaiKhoan") String maTaiKhoan,
+        @Param("maPhongKham") String maPhongKham
+    );
 }
