@@ -34,6 +34,6 @@ public class Advise {
     @Column(name = "thoi_gian_tra_loi")
     private LocalDateTime thoiGianTraLoi;
 
-    @Column(name = "trang_thai")
+    @Column(name = "trang_thai_tra_loi")
     private Boolean trangThai = false;
 }

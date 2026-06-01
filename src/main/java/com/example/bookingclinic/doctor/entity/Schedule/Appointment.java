@@ -58,5 +58,6 @@ public class Appointment {
     @ManyToOne
     @JoinColumn(name = "ma_bac_si", nullable = false)
     private Doctor bacSi; // Đặt lịch với bác sĩ nào?
+    
 
 }
