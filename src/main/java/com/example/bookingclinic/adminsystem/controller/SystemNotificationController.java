@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 
 
@@ -35,15 +36,15 @@ public class SystemNotificationController {
     }
 
     //Tạo thông báo mới
-    @PostMapping("/create")
-    public String createNotification(@RequestBody NotificationRequest request) {
+    @PostMapping(value = "/create", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String createNotification(@ModelAttribute NotificationRequest request) {
         notificationService.createNotification(request);
         return "Tạo thông báo thành công";
     }
     
-    //Cập nhật thông báo
-    @PutMapping("update/{maThongBao}")
-    public String update(@PathVariable String maThongBao, @RequestBody NotificationRequest request) {
+    // Cập nhật thông báo
+    @PutMapping(value = "update/{maThongBao}", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String update(@PathVariable String maThongBao, @ModelAttribute NotificationRequest request) {
         request.setMaThongBao(maThongBao);
         notificationService.updateNotification(request);
         return "Cập nhật thông báo thành công";

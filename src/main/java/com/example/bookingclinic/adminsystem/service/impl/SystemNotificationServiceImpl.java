@@ -15,6 +15,7 @@ import com.example.bookingclinic.adminclinic.entity.AccountEntity;
 import com.example.bookingclinic.adminclinic.entity.NotificationAccountEntity;
 import com.example.bookingclinic.adminclinic.entity.NotificationAccountId;
 import com.example.bookingclinic.adminclinic.entity.NotificationEntity;
+import com.example.bookingclinic.adminclinic.service.FileUploadService;
 import com.example.bookingclinic.adminsystem.repository.SystemAccountRepository;
 import com.example.bookingclinic.adminsystem.repository.SystemNotificationAccountRepository;
 import com.example.bookingclinic.adminsystem.repository.SystemNotificationRepository;
@@ -32,6 +33,7 @@ public class SystemNotificationServiceImpl implements SystemNotificationService 
     private final SystemNotificationAccountRepository notificationAccountRepository;
     private final SystemAccountRepository accountRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final FileUploadService fileUploadService;
 
     private void saveNotificationAccount(NotificationEntity notification, String userId){
         AccountEntity account = accountRepository.findById(userId)
@@ -55,28 +57,39 @@ public class SystemNotificationServiceImpl implements SystemNotificationService 
     }
 
     private String generateMaThongBao(){
-        List<String> danhSachMaThongBao = notificationRepository.findAllMaThongBao();
-        int maxNumber = 0;
-        for(String ma : danhSachMaThongBao) {
-            if(ma != null && ma.startsWith("TB")) {
-                try {
-                    int currentNumber = Integer.parseInt(ma.substring(2));
-                    if(currentNumber > maxNumber) {
-                        maxNumber = currentNumber;
-                    }
-                } catch(NumberFormatException e) {
-                    // Ignore non-numeric suffix
-                }
-            }
-        }
-        int nextNumber = maxNumber + 1;
-        return String.format("TB%02d", nextNumber);
+        // List<String> danhSachMaThongBao = notificationRepository.findAllMaThongBao();
+        // int maxNumber = 0;
+        // for(String ma : danhSachMaThongBao) {
+        //     if(ma != null && ma.startsWith("TB")) {
+        //         try {
+        //             int currentNumber = Integer.parseInt(ma.substring(2));
+        //             if(currentNumber > maxNumber) {
+        //                 maxNumber = currentNumber;
+        //             }
+        //         } catch(NumberFormatException e) {
+        //             // Ignore non-numeric suffix
+        //         }
+        //     }
+        // }
+        // int nextNumber = maxNumber + 1;
+        return "TB" + System.currentTimeMillis();
     }
     
     @Override
     public void createNotification(NotificationRequest request) {
         String maThongBao = generateMaThongBao();
         AccountEntity accountProxy = AccountEntity.builder().maTaiKhoan(request.getMaTaiKhoan()).build();
+        
+        // XỬ LÝ LƯU FILE Ở ĐÂY
+        String anhUrl = null;
+        if (request.getAnhThongBao() != null && !request.getAnhThongBao().isEmpty()) {
+            anhUrl = fileUploadService.uploadFile(request.getAnhThongBao(), "anhThongBao");
+        }
+        String fileUrl = null;
+        if (request.getFiles() != null && !request.getFiles().isEmpty()) {
+            fileUrl = fileUploadService.uploadFile(request.getFiles(), "files");
+        }
+
         NotificationEntity notification = NotificationEntity.builder()
             .maThongBao(maThongBao)
             .account(accountProxy)
@@ -85,6 +98,8 @@ public class SystemNotificationServiceImpl implements SystemNotificationService 
             .loaiThongBao(request.getLoaiThongBao())
             .doiTuongNhan(request.getDoiTuongNhan())
             .thoiGianGui(LocalDateTime.now())
+            .anhThongBao(anhUrl) // Truyền URL vào
+            .files(fileUrl)      // Truyền URL vào
             .isDeleted(false)
             .build();
 

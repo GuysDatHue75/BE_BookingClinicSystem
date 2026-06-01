@@ -90,6 +90,7 @@ public class BrowseClinicServiceImpl implements BrowseClinicService {
                 .trangThai(true)
                 .ngayTao(LocalDateTime.now())
                 .ngayCapNhat(LocalDateTime.now())
+                .email(entity.getEmail())
                 .isDeleted(false)
                 .build();
         accountRepository.save(account);

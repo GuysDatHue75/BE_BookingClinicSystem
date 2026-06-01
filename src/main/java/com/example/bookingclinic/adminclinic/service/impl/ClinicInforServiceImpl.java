@@ -30,41 +30,67 @@ public class ClinicInforServiceImpl implements ClinicInforService{
     }
 
     @Override
-    @Transactional
-    public void updateClinic(String maPhongKham, ClinicRequest request, MultipartFile anhPhongKham, MultipartFile giayPhep){
-        ClinicEntity entity = clinicRepository.findById(maPhongKham)
-            .orElseThrow(() -> new RuntimeException("không tìm thấy phòng khám"));
-        
+@Transactional
+public void updateClinic(String maPhongKham, ClinicRequest request, MultipartFile anhPhongKham, MultipartFile giayPhep){
+    ClinicEntity entity = clinicRepository.findById(maPhongKham)
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng khám"));
+    
+    // Áp dụng Partial Update: Chỉ cập nhật khi có dữ liệu thật
+    if (request.getTenPhongKham() != null && !request.getTenPhongKham().trim().isEmpty()) {
         entity.setTenPhongKham(request.getTenPhongKham());
+    }
+    if (request.getNgayThanhLap() != null) {
         entity.setNgayThanhLap(request.getNgayThanhLap());
-        // entity.setNgayDangKy(request.getNgayDangKy());
-        // entity.setSoLuongBacSi(request.getSoLuongBacSi());
+    }
+    if (request.getLoaiHinhPhongKham() != null && !request.getLoaiHinhPhongKham().trim().isEmpty()) {
         entity.setLoaiHinhPhongKham(request.getLoaiHinhPhongKham());
+    }
+    // Ngăn chặn triệt để lỗi gán NULL cho địa chỉ
+    if (request.getDiaChi() != null && !request.getDiaChi().trim().isEmpty()) {
         entity.setDiaChi(request.getDiaChi());
+    }
+    if (request.getTinhThanhPho() != null && !request.getTinhThanhPho().trim().isEmpty()) {
         entity.setTinhThanhPho(request.getTinhThanhPho());
+    }
+    if (request.getSoDienThoai() != null && !request.getSoDienThoai().trim().isEmpty()) {
         entity.setSoDienThoai(request.getSoDienThoai());
+    }
+    if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
         entity.setEmail(request.getEmail());
+    }
+    if (request.getGioBatDauLamViec() != null) {
         entity.setGioBatDauLamViec(request.getGioBatDauLamViec());
+    }
+    if (request.getGioKetThucLamViec() != null) {
         entity.setGioKetThucLamViec(request.getGioKetThucLamViec());
-        // entity.setTrangThai(request.getTrangThai());
+    }
+    if (request.getMoTa() != null) {
         entity.setMoTa(request.getMoTa());
-        // entity.setGiayPhep(request.getGiayPhep());
+    }
+    if (request.getNgayCap() != null) {
         entity.setNgayCap(request.getNgayCap());
+    }
+    if (request.getNoiCap() != null) {
         entity.setNoiCap(request.getNoiCap());
+    }
+    if (request.getNguoiDaiDien() != null && !request.getNguoiDaiDien().trim().isEmpty()) {
         entity.setNguoiDaiDien(request.getNguoiDaiDien());
+    }
+    if (request.getSoDienThoaiNguoiDaiDien() != null) {
         entity.setSoDienThoaiNguoiDaiDien(request.getSoDienThoaiNguoiDaiDien());
+    }
 
-        if (anhPhongKham != null && !anhPhongKham.isEmpty()) {
-            String anhUrl = fileUploadService.uploadFile(anhPhongKham, "anhPhongKham");
-            entity.setAnhPhongKham(anhUrl); // Lưu đường dẫn "/uploads/anhPhongKham/xyz.jpg" vào DB
-        }
+    if (anhPhongKham != null && !anhPhongKham.isEmpty()) {
+        String anhUrl = fileUploadService.uploadFile(anhPhongKham, "anhPhongKham");
+        entity.setAnhPhongKham(anhUrl);
+    }
 
-        if (giayPhep != null && !giayPhep.isEmpty()) {
-            String giayPhepUrl = fileUploadService.uploadFile(giayPhep, "giayPhep");
-            entity.setGiayPhep(giayPhepUrl); // Lưu đường dẫn "/uploads/giayPhep/abc.pdf" vào DB
-        }
+    if (giayPhep != null && !giayPhep.isEmpty()) {
+        String giayPhepUrl = fileUploadService.uploadFile(giayPhep, "giayPhep");
+        entity.setGiayPhep(giayPhepUrl);
+    }
 
-        clinicRepository.save(entity);
+    clinicRepository.save(entity);
     }
 
 }
