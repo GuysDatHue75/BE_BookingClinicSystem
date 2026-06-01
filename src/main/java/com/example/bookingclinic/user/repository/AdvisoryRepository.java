@@ -14,6 +14,7 @@ import com.example.bookingclinic.user.entity.Advisory;
 public interface AdvisoryRepository extends JpaRepository<Advisory,String> {
     @Query("select tv from Advisory tv where tv.trangThaiTraLoi = true")
     List<Advisory> findAnsweredAdvisories();
+    Advisory findByMaTuVan(String id);
     Page<Advisory> findByTrangThaiTraLoiAndClinic_TinhThanhPhoContainingIgnoreCase(Boolean state, Pageable pageable,String city);
-
+    List<Advisory> findByTrangThaiTraLoiFalseOrderByThoiGianHoiAsc();
 }

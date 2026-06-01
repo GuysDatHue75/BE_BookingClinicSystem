@@ -14,12 +14,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
+import com.example.bookingclinic.adminclinic.repository.ClinicRepository;
+import com.example.bookingclinic.doctor.repository.ScheduleRepository.AppointmentRepository;
+import com.example.bookingclinic.doctor.dto.schedule.AppointmentResponseDTO;
 import com.example.bookingclinic.doctor.dto.schedule.DailyScheduleDTO;
 import com.example.bookingclinic.doctor.dto.schedule.GroupedScheduleDTO;
 import com.example.bookingclinic.doctor.dto.schedule.ScheduleResponseDTO;
 import com.example.bookingclinic.doctor.dto.schedule.SimpleDoctorScheduleDTO;
 import com.example.bookingclinic.doctor.dto.schedule.UpdateSchedulesDTO;
 import com.example.bookingclinic.doctor.dto.schedule.WeeklyScheduleRequestDTO;
+import com.example.bookingclinic.doctor.entity.Schedule.Appointment;
 import com.example.bookingclinic.doctor.entity.Schedule.DoctorSchedule;
 import com.example.bookingclinic.doctor.entity.Schedule.TimeSlot;
 
@@ -33,6 +37,8 @@ public class DoctorScheduleService {
     private final DoctorRepository doctorRepository;
     private final DoctorScheduleRepository doctorScheduleRepository;
     private final DTimeSlotRepository timeSlotRepository; // Bổ sung Repository lấy Khung Giờ
+    private final ClinicRepository clinicRepository;
+    private final AppointmentRepository appointmentRepository;
 
     // BẮT BUỘC CÓ: Đảm bảo nếu lỗi ở giữa chừng thì sẽ HỦY BỎ toàn bộ
     @Transactional
@@ -134,6 +140,7 @@ public class DoctorScheduleService {
         return resultList;
     }
 
+    // 3 update
     @Transactional
     public List<DoctorSchedule> updateSchedules(List<UpdateSchedulesDTO> requestList) {
         List<DoctorSchedule> updateSchedules = new ArrayList<>();
@@ -153,5 +160,44 @@ public class DoctorScheduleService {
         } else {
             return "Thứ " + (dayOfWeek.getValue() + 1);
         }
+    }
+
+    // Lấy thông tin lịch khám để fill vào form tạo đơn thuốc
+    public AppointmentResponseDTO getAppointmentByIdForPrescription(String maLichKham) {
+        // Sử dụng findById có sẵn của JpaRepository
+        Appointment lichKham = appointmentRepository.findById(maLichKham)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch khám với mã: " + maLichKham));
+
+        AppointmentResponseDTO dto = new AppointmentResponseDTO();
+        dto.setMaLichKham(lichKham.getMaLichKham());
+
+        // 1. Lấy thông tin Bệnh nhân (Tên và SĐT lấy từ bảng Tài khoản - acc)
+        if (lichKham.getBenhNhan() != null && lichKham.getBenhNhan().getTaiKhoan() != null) {
+            var taiKhoanBenhNhan = lichKham.getBenhNhan().getTaiKhoan();
+            dto.setTenBenhNhan(taiKhoanBenhNhan.getHoVaTen());
+            dto.setSdtBenhNhan(taiKhoanBenhNhan.getSoDt()); // Ăn theo acc.soDt trong Query của sếp
+        }
+
+        // 2. Lấy thông tin Bác sĩ & Tên Phòng Khám (Bắc cầu qua LichLamViec hoặc BacSi
+        // trực tiếp)
+        if (lichKham.getLichLamViec() != null && lichKham.getLichLamViec().getBacSi() != null) {
+            var bacSi = lichKham.getLichLamViec().getBacSi();
+
+            // Lấy tên bác sĩ từ tài khoản của bác sĩ
+            if (bacSi.getTaiKhoan() != null) {
+                dto.setTenBacSi(bacSi.getTaiKhoan().getHoVaTen());
+            }
+
+            // Bắc cầu tìm tên Phòng Khám từ mã phòng khám của Bác sĩ
+            String maPhongKham = bacSi.getMaPhongKham();
+            if (maPhongKham != null) {
+                clinicRepository.findById(maPhongKham).ifPresent(clinic -> {
+
+                    dto.setTenPhongKham(clinic.getTenPhongKham());
+                });
+            }
+        }
+
+        return dto;
     }
 }

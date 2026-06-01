@@ -1,5 +1,6 @@
 package com.example.bookingclinic.doctor.controller;
 
+import com.example.bookingclinic.doctor.dto.schedule.AppointmentResponseDTO;
 import com.example.bookingclinic.doctor.dto.schedule.GroupedScheduleDTO;
 import com.example.bookingclinic.doctor.dto.schedule.SimpleDoctorScheduleDTO;
 import com.example.bookingclinic.doctor.dto.schedule.UpdateSchedulesDTO;
@@ -98,5 +99,14 @@ public class DoctorScheduleController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    //http://localhost:8080/api/v1/doctor-schedules/LK_111212_09
+    @GetMapping("/{maLichKham}")
+    public ResponseEntity<?> getAppointmentDetails(@PathVariable String maLichKham) {
+        try {
+            AppointmentResponseDTO responseData = doctorScheduleService.getAppointmentByIdForPrescription(maLichKham);
+            return ResponseEntity.ok(responseData);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -19,7 +19,7 @@ public class PatientResponseDTO {
     // Thông tin sức khỏe (từ bảng Patient)
     private String queQuan;
     private String ngheNghiep;
-    private int chieuCao;
+    private Integer chieuCao;
     private Double canNang;
     private String tienSuBenhAn;
     private String tinhTrangSucKhoe;

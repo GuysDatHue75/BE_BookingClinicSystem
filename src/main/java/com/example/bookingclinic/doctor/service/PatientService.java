@@ -59,7 +59,7 @@ public class PatientService {
         response.setDiaChi(patient.getDiaChi());
         response.setQueQuan(patient.getQueQuan());
         response.setNgheNghiep(patient.getNgheNghiep());
-        response.setChieuCao(patient.getChieuCao());
+        response.setChieuCao(patient.getChieuCao()  );
         response.setCanNang(patient.getCanNang());
         response.setNhomMau(patient.getNhomMau());
         response.setTienSuBenhAn(patient.getTienSuBenhAn());

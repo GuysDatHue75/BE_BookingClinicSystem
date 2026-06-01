@@ -45,13 +45,7 @@ public class Advisory {
     @Column(name = "trang_thai_tra_loi")
     private Boolean trangThaiTraLoi;
 
-    public void setThoiGianTraLoi(LocalDateTime now) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setThoiGianTraLoi'");
-    }
+    @Column(name = "thoi_gian_tra_loi")
+    private LocalDateTime thoiGianTraLoi;
 
-    public void setTrangThai(boolean b) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setTrangThai'");
-    }
 }
