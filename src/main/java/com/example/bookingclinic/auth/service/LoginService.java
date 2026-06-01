@@ -44,7 +44,7 @@ public class LoginService {
         if (user == null) {
             return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         }
-        // if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
+        // if (passwordEncoder.matches(infors.getPass(), u  ser.getMatKhau())) {
         if(infors.getPass().equals(user.getMatKhau())){
             Object profileData = null;
             if ("BenhNhan".equals(user.getVaiTro())) {

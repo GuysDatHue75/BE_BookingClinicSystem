@@ -2,6 +2,8 @@ package com.example.bookingclinic.user.entity;
 
 import java.time.LocalDateTime;
 
+import com.example.bookingclinic.doctor.entity.Doctor;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -42,4 +44,14 @@ public class Advisory {
 
     @Column(name = "trang_thai_tra_loi")
     private Boolean trangThaiTraLoi;
+
+    public void setThoiGianTraLoi(LocalDateTime now) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setThoiGianTraLoi'");
+    }
+
+    public void setTrangThai(boolean b) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setTrangThai'");
+    }
 }
