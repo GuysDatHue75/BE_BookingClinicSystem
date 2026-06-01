@@ -39,6 +39,9 @@ public class SystemNotificationRepositoryImpl implements NotificationRepositoryC
     // if(request.getMaTaiKhoan() != null){
     //     builder.and(na.id.maTaiKhoan.eq(request.getMaTaiKhoan()).or(n.maTaiKhoan.eq(request.getMaTaiKhoan())));
     // }
+    if(request.getMaTaiKhoan() != null && !request.getMaTaiKhoan().isEmpty()){
+            builder.and(n.account.maTaiKhoan.eq(request.getMaTaiKhoan()));
+    }
 
     if(request.getKeyword() != null && !request.getKeyword().isEmpty()){
         String keyword = request.getKeyword();
@@ -48,9 +51,9 @@ public class SystemNotificationRepositoryImpl implements NotificationRepositoryC
         );
     }
 
-    if(request.getIsRead() != null){
-        builder.and(na.isRead.eq(request.getIsRead()));
-    }
+    // if(request.getIsRead() != null){
+    //     builder.and(na.isRead.eq(request.getIsRead()));
+    // }
 
     if(request.getLoaiThongBao() != null && !request.getLoaiThongBao().isEmpty()){
         builder.and(n.loaiThongBao.eq(request.getLoaiThongBao()));
@@ -68,11 +71,11 @@ public class SystemNotificationRepositoryImpl implements NotificationRepositoryC
         builder.and(n.thoiGianGui.loe(request.getToDate()));
     }
 
-    String currentUserId = request.getMaTaiKhoan();
-    boolean needJoinAccount = request.getMaTaiKhoan() != null || request.getIsRead() != null;
-    if(currentUserId != null){
-        builder.and(na.id.maTaiKhoan.eq(currentUserId).or(n.account.maTaiKhoan.eq(currentUserId)));
-    }
+    // String currentUserId = request.getMaTaiKhoan();
+    // boolean needJoinAccount = request.getMaTaiKhoan() != null || request.getIsRead() != null;
+    // if(currentUserId != null){
+    //     builder.and(na.id.maTaiKhoan.eq(currentUserId).or(n.account.maTaiKhoan.eq(currentUserId)));
+    // }
 
     var query = queryFactory
         .select(Projections.constructor(NotificationResponse.class,
@@ -88,9 +91,9 @@ public class SystemNotificationRepositoryImpl implements NotificationRepositoryC
         ))
         .from(n);
 
-    if(needJoinAccount) {
-        query.leftJoin(na).on(n.maThongBao.eq(na.id.maThongBao));
-    }
+    // if(needJoinAccount) {
+    //     query.leftJoin(na).on(n.maThongBao.eq(na.id.maThongBao));
+    // }
 
     String sortDir = request.getSortDirection() == null ? "desc" : request.getSortDirection();
     Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
@@ -109,9 +112,9 @@ public class SystemNotificationRepositoryImpl implements NotificationRepositoryC
     var countQuery = queryFactory
         .select(n.maThongBao.countDistinct())
         .from(n);
-    if(needJoinAccount){
-        countQuery.leftJoin(na).on(n.maThongBao.eq(na.id.maThongBao));
-    }
+    // if(needJoinAccount){
+    //     countQuery.leftJoin(na).on(n.maThongBao.eq(na.id.maThongBao));
+    // }
 
     Long total = queryFactory
         .select(n.maThongBao.countDistinct())

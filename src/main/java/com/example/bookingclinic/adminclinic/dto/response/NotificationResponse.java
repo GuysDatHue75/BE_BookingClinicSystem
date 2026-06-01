@@ -19,4 +19,7 @@ public class NotificationResponse {
     private String loaiThongBao;
     private String doiTuongNhan;
     private LocalDateTime thoiGianGui;
+    private String files;
+    private String anhThongBao;
+    private Boolean isRead;
 }
