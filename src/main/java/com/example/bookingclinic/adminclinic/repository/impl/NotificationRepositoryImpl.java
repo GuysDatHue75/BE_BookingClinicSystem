@@ -77,7 +77,10 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             n.noiDung,
             n.loaiThongBao,
             n.doiTuongNhan,
-            n.thoiGianGui
+            n.thoiGianGui,
+            n.files,
+            n.anhThongBao,
+            Expressions.constant(true)
         ))
         .from(n)
         .where(builder)
@@ -145,7 +148,10 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             n.noiDung,
             n.loaiThongBao,
             n.doiTuongNhan,
-            n.thoiGianGui
+            n.thoiGianGui,
+            n.files,
+            n.anhThongBao,
+            na.isRead
         ))
         .from(na)
         .join(na.notification, n)
