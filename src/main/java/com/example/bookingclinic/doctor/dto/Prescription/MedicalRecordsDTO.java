@@ -16,5 +16,7 @@ public class MedicalRecordsDTO {
     private String chuanDoan;
     private String ketLuan;
     private String ghiChu;
+    private String maBacSi;
+    private String maBenhNhan;
     private List<PrescriptionDetailDTO> danhSachThuoc;
 }

@@ -15,6 +15,7 @@ public class PrescriptionDTO {
     private LocalDateTime ngayLap;
 
     // Thông tin từ Hồ sơ khám
+    private String maHoSo;
     private String trieuChung;
     private String chuanDoan;
     private String ketLuan;

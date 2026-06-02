@@ -101,7 +101,7 @@ public class PatientService {
                 if (p.getChiTietDonThuoc() != null && !p.getChiTietDonThuoc().isEmpty()) {
                     List<PrescriptionDetailDTO> listThuoc = p.getChiTietDonThuoc().stream()
                             .map(chiTiet -> {
-                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO(); // ✅ ĐÃ SỬA CHỖ NÀY
+                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO(); 
                                 thuoc.setTenThuoc(chiTiet.getTenThuoc());
                                 thuoc.setLieuDung(chiTiet.getLieuDung());
                                 thuoc.setSoLuong(chiTiet.getSoLuong());

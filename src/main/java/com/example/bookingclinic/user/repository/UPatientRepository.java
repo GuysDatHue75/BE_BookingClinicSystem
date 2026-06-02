@@ -12,4 +12,5 @@ public interface UPatientRepository extends JpaRepository<UPatient, String> {
     UPatient findByEmail(String email);
     UPatient findByTaiKhoan_MaTaiKhoan(String id);
     UPatient findByTaiKhoan(UAccount account);
+    UPatient findByMaBenhNhan(String id);
 }
