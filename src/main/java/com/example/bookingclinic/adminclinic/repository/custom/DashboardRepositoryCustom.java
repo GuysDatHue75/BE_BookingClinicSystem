@@ -9,12 +9,12 @@ import com.example.bookingclinic.adminclinic.entity.AppointmentScheduleEntity;
 import com.example.bookingclinic.adminclinic.entity.PaymentEntity;
 
 public interface DashboardRepositoryCustom {
+    BigDecimal calculateRevenue(String maPhongKham, LocalDateTime start, LocalDateTime end);
     List<PaymentEntity> getPaymentsBetween(String maPhongKham, LocalDateTime startDate, LocalDateTime endDate);
+    Long countTotalAppointments(String maPhongKham, LocalDateTime start, LocalDateTime end);
     List<AppointmentScheduleEntity> getAppointmentsBetween(String maPhongKham, LocalDateTime startDate, LocalDateTime endDate);
     List<AppointmentScheduleEntity> getRecentAppointments(String maPhongKham, int limit);
-    BigDecimal calculateRevenue(String maPhongKham, LocalDateTime start, LocalDateTime end);
-    Long countDistinctPatientsExamined(String maPhongKham, LocalDate targetDate);
-    Long countTotalAppointments(String maPhongKham, LocalDateTime start, LocalDateTime end);
     List<AppointmentScheduleEntity> getAppointmentsForHeatmap(String maPhongKham, LocalDateTime startDate, LocalDateTime endDate);
+    Long countDistinctPatientsExamined(String maPhongKham, LocalDate targetDate);
     AppointmentScheduleEntity getRecentReview(String maPhongKham);
 }
