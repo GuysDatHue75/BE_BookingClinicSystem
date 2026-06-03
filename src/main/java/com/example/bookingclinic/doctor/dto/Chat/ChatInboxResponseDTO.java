@@ -14,6 +14,7 @@ public class ChatInboxResponseDTO {
     private String maPhongChat;
     private String maDoiPhuong; // ID người nhắn với mình
     private String tenDoiPhuong; // Lấy từ bảng Account (để hiển thị tên)
+    private String avatarDoiPhuong;
     private String tinNhanCuoi;
     private LocalDateTime thoiGianCuoi;
     private long soTinChuaDoc;

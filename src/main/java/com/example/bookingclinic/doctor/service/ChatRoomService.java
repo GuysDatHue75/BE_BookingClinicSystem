@@ -48,7 +48,6 @@ public class ChatRoomService {
                                         newChatRoom.setMaNguoi1(sender);
                                         newChatRoom.setMaNguoi2(recipient);
                                         newChatRoom.setThoiGianCapNhat(LocalDateTime.now());
-                                        newChatRoom.setThoiGianCapNhat(LocalDateTime.now());
                                         chatRoomRepository.save(newChatRoom);
                                         return roomId;
                                 });
@@ -128,11 +127,13 @@ public class ChatRoomService {
                         // Xác định ID của đối phương đang nhắn với mình
                         String maDoiPhuong = room.getMaNguoi1().equals(userId) ? room.getMaNguoi2()
                                         : room.getMaNguoi1();
+                        var accountOpt = accountRepository.findById(maDoiPhuong);
 
                         // Truy vấn thông tin tên hiển thị đối phương công khai
                         String tenDoiPhuong = accountRepository.findById(maDoiPhuong)
                                         .map(acc -> acc.getHoVaTen()).orElse("Người dùng hệ thống");
-
+                        String avatarDoiPhuong = accountOpt.map(acc -> acc.getAnhDaiDien())
+                                        .orElse("default-avatar.png");
                         // Lấy nội dung tin nhắn cuối cùng để hiển thị đoạn trích (Snippet)
                         Chat lastChat = chatRepository
                                         .findFirstByMaPhongChatOrderByThoiGianGuiDesc(room.getMaPhongChat())
@@ -146,6 +147,7 @@ public class ChatRoomService {
                                         .maPhongChat(room.getMaPhongChat())
                                         .maDoiPhuong(maDoiPhuong)
                                         .tenDoiPhuong(tenDoiPhuong)
+                                        .avatarDoiPhuong(avatarDoiPhuong)
                                         .tinNhanCuoi(lastChat != null ? lastChat.getNoiDung() : "")
                                         .thoiGianCuoi(room.getThoiGianCapNhat())
                                         .soTinChuaDoc(unreadCount)
@@ -158,6 +160,6 @@ public class ChatRoomService {
         // 5. Đánh dấu trạng thái đã xem toàn bộ tin nhắn trong phòng
         public void markAsRead(String sender, String recipient) {
                 String roomId = getOrAddChatRoom(sender, recipient);
-                chatRepository.markMessagesAsRead(roomId, sender);
+                chatRepository.markMessagesAsRead(roomId, recipient);
         }
 }
