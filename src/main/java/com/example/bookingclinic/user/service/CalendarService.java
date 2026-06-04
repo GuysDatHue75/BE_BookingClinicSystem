@@ -35,6 +35,7 @@ public class CalendarService {
 
     @Transactional
     public String delCalendarByID(CalendarDelDTO body) {
+        System.out.print(body.getIdCalendar());
         if (!calendarRepository.existsById(body.getIdCalendar())) {
             throw new RuntimeException("Không tìm thấy lịch khám: " + body.getIdCalendar());
         }

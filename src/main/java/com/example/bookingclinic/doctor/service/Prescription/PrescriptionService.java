@@ -1,9 +1,13 @@
 package com.example.bookingclinic.doctor.service.Prescription;
 
+import com.example.bookingclinic.doctor.repository.DoctorRepository;
+import com.example.bookingclinic.doctor.repository.PatientRepository;
 import com.example.bookingclinic.doctor.repository.PrescriptionRepository.FilePrescriptionRepository;
 import com.example.bookingclinic.doctor.repository.PrescriptionRepository.MedicalRecordsRepository;
 import com.example.bookingclinic.doctor.repository.PrescriptionRepository.PrescriptionRepository;
 import com.example.bookingclinic.doctor.repository.ScheduleRepository.AppointmentRepository;
+import com.example.bookingclinic.user.entity.UPatient;
+import com.example.bookingclinic.user.repository.UPatientRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,9 +22,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.bookingclinic.doctor.dto.doctor;
 import com.example.bookingclinic.doctor.dto.Prescription.MedicalRecordsDTO;
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDTO;
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDetailDTO;
+import com.example.bookingclinic.doctor.entity.Doctor;
+import com.example.bookingclinic.doctor.entity.Patient;
 import com.example.bookingclinic.doctor.entity.Prescription.FilePrescription;
 import com.example.bookingclinic.doctor.entity.Prescription.MedicalRecords;
 import com.example.bookingclinic.doctor.entity.Prescription.Prescription;
@@ -38,6 +45,8 @@ public class PrescriptionService {
     private final AppointmentRepository appointmentRepository;
     private final FilePrescriptionRepository filePrescriptionRepository;
     private final FileStorageService fileStorageService;
+    private final DoctorRepository doctorRepository;
+    private final UPatientRepository uPatientRepository;
 
     // 1. Tạo đơn thuốc và hoàn tất cuộc khám
     @Transactional
@@ -52,9 +61,10 @@ public class PrescriptionService {
 
         // B1. Lưu hồ sơ khám
         MedicalRecords medicalRecords = new MedicalRecords();
+        Doctor doctor = doctorRepository.findByMaBacSi(lichKham.getBacSi().getMaBacSi());
+        UPatient uPatient = uPatientRepository.findByMaBenhNhan(lichKham.getBenhNhan().getMaBenhNhan());
         medicalRecords.setMaHoSo(dto.getMaHoSo());
         medicalRecords.setAppointment(lichKham);
-
         medicalRecords.setTrieuChung(dto.getTrieuChung());
         medicalRecords.setChuanDoan(dto.getChuanDoan());
         medicalRecords.setKetLuan(dto.getKetLuan());
@@ -72,6 +82,8 @@ public class PrescriptionService {
         prescription.setMaSoDonThuoc(maDonThuoc);
         prescription.setMedicalRecord(medicalRecords);
         prescription.setNgayLap(LocalDateTime.now());
+        prescription.setDoctor(doctor);
+        prescription.setPatient(uPatient);
 
         // B2.2. Tạo danh sách chi tiết thuốc
         List<PrescriptionDetail> details = dto.getDanhSachThuoc().stream().map(detailDTO -> {

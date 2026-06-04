@@ -28,21 +28,40 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        // Lấy userId từ header lúc connect
-        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
 
+        // 1. Thêm một bước bọc bảo vệ an toàn để lấy SimpAttributes gốc
+        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+        String userId = null;
+
+        if (sessionAttributes != null) {
+            userId = (String) sessionAttributes.get("userId");
+        }
+
+        // 2. Dự phòng: Nếu session attributes chưa có, thử tìm userId trong native
+        // headers (nếu frontend có truyền)
+        if (userId == null) {
+            userId = headerAccessor.getFirstNativeHeader("userId");
+        }
+
+        // 3. Nếu tìm thấy userId thì xử lý logic online
         if (userId != null) {
             onlineUsers.put(userId, true);
             log.info("Người dùng {} đã Online", userId);
-            // Thông báo cho mọi người online
             broadcastStatus(userId, true);
+        } else {
+            log.warn("Một kết nối WebSocket thành công nhưng không tìm thấy userId trong Header!");
         }
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
+        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+
+        String userId = null;
+        if (sessionAttributes != null) {
+            userId = (String) sessionAttributes.get("userId");
+        }
 
         if (userId != null) {
             onlineUsers.remove(userId);

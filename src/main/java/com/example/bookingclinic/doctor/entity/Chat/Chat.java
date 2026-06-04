@@ -20,10 +20,10 @@ public class Chat {
     @Column(name = "ma_phong_chat", length = 50, nullable = false)
     private String maPhongChat;
 
-    @Column(name = "ma_nguoi_gui", length = 10, nullable = false)
+    @Column(name = "ma_nguoi_gui", length = 255, nullable = false)
     private String maNguoiGui;
 
-    @Column(name = "ma_nguoi_nhan", length = 10, nullable = false)
+    @Column(name = "ma_nguoi_nhan", length = 255, nullable = false)
     private String maNguoiNhan;
 
     @Column(name = "loai_tin_nhan", length = 20)

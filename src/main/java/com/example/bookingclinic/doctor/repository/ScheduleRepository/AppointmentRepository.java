@@ -15,7 +15,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
     @Query("SELECT new com.example.bookingclinic.doctor.dto.schedule.ScheduleResponseDTO(" +
             "a.maLichKham, acc.hoVaTen, p.ngaySinh, p.gioiTinh, acc.soDt, " +
-            "p.diaChi, a.lyDoKham, a.trangThai, ds.ngayLamViec, ds.khungGioKham.maKhungGio) " + // Đã sửa ở đây
+            "p.diaChi, a.lyDoKham, a.trangThai, ds.ngayLamViec, ds.khungGioKham.maKhungGio) " + 
             "FROM Appointment a " +
             "JOIN a.benhNhan p " +
             "JOIN p.taiKhoan acc " +
@@ -23,4 +23,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
             "WHERE ds.bacSi.maBacSi = :maBacSi " +
             "AND a.trangThai = 'ChoXacNhan'")
     List<ScheduleResponseDTO> getDSChuaXacNhan(@Param("maBacSi") String maBacSi);
+
+    @Query("SELECT new com.example.bookingclinic.doctor.dto.schedule.ScheduleResponseDTO(" +
+            "a.maLichKham, acc.hoVaTen, p.ngaySinh, p.gioiTinh, acc.soDt, " +
+            "p.diaChi, a.lyDoKham, a.trangThai, ds.ngayLamViec, ds.khungGioKham.maKhungGio) " +
+            "FROM Appointment a " +
+            "JOIN a.benhNhan p " +
+            "JOIN p.taiKhoan acc " +
+            "JOIN a.lichLamViec ds " +
+            "WHERE ds.bacSi.maBacSi = :maBacSi " +
+            "AND a.trangThai = 'DaXacNhan'")
+    List<ScheduleResponseDTO> getDSDaXacNhan(@Param("maBacSi") String maBacSi);
 }

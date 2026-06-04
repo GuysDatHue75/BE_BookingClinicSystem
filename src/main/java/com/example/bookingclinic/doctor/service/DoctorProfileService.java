@@ -20,7 +20,7 @@ public class DoctorProfileService {
         // 1. LẤY HỒ SƠ BÁC SĨ (GET)
         public Doctor getDoctorProfile(String maBacSi) {
                 return doctorRepository.findByMaBacSi(maBacSi);
-                
+
         }
 
         // 2. CẬP NHẬT HỒ SƠ BÁC SĨ (PUT)
@@ -42,8 +42,30 @@ public class DoctorProfileService {
                 doctor.setNgaySinh(updateDTO.getNgaySinh());
                 doctor.setGioiTinh(updateDTO.getGioiTinh());
                 doctor.setDiaChi(updateDTO.getDiaChi());
-                doctor.setAvt(updateDTO.getAnhDaiDien());
                 doctor.setCccd(updateDTO.getCccd());
+                String anhBase64 = updateDTO.getAnhDaiDien();
+
+                if (anhBase64 != null && !anhBase64.isEmpty()) {
+                        // Chỉ kiểm tra và xử lý nếu đây là chuỗi Base64 mới (bắt đầu bằng data:image/)
+                        if (anhBase64.startsWith("data:image/")) {
+
+                                // Lấy dung lượng file thực tế từ chuỗi Base64
+                                double sizeInBytes = (anhBase64.length() * 3.0) / 4.0;
+
+                                // Đổi giới hạn xuống 500KB (500 * 1024 bytes) để bảo vệ database
+                                if (sizeInBytes > 500 * 1024) {
+                                        throw new RuntimeException(
+                                                        "Kích thước ảnh quá lớn! Vui lòng chọn ảnh dưới 500KB.");
+                                }
+
+                                // Thỏa mãn điều kiện -> Gán chuỗi Base64 vào trường AVT của Doctor
+                                doctor.setAvt(anhBase64);
+                        } else {
+                                // Nếu không bắt đầu bằng data:image/, nghĩa là người dùng giữ nguyên ảnh cũ
+                                // (hoặc ảnh từ link có sẵn), ta giữ nguyên không ghi đè lỗi.
+                                doctor.setAvt(anhBase64);
+                        }
+                }
 
                 // Thông tin chuyên môn
                 doctor.setMaChuyenKhoa(updateDTO.getMaChuyenKhoa());

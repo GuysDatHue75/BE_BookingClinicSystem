@@ -64,7 +64,7 @@ public class PatientService {
         response.setNhomMau(patient.getNhomMau());
         response.setTienSuBenhAn(patient.getTienSuBenhAn());
         response.setTinhTrangSucKhoe(patient.getTinhTrangSucKhoe());
-
+        response.setAccount(patient.getTaiKhoan());
         // Lấy thông tin Họ Tên từ Account liên kết
         if (patient.getTaiKhoan() != null) {
             response.setHoVaTen(patient.getTaiKhoan().getHoVaTen());
@@ -101,7 +101,7 @@ public class PatientService {
                 if (p.getChiTietDonThuoc() != null && !p.getChiTietDonThuoc().isEmpty()) {
                     List<PrescriptionDetailDTO> listThuoc = p.getChiTietDonThuoc().stream()
                             .map(chiTiet -> {
-                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO(); // ✅ ĐÃ SỬA CHỖ NÀY
+                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO(); 
                                 thuoc.setTenThuoc(chiTiet.getTenThuoc());
                                 thuoc.setLieuDung(chiTiet.getLieuDung());
                                 thuoc.setSoLuong(chiTiet.getSoLuong());

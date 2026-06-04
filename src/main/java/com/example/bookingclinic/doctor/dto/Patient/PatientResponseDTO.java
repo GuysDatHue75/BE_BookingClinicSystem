@@ -6,7 +6,10 @@ import java.util.List;
 
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDTO;
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDetailDTO;
+import com.example.bookingclinic.doctor.entity.Account;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +38,9 @@ public class PatientResponseDTO {
     private String diaChi;
 
     private List<MedicalHistoryDTO> lichSuKham;
+    @JoinColumn(name = "ma_tai_khoan")
+    @OneToOne
+    private Account account;
 
     @Data
     @NoArgsConstructor

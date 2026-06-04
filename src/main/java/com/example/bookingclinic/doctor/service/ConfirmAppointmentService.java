@@ -30,10 +30,6 @@ public class ConfirmAppointmentService {
     @Transactional
     public String approveAppointment(ScheduleResponseDTO requestDTO) {
 
-        // 🛠️ SỬA LỖI TẠI ĐÂY: Thay "AppointmentRepository.findById" thành
-        // "appointmentRepository.findById" (dùng biến instance)
-        // Đồng thời sửa requestDTO.getMaLichLam() thành requestDTO.getMaLichKham() để
-        // tìm đúng Id của lịch khám
         Appointment appointment = appointmentRepository.findById(requestDTO.getMaLichKham())
                 .orElseThrow(() -> new RuntimeException(
                         "Lỗi: Không tìm thấy lịch khám với mã: " + requestDTO.getMaLichKham()));
@@ -58,5 +54,9 @@ public class ConfirmAppointmentService {
 
         return "Xử lý lịch khám " + requestDTO.getMaLichKham() + " thành công với trạng thái: "
                 + requestDTO.getTrangThai();
+    }
+
+    public List<ScheduleResponseDTO> layDanhsachDaXacNhan(String maBacSi) {
+        return appointmentRepository.getDSDaXacNhan(maBacSi);
     }
 }

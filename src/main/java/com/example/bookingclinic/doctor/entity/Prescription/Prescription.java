@@ -5,7 +5,7 @@ import java.util.List;
 
 // Import 2 Entity Doctor và Patient để map khóa ngoại
 import com.example.bookingclinic.doctor.entity.Doctor;
-import com.example.bookingclinic.doctor.entity.Patient;
+import com.example.bookingclinic.user.entity.UPatient;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,7 +38,7 @@ public class Prescription {
 
     @ManyToOne
     @JoinColumn(name = "ma_benh_nhan")
-    private Patient patient;
+    private UPatient patient;
 
     // --- MỐI QUAN HỆ VỚI CHI TIẾT ---
 
