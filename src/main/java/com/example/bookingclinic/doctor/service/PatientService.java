@@ -59,7 +59,7 @@ public class PatientService {
         response.setDiaChi(patient.getDiaChi());
         response.setQueQuan(patient.getQueQuan());
         response.setNgheNghiep(patient.getNgheNghiep());
-        response.setChieuCao(patient.getChieuCao()  );
+        response.setChieuCao(patient.getChieuCao());
         response.setCanNang(patient.getCanNang());
         response.setNhomMau(patient.getNhomMau());
         response.setTienSuBenhAn(patient.getTienSuBenhAn());
@@ -101,7 +101,7 @@ public class PatientService {
                 if (p.getChiTietDonThuoc() != null && !p.getChiTietDonThuoc().isEmpty()) {
                     List<PrescriptionDetailDTO> listThuoc = p.getChiTietDonThuoc().stream()
                             .map(chiTiet -> {
-                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO(); 
+                                PrescriptionDetailDTO thuoc = new PrescriptionDetailDTO();
                                 thuoc.setTenThuoc(chiTiet.getTenThuoc());
                                 thuoc.setLieuDung(chiTiet.getLieuDung());
                                 thuoc.setSoLuong(chiTiet.getSoLuong());

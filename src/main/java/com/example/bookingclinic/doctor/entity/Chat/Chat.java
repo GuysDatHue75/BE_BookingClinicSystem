@@ -14,7 +14,7 @@ public class Chat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_tin_nhan")
+    @Column(name = "ma_tin_nhan")   
     private Integer maTinNhan;
 
     @Column(name = "ma_phong_chat", length = 50, nullable = false)

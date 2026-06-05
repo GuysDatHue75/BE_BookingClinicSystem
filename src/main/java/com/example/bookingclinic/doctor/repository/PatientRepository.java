@@ -14,13 +14,13 @@ import com.example.bookingclinic.doctor.entity.Patient;
 public interface PatientRepository extends JpaRepository<Patient, String> {
         // 1. Tìm kiếm nếu SĐT chứa từ khóa HOẶC Tên chứa từ khóa
         @Query("SELECT p FROM Patient p " +
-                        "JOIN FETCH p.taiKhoan t " + // FETCH giúp lấy kèm dữ liệu tài khoản
+                        "JOIN FETCH p.taiKhoan t " +
                         "WHERE t.vaiTro = 'BenhNhan' " +
                         "AND (:keyword IS NULL OR t.soDt LIKE %:keyword% OR t.hoVaTen LIKE %:keyword%)")
         Page<Patient> searchPatients(@Param("keyword") String keyword, Pageable pageable);
 
         // 2. Lấy danh sách bệnh nhân (Đã lọc trùng bằng DISTINCT)
-        @Query("SELECT DISTINCT new com.example.bookingclinic.doctor.dto.Patient.PatientmanagerDTO(" +
+        @Query(value = "SELECT DISTINCT new com.example.bookingclinic.doctor.dto.Patient.PatientmanagerDTO(" +
                         "p.maBenhNhan, " +
                         "acc.hoVaTen, " +
                         "p.ngaySinh, " +
@@ -35,7 +35,18 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
                         "WHERE ds.bacSi.maBacSi = :maBacSi " +
                         "AND ds.maPhongKham = :maPhongKham " +
                         "AND a.trangThai = :trangThai " +
-                        "AND (:keyword IS NULL OR acc.hoVaTen LIKE %:keyword% OR p.maBenhNhan LIKE %:keyword%)")
+                        "AND (:keyword IS NULL OR acc.hoVaTen LIKE %:keyword% OR p.maBenhNhan LIKE %:keyword%)",
+
+                        // 2. BỔ SUNG CÂU ĐẾM (Đếm theo mã bệnh nhân không trùng lặp)
+                        countQuery = "SELECT COUNT(DISTINCT p.maBenhNhan) " +
+                                        "FROM Appointment a " +
+                                        "JOIN a.benhNhan p " +
+                                        "JOIN p.taiKhoan acc " +
+                                        "JOIN a.lichLamViec ds " +
+                                        "WHERE ds.bacSi.maBacSi = :maBacSi " +
+                                        "AND ds.maPhongKham = :maPhongKham " +
+                                        "AND a.trangThai = :trangThai " +
+                                        "AND (:keyword IS NULL OR acc.hoVaTen LIKE %:keyword% OR p.maBenhNhan LIKE %:keyword%)")
         Page<PatientmanagerDTO> findDetailedPatients(
                         @Param("maBacSi") String maBacSi,
                         @Param("maPhongKham") String maPhongKham,

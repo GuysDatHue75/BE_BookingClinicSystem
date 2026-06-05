@@ -8,11 +8,14 @@ import com.example.bookingclinic.doctor.repository.PrescriptionRepository.Prescr
 import com.example.bookingclinic.doctor.repository.ScheduleRepository.AppointmentRepository;
 import com.example.bookingclinic.user.entity.UPatient;
 import com.example.bookingclinic.user.repository.UPatientRepository;
+import com.google.api.client.util.Value;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -43,27 +46,30 @@ public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final AppointmentRepository appointmentRepository;
-    private final FilePrescriptionRepository filePrescriptionRepository;
-    private final FileStorageService fileStorageService;
     private final DoctorRepository doctorRepository;
     private final UPatientRepository uPatientRepository;
 
     // 1. Tạo đơn thuốc và hoàn tất cuộc khám
     @Transactional
-    public String CreatePrescription(MedicalRecordsDTO dto, List<MultipartFile> files) {
+    public Map<String, Object> createPrescription(MedicalRecordsDTO dto) {
 
         // B0. Tìm lịch khám gốc và cập nhật trạng thái sang "DaKham"
         Appointment lichKham = appointmentRepository.findById(dto.getMaLichKham())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch khám với mã: " + dto.getMaLichKham()));
 
-        lichKham.setTrangThai("DaKham"); // Đổi trạng thái sang Đã Khám
-        appointmentRepository.save(lichKham); // Lưu lại thay đổi vào DB
+        lichKham.setTrangThai("DaKham");
+        appointmentRepository.save(lichKham);
 
-        // B1. Lưu hồ sơ khám
+        // B1. Khởi tạo và lưu hồ sơ khám (MedicalRecords)
         MedicalRecords medicalRecords = new MedicalRecords();
         Doctor doctor = doctorRepository.findByMaBacSi(lichKham.getBacSi().getMaBacSi());
         UPatient uPatient = uPatientRepository.findByMaBenhNhan(lichKham.getBenhNhan().getMaBenhNhan());
-        medicalRecords.setMaHoSo(dto.getMaHoSo());
+
+        Integer maxHoSoNumber = medicalRecordsRepository.getMaxMaHoSo();
+        int nextHoSoNumber = (maxHoSoNumber == null) ? 1 : maxHoSoNumber + 1;
+        String maHoSoTuDong = String.format("HS%02d", nextHoSoNumber);
+
+        medicalRecords.setMaHoSo(maHoSoTuDong);
         medicalRecords.setAppointment(lichKham);
         medicalRecords.setTrieuChung(dto.getTrieuChung());
         medicalRecords.setChuanDoan(dto.getChuanDoan());
@@ -73,7 +79,7 @@ public class PrescriptionService {
 
         medicalRecordsRepository.save(medicalRecords);
 
-        // B2. Tạo và lưu đơn thuốc
+        // B2. Tạo và lưu đơn thuốc (Prescription)
         Prescription prescription = new Prescription();
         Integer maxNumber = prescriptionRepository.getMaxMaSoDonThuoc();
         int nextNumber = (maxNumber == null) ? 1 : maxNumber + 1;
@@ -85,42 +91,30 @@ public class PrescriptionService {
         prescription.setDoctor(doctor);
         prescription.setPatient(uPatient);
 
-        // B2.2. Tạo danh sách chi tiết thuốc
-        List<PrescriptionDetail> details = dto.getDanhSachThuoc().stream().map(detailDTO -> {
-            PrescriptionDetail detail = new PrescriptionDetail();
-            detail.setPrescription(prescription);
-            detail.setTenThuoc(detailDTO.getTenThuoc());
-            detail.setLieuDung(detailDTO.getLieuDung());
-            detail.setSoLuong(detailDTO.getSoLuong());
-            detail.setDonVi(detailDTO.getDonVi());
-            detail.setGhiChu(detailDTO.getGhiChu());
-            return detail;
-        }).collect(Collectors.toList());
+        // B3. Tạo danh sách chi tiết các loại thuốc theo đơn
+        if (dto.getDanhSachThuoc() != null) {
+            List<PrescriptionDetail> details = dto.getDanhSachThuoc().stream().map(detailDTO -> {
+                PrescriptionDetail detail = new PrescriptionDetail();
+                detail.setPrescription(prescription);
+                detail.setTenThuoc(detailDTO.getTenThuoc());
+                detail.setLieuDung(detailDTO.getLieuDung());
+                detail.setSoLuong(detailDTO.getSoLuong());
+                detail.setDonVi(detailDTO.getDonVi());
+                detail.setGhiChu(detailDTO.getGhiChu());
+                return detail;
+            }).collect(Collectors.toList());
 
-        // Gán danh sách con vào cha
-        prescription.setChiTietDonThuoc(details);
+            prescription.setChiTietDonThuoc(details);
+        }
+
         prescriptionRepository.save(prescription);
 
-        // B3. LƯU FILE ẢNH (Đã sửa lại khớp với Entity mới)
-        if (files != null && !files.isEmpty()) {
-            for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    // Gọi FileStorageService để lưu file vào ổ cứng (thư mục uploads)
-                    String fileUrl = fileStorageService.storeFile(file);
+        // Trả về các mã định danh cần thiết cho Client
+        Map<String, Object> response = new HashMap<>();
+        response.put("maHoSo", maHoSoTuDong);
+        response.put("maSoDonThuoc", maDonThuoc);
 
-                    // Lưu thông tin file vào CSDL theo cấu trúc mới
-                    FilePrescription taiLieu = FilePrescription.builder()
-                            .hoSoKham(medicalRecords)
-                            .tenAnh(file.getOriginalFilename()) // Lấy tên gốc của ảnh
-                            .duongDanAnh(fileUrl) // Lưu đường dẫn
-                            // Đã xóa .loaiFile() và .phanLoai() vì Entity không còn
-                            .build();
-
-                    filePrescriptionRepository.save(taiLieu);
-                }
-            }
-        }
-        return "Tạo đơn thuốc thành công và đã hoàn tất cuộc khám. Mã đơn: " + maDonThuoc;
+        return response;
     }
 
     // 2. Xem 1 đơn thuốc
@@ -195,27 +189,18 @@ public class PrescriptionService {
         prescriptionDTO.setMaSoDonThuoc(prescription.getMaSoDonThuoc());
         prescriptionDTO.setNgayLap(prescription.getNgayLap());
 
-        if (prescription.getMedicalRecord() != null) {
-            prescriptionDTO.setTrieuChung(prescription.getMedicalRecord().getTrieuChung());
-            prescriptionDTO.setChuanDoan(prescription.getMedicalRecord().getChuanDoan());
-            prescriptionDTO.setKetLuan(prescription.getMedicalRecord().getKetLuan());
-            prescriptionDTO.setGhiChuHoSo(prescription.getMedicalRecord().getGhiChu());
-            String maHoSo = prescription.getMedicalRecord().getMaHoSo();
+        // Ánh xạ thông tin từ Hồ sơ khám bệnh và Lịch hẹn liên quan
+        MedicalRecords record = prescription.getMedicalRecord();
+        if (record != null) {
+            prescriptionDTO.setMaHoSo(record.getMaHoSo());
+            prescriptionDTO.setTrieuChung(record.getTrieuChung());
+            prescriptionDTO.setChuanDoan(record.getChuanDoan());
+            prescriptionDTO.setKetLuan(record.getKetLuan());
+            prescriptionDTO.setGhiChuHoSo(record.getGhiChu());
 
-            if (maHoSo != null) {
-                // Lấy các file có chung maHoSo từ Database
-                List<FilePrescription> files = filePrescriptionRepository.findByHoSoKham_MaHoSo(maHoSo);
-                if (files != null && !files.isEmpty()) {
-                    // Đã sửa hàm lấy tên file sang getDuongDanAnh() cho khớp Entity mới
-                    List<String> fileUrls = files.stream()
-                            .map(file -> "http://localhost:8080/uploads/" + file.getDuongDanAnh())
-                            .collect(Collectors.toList());
-                    prescriptionDTO.setDanhSachFileAnh(fileUrls);
-                }
-            }
-            if (prescription.getMedicalRecord().getAppointment() != null) {
-                var lichKham = prescription.getMedicalRecord().getAppointment();
-
+            Appointment lichKham = record.getAppointment();
+            if (lichKham != null) {
+                // Ánh xạ thông tin bệnh nhân
                 if (lichKham.getBenhNhan() != null) {
                     if (lichKham.getBenhNhan().getTaiKhoan() != null) {
                         prescriptionDTO.setTenBenhNhan(lichKham.getBenhNhan().getTaiKhoan().getHoVaTen());
@@ -223,6 +208,7 @@ public class PrescriptionService {
                     prescriptionDTO.setSdtBenhNhan(lichKham.getBenhNhan().getSoDienThoai());
                 }
 
+                // Ánh xạ thông tin bác sĩ điều trị
                 if (lichKham.getBacSi() != null) {
                     if (lichKham.getBacSi().getTaiKhoan() != null) {
                         prescriptionDTO.setTenBacSi(lichKham.getBacSi().getTaiKhoan().getHoVaTen());
@@ -232,6 +218,7 @@ public class PrescriptionService {
             }
         }
 
+        // Ánh xạ danh sách thuốc có trong đơn thuốc
         if (prescription.getChiTietDonThuoc() != null) {
             List<PrescriptionDetailDTO> listThuoc = prescription.getChiTietDonThuoc().stream().map(detail -> {
                 PrescriptionDetailDTO detailDTO = new PrescriptionDetailDTO();
@@ -242,8 +229,11 @@ public class PrescriptionService {
                 detailDTO.setGhiChu(detail.getGhiChu());
                 return detailDTO;
             }).toList();
+
             prescriptionDTO.setDanhSachThuoc(listThuoc);
         }
+
         return prescriptionDTO;
+
     }
 }

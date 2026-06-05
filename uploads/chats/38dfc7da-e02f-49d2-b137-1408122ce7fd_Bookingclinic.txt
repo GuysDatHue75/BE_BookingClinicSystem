@@ -1,0 +1,21 @@
+- quản lý bệnh nhân:
+Mã tìa khaorn ( account )
+Mã bệnh nhân (key)
+- khám online:
+	sau khi khám xong : 	+ có mã bệnh nhân 
+			   	+ mabacsi
+				+ maphongkham
+				-> add vào danh sách bệnh nhân quản lý
+				   Thêm thông tin cuộc khám (dịch vụ sử dụng,kết quả chuẩn đoán) vào hố sơ
+- khám offline:
+	Đăng ký đến khám -> trên hệ thông có :  + maBN
+						+ maBacSi
+						+ maPk
+				-> add vào danh sách bệnh nhân quản lý
+				Thêm thông tin cuộc khám (dịch vụ sử dụng,kết quả chuẩn đoán) vào hố sơ
+-> Quản lý bệnh nhân thông qua hẹn lịch khám (schedule).
+
+
+
+Lịch khám (maLichKham) -> maPhongKham,Trạng thái (DaKham) 
+->(lọc được danh sách bệnh nhân của phòng khám và của 1 bác sĩ ) -> Lấy danh sách

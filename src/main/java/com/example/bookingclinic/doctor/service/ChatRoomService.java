@@ -8,14 +8,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.doctor.dto.Chat.ChatInboxResponseDTO;
 import com.example.bookingclinic.doctor.dto.Chat.ChatMessageDTO;
+import com.example.bookingclinic.doctor.entity.Account;
 import com.example.bookingclinic.doctor.entity.Chat.Chat;
 import com.example.bookingclinic.doctor.entity.Chat.ChatRoom;
 import com.example.bookingclinic.doctor.repository.AccountRepository;
 import com.example.bookingclinic.doctor.repository.Chat.ChatRepository;
 import com.example.bookingclinic.doctor.repository.Chat.ChatRoomRepository;
+import com.example.bookingclinic.doctor.service.Prescription.FileStorageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +30,7 @@ public class ChatRoomService {
         private final ChatRoomRepository chatRoomRepository;
         private final ChatRepository chatRepository;
         private final AccountRepository accountRepository;
+        private final FileStorageService fileStorageService;
 
         // 1. Lấy hoặc Tự động tạo phòng chat dựa trên định danh chuẩn hóa mã hóa
         public String getOrAddChatRoom(String sender, String recipient) {
@@ -76,7 +80,8 @@ public class ChatRoomService {
                         chatRoom.setThoiGianCapNhat(LocalDateTime.now());
                         chatRoomRepository.save(chatRoom);
                 });
-
+                String avatarNguoiGui = accountRepository.findById(savedEntity.getMaNguoiGui())
+                                .map(Account::getAnhDaiDien).orElse(null);
                 // Trả dữ liệu DTO chuẩn hóa ra ngoài Controller phát tín hiệu Realtime
                 return ChatMessageDTO.builder()
                                 .maTinNhan(savedEntity.getMaTinNhan())
@@ -86,6 +91,7 @@ public class ChatRoomService {
                                 .loaiTinNhan(savedEntity.getLoaiTinNhan())
                                 .noiDung(savedEntity.getNoiDung())
                                 .thoiGianGui(savedEntity.getThoiGianGui())
+                                .avatarNguoiGui(avatarNguoiGui)
                                 .daXem(savedEntity.getDaXem())
                                 .build();
         }
@@ -104,16 +110,24 @@ public class ChatRoomService {
                 Pageable pageable = PageRequest.of(page, size);
                 Page<Chat> chatPage = chatRepository.findByMaPhongChatOrderByThoiGianGuiDesc(roomId, pageable);
 
-                return chatPage.map(chat -> ChatMessageDTO.builder()
-                                .maTinNhan(chat.getMaTinNhan())
-                                .maPhongChat(chat.getMaPhongChat())
-                                .maNguoiGui(chat.getMaNguoiGui())
-                                .maNguoiNhan(chat.getMaNguoiNhan())
-                                .loaiTinNhan(chat.getLoaiTinNhan())
-                                .noiDung(chat.getNoiDung())
-                                .thoiGianGui(chat.getThoiGianGui())
-                                .daXem(chat.getDaXem())
-                                .build());
+                String avatarSender = accountRepository.findById(sender).map(Account::getAnhDaiDien).orElse(null);
+                String avatarRecipient = accountRepository.findById(recipient).map(Account::getAnhDaiDien).orElse(null);
+
+                return chatPage.map(chat -> {
+                        String currentAvatar = chat.getMaNguoiGui().equals(sender) ? avatarSender : avatarRecipient;
+                        return ChatMessageDTO.builder()
+                                        .maTinNhan(chat.getMaTinNhan())
+                                        .maPhongChat(chat.getMaPhongChat())
+                                        .maNguoiGui(chat.getMaNguoiGui())
+                                        .maNguoiNhan(chat.getMaNguoiNhan())
+                                        .loaiTinNhan(chat.getLoaiTinNhan())
+                                        .noiDung(chat.getNoiDung())
+                                        .thoiGianGui(chat.getThoiGianGui())
+                                        .avatarNguoiGui(currentAvatar)
+                                        .daXem(chat.getDaXem())
+                                        .build();
+                });
+
         }
 
         // 4. Lấy danh sách các phòng chat hiện có (Hộp thư thoại)
@@ -132,8 +146,7 @@ public class ChatRoomService {
                         // Truy vấn thông tin tên hiển thị đối phương công khai
                         String tenDoiPhuong = accountRepository.findById(maDoiPhuong)
                                         .map(acc -> acc.getHoVaTen()).orElse("Người dùng hệ thống");
-                        String avatarDoiPhuong = accountOpt.map(acc -> acc.getAnhDaiDien())
-                                        .orElse("default-avatar.png");
+                        String avatarDoiPhuong = accountOpt.map(Account::getAnhDaiDien).orElse(null);
                         // Lấy nội dung tin nhắn cuối cùng để hiển thị đoạn trích (Snippet)
                         Chat lastChat = chatRepository
                                         .findFirstByMaPhongChatOrderByThoiGianGuiDesc(room.getMaPhongChat())
@@ -161,5 +174,20 @@ public class ChatRoomService {
         public void markAsRead(String sender, String recipient) {
                 String roomId = getOrAddChatRoom(sender, recipient);
                 chatRepository.markMessagesAsRead(roomId, recipient);
+        }
+
+        public String uploadChatAttachment(MultipartFile file) {
+                if (file == null || file.isEmpty()) {
+                        throw new IllegalArgumentException("File gửi lên không được để trống!");
+                }
+                try {
+                        // Tái sử dụng FileStorageService của hệ thống để lưu file vào thư mục uploads
+                        String fileUrl = fileStorageService.storeFile(file);
+
+                        // Trả về đường dẫn URL của file (Ví dụ: /uploads/abc.jpg)
+                        return fileUrl;
+                } catch (Exception e) {
+                        throw new RuntimeException("Lỗi trong quá trình lưu trữ file chat: " + e.getMessage());
+                }
         }
 }

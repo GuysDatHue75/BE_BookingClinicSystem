@@ -79,15 +79,14 @@ public class DoctorScheduleService {
 
                 // TẠO MỚI
                 DoctorSchedule schedule = new DoctorSchedule();
-                // Khuyên dùng UUID dài hơn chút để chống trùng lặp sếp nhé (Lấy 8 ký tự đầu)
                 schedule.setMaLichLam("LLV-" + UUID.randomUUID().toString().substring(0, 8));
                 schedule.setBacSi(doctorRepository.getReferenceById(maBacSi));
                 schedule.setNgayLamViec(ngayLamViec);
-                schedule.setKhungGioKham(timeSlot); // Set thẳng Object TimeSlot vào đây
+                schedule.setKhungGioKham(timeSlot); 
                 schedule.setLoaiHinhKham(ngayDTO.getLoaiHinhKham());
                 schedule.setTrangThai(ngayDTO.getTrangThai());
                 schedule.setMaPhongKham(ngayDTO.getMaPhongKham());
-                // phòng khám nếu DTO có gửi lên
+
                 schedulesToSave.add(schedule);
             }
         }
@@ -116,7 +115,6 @@ public class DoctorScheduleService {
                         String gioHienThi = schedule.getKhungGioKham().getKhungGioBatDau() + " - " +
                                 schedule.getKhungGioKham().getKhungGioKetThuc();
                         dto.setKhungGio(gioHienThi);
-                        // dto.setMaKhungGio(schedule.getKhungGioKham().getMaKhungGio());
                     }
                     dto.setLoaiHinhKham(schedule.getLoaiHinhKham());
                     dto.setTrangThai(schedule.getTrangThai());

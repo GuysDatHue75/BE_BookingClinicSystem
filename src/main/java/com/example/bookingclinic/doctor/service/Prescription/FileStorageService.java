@@ -12,7 +12,9 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
+
     private final Path fileStorageLocation;
+
 
     // Lấy đường dẫn "uploads" từ file properties bạn đã cấu hình
     public FileStorageService(@Value("${file.upload-dir}") String uploadDir) {

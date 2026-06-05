@@ -16,8 +16,8 @@ public class DoctorProfileController {
 
     // Lấy thông tin Profile
     @GetMapping("/{maBacSi}")
-    public ResponseEntity<Doctor> getProfile(@PathVariable String maBacSi) {
-        Doctor profile = doctorProfileService.getDoctorProfile(maBacSi);
+    public ResponseEntity<DoctorProfileDTO> getProfile(@PathVariable String maBacSi) {
+        DoctorProfileDTO profile = doctorProfileService.getDoctorProfile(maBacSi);
         return ResponseEntity.ok(profile);
     }
 

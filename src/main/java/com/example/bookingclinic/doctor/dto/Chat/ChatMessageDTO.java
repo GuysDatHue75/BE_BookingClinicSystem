@@ -18,5 +18,7 @@ public class ChatMessageDTO {
     private String loaiTinNhan;
     private String noiDung;
     private LocalDateTime thoiGianGui;
+    private String avatarNguoiGui;
     private Boolean daXem;
+
 }

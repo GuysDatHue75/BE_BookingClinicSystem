@@ -1,7 +1,9 @@
 package com.example.bookingclinic.doctor.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,12 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookingclinic.doctor.dto.Prescription.MedicalRecordsDTO;
 import com.example.bookingclinic.doctor.dto.Prescription.PrescriptionDTO;
 import com.example.bookingclinic.doctor.service.Prescription.PrescriptionService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,34 +23,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/v1/prescription")
 @RequiredArgsConstructor
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
-    private final ObjectMapper objectMapper;
 
     // 1. Tạo đơn thuốc
     // http://localhost:8080/api/v1/prescription/create
-    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> Create(
-            @RequestPart("data") String jsonData,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+    @PostMapping(value = "/create")
+    public ResponseEntity<?> create(@RequestBody MedicalRecordsDTO dto) {
         try {
-            // Ép kiểu chuỗi JSON từ Client gửi lên thành đối tượng MedicalRecordsDTO
-            MedicalRecordsDTO dto = objectMapper.readValue(jsonData, MedicalRecordsDTO.class);
-
-            // Đẩy dữ liệu và file xuống Service
-            String result = prescriptionService.CreatePrescription(dto, files);
+            Map<String, Object> result = prescriptionService.createPrescription(dto);
             return ResponseEntity.ok(result);
-
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body("Lỗi logic: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body("Lỗi định dạng dữ liệu: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Lỗi xử lý tạo đơn thuốc");
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(400).body(errorResponse);
         }
     }
 

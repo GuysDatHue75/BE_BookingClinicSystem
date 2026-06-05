@@ -3,6 +3,8 @@ package com.example.bookingclinic.doctor.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -16,6 +18,7 @@ public class DoctorProfileDTO {
     private String maBacSi;
     private String email;
     private String soDienThoai;
+    @JsonProperty("anhDaiDien")
     private String anhDaiDien; // Trong service đang map với trường 'avt'
     private Boolean gioiTinh;
     private LocalDate ngaySinh;

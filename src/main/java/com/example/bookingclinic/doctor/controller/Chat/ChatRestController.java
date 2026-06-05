@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -81,5 +83,27 @@ public class ChatRestController {
 
         // Bắn tín hiệu "đã đọc" qua WebSocket trả về cho người gửi ban đầu
         messagingTemplate.convertAndSend("/topic/read/" + maNguoiGui, payload);
+    }
+
+    // API CHAT UPLOAD: POST /api/v1/chat/upload
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadChatFile(@RequestParam("file") MultipartFile file) {
+        try {
+            // 1. Gọi service để lưu file vào ổ cứng, trả về tên file duy nhất (Ví dụ:
+            // "abc-123.jpg")
+            String newFileName = chatRoomService.uploadChatAttachment(file);
+
+            // 2. Trả về thông tin tên file dưới dạng JSON để Frontend dễ lấy
+            Map<String, String> response = new HashMap<>();
+            response.put("fileName", newFileName);
+            response.put("fileUrl", "/uploads/" + newFileName);
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Lỗi xử lý file từ hệ thống: " + e.getMessage()));
+        }
     }
 }
