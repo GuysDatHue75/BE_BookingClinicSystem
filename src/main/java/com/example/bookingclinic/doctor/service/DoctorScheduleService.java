@@ -60,8 +60,6 @@ public class DoctorScheduleService {
             }
 
             // VÒNG FOR 2: Duyệt qua từng MÃ KHUNG GIỜ
-            // (Lưu ý: Đổi tên biến ngayDTO.getKhungGio() thành danh sách Mã Khung Giờ cho
-            // rõ nghĩa)
             for (String maKhungGio : ngayDTO.getKhungGio()) {
 
                 // VALIDATION: Kiểm tra trùng lặp (Phải update lại hàm trong Repository nhé sếp)
@@ -85,6 +83,7 @@ public class DoctorScheduleService {
                 schedule.setKhungGioKham(timeSlot); 
                 schedule.setLoaiHinhKham(ngayDTO.getLoaiHinhKham());
                 schedule.setTrangThai(ngayDTO.getTrangThai());
+                System.out.print(ngayDTO.getMaPhongKham());
                 schedule.setMaPhongKham(ngayDTO.getMaPhongKham());
 
                 schedulesToSave.add(schedule);
