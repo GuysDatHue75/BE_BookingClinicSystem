@@ -43,6 +43,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/v1/**").permitAll()
                                                 // MỞ KHÓA WEBSOCKET: Thêm dòng này để cho phép socket đi qua
                                                 .requestMatchers("/ws-chat/**").permitAll()
+                                                .requestMatchers("/uploads/**").permitAll()
                                                 .anyRequest().authenticated())
                                 // 4. ĐÂY LÀ ĐOẠN FIX LỖI: Tắt X-Frame-Options theo cú pháp Lambda mới
                                 .headers(headers -> headers
