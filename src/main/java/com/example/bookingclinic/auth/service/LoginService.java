@@ -44,6 +44,10 @@ public class LoginService {
         if (user == null) {
             return ResponseEntity.status(404).body("Số điện thoại không tồn tại!");
         }
+        
+        if (Boolean.TRUE.equals(user.getIsDeleted())) {
+                return ResponseEntity.status(403).body("Đăng nhập thất bại: Tài khoản của bạn đã bị khóa hoặc bị xóa khỏi hệ thống!");
+        }
 
         if (passwordEncoder.matches(infors.getPass(), user.getMatKhau())) {
         // if(infors.getPass().equals(user.getMatKhau())){ 

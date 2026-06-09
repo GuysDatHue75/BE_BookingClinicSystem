@@ -41,10 +41,6 @@ public class DashboardServiceImpl implements DashboardService {
     private final ClinicDoctorRepository    doctorRepo;
     private final ClinicRepository          clinicRepo;
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // PUBLIC – Full dashboard
-    // ═══════════════════════════════════════════════════════════════════════════
-
     @Override
     public DashboardResponseDTO getFullDashboard(String maPhongKham) {
         return DashboardResponseDTO.builder()
@@ -56,10 +52,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .recentReview(getRecentReview(maPhongKham))
                 .build();
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // KPI
-    // ═══════════════════════════════════════════════════════════════════════════
 
     @Override
     public DashboardKpiResponse getKpi(String maPhongKham) {
@@ -90,10 +82,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .soLuongBacSiHoatDong(activeDoctors)
                 .build();
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // BIỂU ĐỒ DOANH THU
-    // ═══════════════════════════════════════════════════════════════════════════
 
     @Override
     public RevenueChartResponse getRevenueChart(String maPhongKham, RevenueChartResponse.Mode mode) {
@@ -179,10 +167,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .labels(labels).income(income).expense(expense)
                 .build();
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // BIỂU ĐỒ PHÂN LOẠI TUỔI
-    // ═══════════════════════════════════════════════════════════════════════════
 
     @Override
     public AgeGroupChartResponse getAgeGroupChart(String maPhongKham, int days) {
@@ -284,10 +268,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .build();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // HEATMAP
-    // ═══════════════════════════════════════════════════════════════════════════
-
     @Override
     public HeatmapResponse getHeatmap(String maPhongKham, int days) {
         LocalDate today = LocalDate.now();
@@ -325,10 +305,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .maxValue(maxVal)
                 .build();
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // LỊCH HẸN GẦN ĐÂY
-    // ═══════════════════════════════════════════════════════════════════════════
 
     @Override
     public List<AppointmentDashboardResponse> getRecentAppointments(String maPhongKham, int limit) {
@@ -374,10 +350,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .build();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // ĐÁNH GIÁ GẦN NHẤT
-    // ═══════════════════════════════════════════════════════════════════════════
-
     @Override
     public RecentReviewResponse getRecentReview(String maPhongKham) {
         AppointmentScheduleEntity a = dashboardRepo.getRecentReview(maPhongKham);
@@ -396,10 +368,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .tenBacSi(tenBacSi)
                 .build();
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // UTILS (private)
-    // ═══════════════════════════════════════════════════════════════════════════
 
     private LocalDateTime startOf(LocalDate d) {
         return d.atStartOfDay();
